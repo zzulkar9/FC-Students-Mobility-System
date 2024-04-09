@@ -21,8 +21,10 @@
                     <div>
                         <label for="course_data" class="block text-sm font-medium text-gray-700">Paste Course
                             Data:</label>
-                        <textarea id="course_data" name="course_data" rows="4" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                        <textarea id="course_data" name="course_data" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                            rows="10"
+                            placeholder="Enter each course on a new line, e.g.,\nSECR2043 Operating Systems 3 SECR1033\nSECJ2154 Object Oriented Programming 4 SECJ1023"
+                            required></textarea>
                     </div>
 
                     <div>

@@ -16,28 +16,38 @@ class CourseController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $inputStr = $request->course_data;
-        // Basic parsing logic; adjustments may be needed based on your exact data format
-        preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $inputStr, $matches);
+{
+    $inputStr = $request->course_data;
+    $yearSemester = $request->year_semester; // Capture the year_semester from the form
+
+    $lines = explode("\n", $inputStr); // Split input into lines
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line)) continue;
+
+        preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
 
         $courseCode = $matches[1] ?? null;
         $courseName = $matches[2] ?? null;
         $courseCredit = $matches[3] ?? null;
         $prerequisites = $matches[4] ?? null;
 
+        // Ensure year_semester is included in the create method
         Course::create([
             'course_code' => $courseCode,
             'course_name' => $courseName,
-            'year_semester' => $request->year_semester,
+            'year_semester' => $yearSemester, // Include this in the database record
             'course_credit' => $courseCredit,
             'prerequisites' => $prerequisites,
-            'description' => $request->description, // Now taking input from form
-            'day_and_timeslot' => $request->day_and_timeslot, // Now taking input from form
+            // Include other fields as needed
         ]);
-
-        return redirect()->route('courses.create')->with('success', 'Course added successfully');
     }
+
+    return redirect()->route('courses.create')->with('success', 'Courses added successfully.');
+}
+
+
 
     public function edit($id)
     {
@@ -82,5 +92,4 @@ class CourseController extends Controller
         $course = Course::findOrFail($id); // Find the course or fail
         return view('courses.show', compact('course')); // Return the show view with the course
     }
-    
 }
