@@ -7,7 +7,7 @@
                         <!-- Optional: Include an icon here -->
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm font-medium text-green-800">
+                        <p class="text-green-500">
                             {{ session('success') }}
                         </p>
                     </div>

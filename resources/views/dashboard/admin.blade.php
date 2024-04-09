@@ -18,7 +18,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-4">
-                        <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900 px-4">
+                        <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900">
                             Add User
                         </a>
                     </div>
@@ -44,14 +44,15 @@
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                            <button type="submit" class="text-red-600 hover:text-red-900 py-1">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
-                            {{-- Pagination links --}}
-                        {{ $users->appends(['search' => request('search')])->links() }}
+                        <div class="mt-4 pb-3">
+                            {{ $users->appends(['search' => request('search')])->links() }}
+                        </div>
                     </table>
                 </div>
             </div>
