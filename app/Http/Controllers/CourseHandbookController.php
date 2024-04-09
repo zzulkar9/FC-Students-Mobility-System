@@ -8,17 +8,16 @@ use App\Models\Course; // Don't forget to import your Course model
 class CourseHandbookController extends Controller
 {
     public function index($searchQuery = null)
-{
-    $courses = Course::query();
+    {
+        $courses = Course::query();
 
-    if ($searchQuery) {
-        $courses = $courses->where('course_code', 'like', "%{$searchQuery}%")
-                           ->orWhere('course_name', 'like', "%{$searchQuery}%");
+        if ($searchQuery) {
+            $courses = $courses->where('course_code', 'like', "%{$searchQuery}%")
+                ->orWhere('course_name', 'like', "%{$searchQuery}%");
+        }
+
+        $courses = $courses->paginate(3); // Paginate the courses, 6 per page
+
+        return view('course-handbook.index', compact('courses'));
     }
-
-    $courses = $courses->get();
-
-    return view('course-handbook.index', compact('courses'));
-}
-
 }

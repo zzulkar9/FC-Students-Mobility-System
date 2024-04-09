@@ -52,6 +52,9 @@
                             </tr>
                             @endforeach
                         </tbody>
+                        <div class="mt-4">
+                            {{ $courses->appends(['search' => request('search')])->links() }}
+                        </div>
                     </table>
                 </div>
             </div>
