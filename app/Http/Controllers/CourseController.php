@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Course;
 
 
@@ -16,7 +17,7 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $inputStr = $request->course_data;
-        // Basic parsing logic; you may need to adjust it based on your exact data format
+        // Basic parsing logic; adjustments may be needed based on your exact data format
         preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $inputStr, $matches);
 
         $courseCode = $matches[1] ?? null;
@@ -27,10 +28,11 @@ class CourseController extends Controller
         Course::create([
             'course_code' => $courseCode,
             'course_name' => $courseName,
-            'year_semester' => 'Year 1: Semester 1', // You might want to adjust this or take as input
+            'year_semester' => $request->year_semester,
             'course_credit' => $courseCredit,
             'prerequisites' => $prerequisites,
-            // 'description' and 'day_and_timeslot' can be set as nullable for now
+            'description' => $request->description, // Now taking input from form
+            'day_and_timeslot' => $request->day_and_timeslot, // Now taking input from form
         ]);
 
         return redirect()->route('courses.create')->with('success', 'Course added successfully');

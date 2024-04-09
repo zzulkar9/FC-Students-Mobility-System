@@ -57,7 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator())) {
             return app(CourseHandbookController::class)->index();
         }
-        abort(403); // Or redirect to a "not authorized" page or the dashboard with a message.
+        abort(403);
     })->name('course-handbook.index');
 
     Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
