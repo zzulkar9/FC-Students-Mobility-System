@@ -16,7 +16,7 @@ class CourseHandbookController extends Controller
                 ->orWhere('course_name', 'like', "%{$searchQuery}%");
         }
 
-        $courses = $courses->paginate(3); // Paginate the courses, 6 per page
+        $courses = $courses->paginate(6); // Paginate the courses, 6 per page
 
         return view('course-handbook.index', compact('courses'));
     }
