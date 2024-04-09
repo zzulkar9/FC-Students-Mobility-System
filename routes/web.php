@@ -63,12 +63,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
 
     // Protect the course handbook management route with a policy
-    Route::get('/course-handbook', function () {
+    Route::get('/course-handbook', function (CourseHandbookController $controller) {
         if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator())) {
-            return app(CourseHandbookController::class)->index();
+            $searchQuery = request('search', ''); // Getting a search query from the request
+            return $controller->index($searchQuery);
         }
-        abort(403); // Or redirect to a "not authorized" page or the dashboard with a message.
-    })->name('course-handbook.index');
+        return abort(403);
+    })->name('course-handbook.index')->middleware('auth');
 
     // Using a resource route for courses to simplify CRUD operations
     Route::resource('courses', CourseController::class)->except(['index', 'show', 'edit', 'destroy'])->middleware('auth');
