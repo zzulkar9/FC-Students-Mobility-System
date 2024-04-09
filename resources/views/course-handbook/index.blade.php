@@ -22,7 +22,7 @@
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Course Name</th>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Year and Semester</th>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Course Credit</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Prerequisites</th>
+                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Pre-requisites</th>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -39,7 +39,7 @@
                                     <form action="{{ route('courses.destroy', $course->id) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-red" onclick="return confirm('Are you sure?')">Delete</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure?')">Delete</button>
                                     </form>
                                     <a href="{{ route('courses.show', $course->id) }}" class="btn btn-green">View Full Details</a>
                                 </td>

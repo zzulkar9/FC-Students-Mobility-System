@@ -77,8 +77,10 @@ class CourseController extends Controller
         return redirect()->route('course-handbook.index')->with('success', 'Course deleted successfully.');
     }
 
-    public function show(Course $course)
+    public function show($id)
     {
-        return view('courses.show', compact('course'));
+        $course = Course::findOrFail($id); // Find the course or fail
+        return view('courses.show', compact('course')); // Return the show view with the course
     }
+    
 }
