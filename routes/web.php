@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () { 
+Route::get('/', function () {
     return view('welcome');
 });
 
@@ -38,12 +38,22 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard-utm-student', function () { return view('dashboard.utm-student'); })->name('dashboard-utm-student');
-    Route::get('/dashboard-other-student', function () { return view('dashboard.other-student'); })->name('dashboard-other-student');
+    Route::get('/dashboard-utm-student', function () {
+        return view('dashboard.utm-student');
+    })->name('dashboard-utm-student');
+    Route::get('/dashboard-other-student', function () {
+        return view('dashboard.other-student');
+    })->name('dashboard-other-student');
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('dashboard-admin');
-    Route::get('/dashboard-tda', function () { return view('dashboard.tda'); })->name('dashboard-tda');
-    Route::get('/dashboard-pc', function () { return view('dashboard.pc'); })->name('dashboard-pc');
-    Route::get('/dashboard-staff', function () { return view('dashboard.staff'); })->name('dashboard-staff');
+    Route::get('/dashboard-tda', function () {
+        return view('dashboard.tda');
+    })->name('dashboard-tda');
+    Route::get('/dashboard-pc', function () {
+        return view('dashboard.pc');
+    })->name('dashboard-pc');
+    Route::get('/dashboard-staff', function () {
+        return view('dashboard.staff');
+    })->name('dashboard-staff');
 
     // User management routes
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -57,11 +67,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator())) {
             return app(CourseHandbookController::class)->index();
         }
-        abort(403);
+        abort(403); // Or redirect to a "not authorized" page or the dashboard with a message.
     })->name('course-handbook.index');
 
-    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
-    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    // Using a resource route for courses to simplify CRUD operations
+    Route::resource('courses', CourseController::class)->except(['index', 'show', 'edit', 'destroy'])->middleware('auth');
+
+    // Individual routes for actions we want to handle differently or with additional middleware
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit')->middleware('auth');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->middleware('auth');
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
 });
 
 Route::middleware('auth')->group(function () {
