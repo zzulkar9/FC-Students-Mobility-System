@@ -59,6 +59,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->user_type === self::TYPE_ADMIN;
     }
 
+    public function isUtmStudent(): bool
+    {
+        return $this->user_type === self::TYPE_UTM_STUDENT;
+    }
+
+    public function isTDA(): bool
+    {
+        return $this->user_type === self::TYPE_TDA;
+    }
+
     /**
      * Check if the user is a program coordinator.
      *

@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseHandbookController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ApplicationFormController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -78,6 +79,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit')->middleware('auth');
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->middleware('auth');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
+
+
+    // Application Form routes
+    Route::get('/application-form', function (ApplicationFormController $controller) {
+        if (Auth::check() && (Auth::user()->isUtmStudent() || Auth::user()->isTDA() || Auth::user()->isProgramCoordinator())) {
+            return $controller->index();
+        }
+        return abort(403);
+    })->name('application-form.index')->middleware('auth');
 });
 
 Route::middleware('auth')->group(function () {

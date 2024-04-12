@@ -20,6 +20,12 @@
                             {{ __('Manage Course Handbook') }}
                         </x-nav-link>
                     @endif
+                    @if (auth()->check() &&
+                            (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
+                        <x-nav-link :href="route('application-form.index')" :active="request()->routeIs('application-form.*')">
+                            {{ __('Application Form') }}
+                        </x-nav-link>
+                    @endif
 
                 </div>
             </div>
