@@ -88,6 +88,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return abort(403);
     })->name('application-form.index')->middleware('auth');
+
+    Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
+
 });
 
 Route::middleware('auth')->group(function () {
