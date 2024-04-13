@@ -31,7 +31,7 @@
         </div>
 
         <!-- User Type Selection -->
-        <div>
+        <div class="mt-4">
             <x-input-label for="user_type" :value="__('User Type')" />
         
             <select name="user_type" id="user_type" class="block mt-1 w-full" required>
@@ -42,13 +42,13 @@
         </div>
 
         <!-- Matric Number (conditionally displayed) -->
-        <div id="matricNumberField" style="display: none;">
+        <div id="matricNumberField" style="display: none;" class="mt-4">
             <x-input-label for="matric_number" :value="__('Matric Number')" />
             <x-text-input id="matric_number" class="block mt-1 w-full" type="text" name="matric_number" :value="old('matric_number')" />
         </div>
 
         <!-- Intake Period (conditionally displayed) -->
-        <div id="intakePeriodField" style="display: none;">
+        <div id="intakePeriodField" style="display: none;" class="mt-4">
             <x-input-label for="intake_period" :value="__('Intake Period')" /> <!-- Corrected to x-input-label -->
             <select name="intake_period" id="intake_period" class="block mt-1 w-full">
                 <option value="">Please select an intake period</option>
