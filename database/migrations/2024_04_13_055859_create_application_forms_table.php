@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('application_forms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('utm_course_id')->constrained('courses');
-            $table->string('target_course');
-            $table->text('target_course_description');
-            $table->text('notes')->nullable();
-            $table->boolean('is_draft')->default(false);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Assumes each form is linked to a user
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_draft')->default(true);
             $table->timestamps();
         });
-        
     }
 
     /**
