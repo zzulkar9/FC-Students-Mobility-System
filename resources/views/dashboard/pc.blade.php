@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Program Coordinator Dashboard') }}
+            {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
@@ -32,7 +32,7 @@
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->user->matric_number }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->intake }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">
-                                        <a href="{{ route('application-form.review', $application->id) }}" class="text-blue-600 hover:text-blue-900">Review</a>
+                                        <a href="{{ route('application-form.show', $application->id) }}" class="text-blue-600 hover:text-blue-900">Review</a>
                                     </td>
                                 </tr>
                             @endforeach

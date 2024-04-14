@@ -66,14 +66,19 @@ class ApplicationFormController extends Controller
     {
         $searchTerm = $request->input('search', '');
         $applications = ApplicationForm::with('user')
-                            ->whereHas('user', function($query) use ($searchTerm) {
-                                $query->where('name', 'like', '%' . $searchTerm . '%')
-                                      ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
-                            })
-                            ->latest()
-                            ->paginate(10);
-    
+            ->whereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+            })
+            ->latest()
+            ->paginate(10);
+
         return view('dashboard.pc', compact('applications'));
     }
-    
+
+    public function show($id)
+    {
+        $applicationForm = ApplicationForm::with(['user', 'subjects'])->findOrFail($id);
+        return view('application-form.show', compact('applicationForm'));
+    }
 }

@@ -17,5 +17,14 @@ export default {
         },
     },
 
+    theme: {
+        extend: {
+            colors: {
+                // This ensures all default colors are available
+                ...require('tailwindcss/colors'),
+            },
+        },
+    },
+
     plugins: [forms],
 };

@@ -16,7 +16,7 @@
                         </div>
 
                         <!-- Button to add more subjects -->
-                        <button type="button" onclick="addCourseField()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                        <button type="button" onclick="addCourseField()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             Add More Subject
                         </button>
 
@@ -53,7 +53,7 @@
                     <input type="text" name="target_course_description[]" required>
                     <label>Notes:</label>
                     <input type="text" name="target_course_notes[]">
-                    <button type="button" onclick="removeCourseField(this)">Remove</button>
+                    <button type="button" onclick="removeCourseField(this)" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Remove</button>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', fieldHTML);

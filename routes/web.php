@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
+// Welcome Route
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Dashboard Route based on user type
 Route::get('/dashboard', function () {
     if (!auth()->check()) {
         return redirect('/login');
@@ -38,67 +40,50 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Authenticated User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard-utm-student', function () {
-        return view('dashboard.utm-student');
-    })->name('dashboard-utm-student');
-    Route::get('/dashboard-other-student', function () {
-        return view('dashboard.other-student');
-    })->name('dashboard-other-student');
+    // Dashboard Routes
+    Route::get('/dashboard-utm-student', function () { return view('dashboard.utm-student'); })->name('dashboard-utm-student');
+    Route::get('/dashboard-other-student', function () { return view('dashboard.other-student'); })->name('dashboard-other-student');
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('dashboard-admin');
-    Route::get('/dashboard-tda', function () {
-        return view('dashboard.tda');
-    })->name('dashboard-tda');
-    Route::get('/dashboard-pc', [ApplicationFormController::class, 'review'])->name('dashboard-pc')->middleware('auth');
-    Route::get('/dashboard-staff', function () {
-        return view('dashboard.staff');
-    })->name('dashboard-staff');
+    Route::get('/dashboard-tda', function () { return view('dashboard.tda'); })->name('dashboard-tda');
+    Route::get('/dashboard-pc', [ApplicationFormController::class, 'review'])->name('dashboard-pc');
+    Route::get('/dashboard-staff', function () { return view('dashboard.staff'); })->name('dashboard-staff');
 
-    // User management routes
+    // User Management Routes
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{id}/edit', [AdminController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [AdminController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
 
-    // Protect the course handbook management route with a policy
+    // Course Handbook Route
     Route::get('/course-handbook', function (CourseHandbookController $controller) {
         if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator())) {
-            $searchQuery = request('search', ''); // Getting a search query from the request
+            $searchQuery = request('search', '');
             return $controller->index($searchQuery);
         }
         return abort(403);
     })->name('course-handbook.index')->middleware('auth');
 
-    // Using a resource route for courses to simplify CRUD operations
+    // Course Resource Routes
     Route::resource('courses', CourseController::class)->except(['index', 'show', 'edit', 'destroy'])->middleware('auth');
-
-    // Individual routes for actions we want to handle differently or with additional middleware
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit')->middleware('auth');
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->middleware('auth');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
 
-
-    // Application Form routes
-    Route::get('/application-form', function (ApplicationFormController $controller) {
-        if (Auth::check() && (Auth::user()->isUtmStudent() || Auth::user()->isTDA() || Auth::user()->isProgramCoordinator())) {
-            return $controller->index();
-        }
-        return abort(403);
-    })->name('application-form.index')->middleware('auth');
-
+    // Application Form Routes
+    Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');
     Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
     Route::get('/application-form/review', [ApplicationFormController::class, 'review'])->name('application-form.review');
-
-    
-
+    Route::get('/application-form/{applicationForm}/review', [ApplicationFormController::class, 'show'])->name('application-form.show')->middleware('auth');
 });
 
+// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    // Add additional authenticated routes as needed...
 });
 
 require __DIR__ . '/auth.php';

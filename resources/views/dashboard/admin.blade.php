@@ -40,11 +40,11 @@
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->user_type }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->matric_number }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="text-blue-600 hover:text-blue-900 px-4">Edit</a>
+                                        <a href="{{ route('users.edit', $user->id) }}" class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 py-1">Delete</button>
+                                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
