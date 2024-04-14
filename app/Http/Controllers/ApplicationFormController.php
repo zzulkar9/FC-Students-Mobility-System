@@ -37,7 +37,7 @@ class ApplicationFormController extends Controller
 
         foreach ($request->utm_course_id as $index => $courseId) {
             $utmCourse = Course::findOrFail($courseId);
-    
+
             $subject = new ApplicationFormSubject([
                 'utm_course_id' => $utmCourse->id,
                 'utm_course_code' => $utmCourse->course_code,
@@ -47,10 +47,33 @@ class ApplicationFormController extends Controller
                 'target_course_description' => $request->target_course_description[$index],
                 'notes' => $request->target_course_notes[$index] ?? null,
             ]);
-    
+
             $applicationForm->subjects()->save($subject);
         }
-    
+
         return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
     }
+
+    public function coordinatorIndex()
+    {
+        // Assuming each application form has a relation to a user where user details like name, matric number are stored
+        $applications = ApplicationForm::with('user')->get();
+
+        return view('dashboard.pc', ['applications' => $applications]);
+    }
+
+    public function review(Request $request)
+    {
+        $searchTerm = $request->input('search', '');
+        $applications = ApplicationForm::with('user')
+                            ->whereHas('user', function($query) use ($searchTerm) {
+                                $query->where('name', 'like', '%' . $searchTerm . '%')
+                                      ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+                            })
+                            ->latest()
+                            ->paginate(10);
+    
+        return view('dashboard.pc', compact('applications'));
+    }
+    
 }

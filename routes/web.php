@@ -49,9 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard-tda', function () {
         return view('dashboard.tda');
     })->name('dashboard-tda');
-    Route::get('/dashboard-pc', function () {
-        return view('dashboard.pc');
-    })->name('dashboard-pc');
+    Route::get('/dashboard-pc', [ApplicationFormController::class, 'review'])->name('dashboard-pc')->middleware('auth');
     Route::get('/dashboard-staff', function () {
         return view('dashboard.staff');
     })->name('dashboard-staff');
@@ -90,6 +88,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('application-form.index')->middleware('auth');
 
     Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
+    Route::get('/application-form/review', [ApplicationFormController::class, 'review'])->name('application-form.review');
+
+    
 
 });
 
