@@ -36,7 +36,7 @@
 
                 <!-- Edit Button -->
                 <div class="flex items-center mt-4 justify-center">
-                    <a href="{{ route('courses.edit', $course->id) }}" class="px-4 py-2 bg-blue-500 rounded-md">Edit</a>
+                    <a href="{{ route('courses.edit', $course->id) }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Edit</a>
                 </div>
             </div>
         </div>

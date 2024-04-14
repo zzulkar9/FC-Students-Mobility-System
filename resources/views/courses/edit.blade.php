@@ -74,7 +74,7 @@
 
                     <!-- Update Button -->
                     <div class="flex items-center mt-4 justify-center">
-                        <button type="submit" class="items-center">Update
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update
                         </button>
                     </div>
                 </form>

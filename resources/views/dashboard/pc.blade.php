@@ -11,7 +11,7 @@
             <form method="GET" action="{{ route('dashboard-pc') }}"> <!-- Ensure the route name and logic supports search -->
                 <div class="flex space-x-4 items-center mb-4">
                     <input type="text" name="search" class="rounded-md shadow-sm border-gray-300" placeholder="Search applications..." value="{{ request('search') }}">
-                    <button type="submit" class="px-2 py-2 bg-blue-500 rounded-md">🔍</button>
+                    <button type="submit" class="py-2 rounded-md">🔍</button>
                 </div>
             </form>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -32,7 +32,7 @@
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->user->matric_number }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->intake }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">
-                                        <a href="{{ route('application-form.show', $application->id) }}" class="text-blue-600 hover:text-blue-900">Review</a>
+                                        <a href="{{ route('application-form.show', $application->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Review</a>
                                     </td>
                                 </tr>
                             @endforeach

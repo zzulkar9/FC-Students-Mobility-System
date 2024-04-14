@@ -53,6 +53,22 @@
                     </div>
 
                     <!-- Additional fields like Matric Number and Intake Period here -->
+                    <!-- Matric Number (conditionally displayed) -->
+                    <div id="matricNumberField" style="display: none;" class="mt-4">
+                        <x-input-label for="matric_number" :value="__('Matric Number')" />
+                        <x-text-input id="matric_number" class="block mt-1 w-full" type="text" name="matric_number"
+                            :value="old('matric_number')" />
+                    </div>
+
+                    <!-- Intake Period (conditionally displayed) -->
+                    <div id="intakePeriodField" style="display: none;" class="mt-4">
+                        <x-input-label for="intake_period" :value="__('Intake Period')" /> <!-- Corrected to x-input-label -->
+                        <select name="intake_period" id="intake_period" class="block mt-1 w-full">
+                            <option value="">Please select an intake period</option>
+                            <option value="March/April">March/April</option>
+                            <option value="September">September</option>
+                        </select>
+                    </div>
 
                     <div class="flex items-center justify-end mt-4">
                         <x-primary-button class="ml-4">
