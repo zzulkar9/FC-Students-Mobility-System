@@ -101,4 +101,55 @@ class ApplicationFormController extends Controller
 
         return back()->with('success', 'Notes updated successfully.');
     }
+
+
+    public function edit($id)
+    {
+        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);  // Make sure to load related subjects if needed
+
+        // Check if the currently authenticated user is the owner of the form
+        if (auth()->id() !== $applicationForm->user_id && !auth()->user()->isAdmin()) {
+            abort(403); // Added admin check if admins can edit any form
+        }
+
+        $courses = Course::all(); // Fetch all courses for dropdown options
+
+        return view('application-form.edit', compact('applicationForm', 'courses'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id); // Load form with subjects
+
+        $request->validate([
+            'utm_course_id' => 'required|array',
+            'utm_course_id.*' => 'exists:courses,id',
+            'target_course' => 'required|array',
+            'target_course.*' => 'required|string|max:255',
+            'target_course_description' => 'required|array',
+            'target_course_description.*' => 'required|string',
+            'target_course_notes' => 'nullable|array',
+            'target_course_notes.*' => 'nullable|string',
+        ]);
+
+        foreach ($request->utm_course_id as $index => $courseId) {
+            $utmCourse = Course::findOrFail($courseId);
+            $subject = $applicationForm->subjects[$index]; // Assuming index aligns correctly with subjects
+
+            // Update each subject entry
+            $subject->utm_course_id = $utmCourse->id;
+            $subject->utm_course_code = $utmCourse->course_code;
+            $subject->utm_course_name = $utmCourse->course_name;
+            $subject->utm_course_description = $utmCourse->description;
+            $subject->target_course = $request->target_course[$index];
+            $subject->target_course_description = $request->target_course_description[$index];
+            $subject->notes = $request->target_course_notes[$index] ?? $subject->notes; // Use existing notes if none provided
+            $subject->save(); // Make sure to save each subject update
+        }
+
+        $applicationForm->save(); // Save the overall form changes
+
+        return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
+    }
 }
