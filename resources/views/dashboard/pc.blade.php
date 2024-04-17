@@ -16,7 +16,7 @@
             </form>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <table class="min-w-full w-full border-collapse border border-gray-300">
+                    <table class="min-w-full w-full border-collapse border border-gray-300 break-words">
                         <thead>
                             <tr>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Student Name</th>

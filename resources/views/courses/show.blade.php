@@ -5,7 +5,7 @@
                 <h1 class="text-center mb-6">Course Details</h1>
 
                 <!-- Course Details Table -->
-                <table class="min-w-full divide-y divide-gray-200 min-w-full w-full border-collapse border border-gray-300">
+                <table class="min-w-full divide-y divide-gray-200 min-w-full w-full border-collapse border border-gray-300 break-words">
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr>
                             <td class="px-6 py-4 border border-gray-300 bg-gray-400 whitespace-nowrap text-sm font-medium text-gray-900">Course Code</td>

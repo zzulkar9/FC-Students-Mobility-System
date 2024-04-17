@@ -23,7 +23,7 @@
                             Add Course
                         </a>
                     </div>
-                    <table class="min-w-full w-full border-collapse border border-gray-300">
+                    <table class="min-w-full w-full border-collapse border border-gray-300 break-words">
                         <thead>
                             <tr>
                                 <th

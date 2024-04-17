@@ -14,7 +14,7 @@
                     <p>Name: {{ $applicationForm->user->name }}</p>
                     <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
                     <!-- Table for displaying UTM and Target University Courses -->
-                    <table class="min-w-full table-auto">
+                    <table class="min-w-full table-auto break-words">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="px-4 py-2 text-left">UTM Course Code</th>
