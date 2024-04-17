@@ -30,7 +30,7 @@
                                 <tr class="hover:bg-gray-100">
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->user->name }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->user->matric_number }}</td>
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->intake }}</td>
+                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $application->intake_period }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">
                                         <a href="{{ route('application-form.show', $application->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Review</a>
                                     </td>

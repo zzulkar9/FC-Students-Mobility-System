@@ -6,9 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\ApplicationForm;
 use App\Models\ApplicationFormSubject;
+use Illuminate\Support\Facades\Auth;
 
 class ApplicationFormController extends Controller
 {
+    public function indexForStudent()
+    {
+        $applications = ApplicationForm::where('user_id', Auth::id())->latest()->get();
+        return view('dashboard.utm-student', compact('applications'));
+    }
+
     public function index()
     {
         $courses = Course::all();
@@ -80,5 +87,18 @@ class ApplicationFormController extends Controller
     {
         $applicationForm = ApplicationForm::with(['user', 'subjects'])->findOrFail($id);
         return view('application-form.show', compact('applicationForm'));
+    }
+
+    public function updateNotes(Request $request, $subjectId)
+    {
+        $request->validate([
+            'notes' => 'required|string|max:255', // Validate as necessary
+        ]);
+
+        $subject = ApplicationFormSubject::findOrFail($subjectId);
+        $subject->notes = $request->notes;
+        $subject->save();
+
+        return back()->with('success', 'Notes updated successfully.');
     }
 }

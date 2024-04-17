@@ -43,7 +43,7 @@ Route::get('/dashboard', function () {
 // Authenticated User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Routes
-    Route::get('/dashboard-utm-student', function () { return view('dashboard.utm-student'); })->name('dashboard-utm-student');
+    Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
     Route::get('/dashboard-other-student', function () { return view('dashboard.other-student'); })->name('dashboard-other-student');
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('dashboard-admin');
     Route::get('/dashboard-tda', function () { return view('dashboard.tda'); })->name('dashboard-tda');
@@ -77,6 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
     Route::get('/application-form/review', [ApplicationFormController::class, 'review'])->name('application-form.review');
     Route::get('/application-form/{applicationForm}/review', [ApplicationFormController::class, 'show'])->name('application-form.show')->middleware('auth');
+    Route::patch('/application-form-subjects/{id}/update-notes', [ApplicationFormController::class, 'updateNotes'])->name('application-form.update-notes')->middleware('auth');
+
 });
 
 // Profile Routes

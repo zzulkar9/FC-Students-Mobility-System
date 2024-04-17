@@ -16,16 +16,19 @@
                         </div>
 
                         <!-- Button to add more subjects -->
-                        <button type="button" onclick="addCourseField()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="button" onclick="addCourseField()"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             Add More Subject
                         </button>
 
                         <!-- Actions -->
                         <div class="mt-4">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Submit
                             </button>
-                            <button type="submit" name="action" value="save_draft" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit" name="action" value="save_draft"
+                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                                 Save Draft
                             </button>
                         </div>
@@ -39,23 +42,21 @@
         function addCourseField() {
             const container = document.getElementById('courseFields');
             const fieldHTML = `
-                <div class="course-field">
-                    <label>UTM Course:</label>
-                    <select name="utm_course_id[]" required>
-                        <option value="">Select a Course</option>
-                        @foreach ($courses as $course)
-                            <option value="{{ $course->id }}">{{ $course->course_name }}</option>
-                        @endforeach
-                    </select>
-                    <label>Target University Course:</label>
-                    <input type="text" name="target_course[]" required>
-                    <label>Course Description at Target University:</label>
-                    <input type="text" name="target_course_description[]" required>
-                    <label>Notes:</label>
-                    <input type="text" name="target_course_notes[]">
-                    <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Remove</button>
-                </div>
-            `;
+        <div class="course-field">
+            <label>UTM Course:</label>
+            <select name="utm_course_id[]" required>
+                <option value="">Select a Course</option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                @endforeach
+            </select>
+            <label>Target University Course:</label>
+            <textarea name="target_course[]" rows="2" required></textarea>
+            <label>Course Description at Target University:</label>
+            <textarea name="target_course_description[]" rows="2" required></textarea>
+            <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Remove</button>
+        </div>
+    `;
             container.insertAdjacentHTML('beforeend', fieldHTML);
         }
 
