@@ -54,7 +54,7 @@
                                                     class="w-full">
                                                 <button type="submit"
                                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                                                    Save
+                                                    Save Test
                                                 </button>
                                             </form>
                                         @endif
