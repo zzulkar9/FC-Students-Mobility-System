@@ -11,13 +11,23 @@
                 <div class="p-6 text-gray-900">
                     <form method="POST" action="{{ route('application-form.submit') }}" id="applicationForm">
                         @csrf
-                        <div id="courseFields">
-                            <!-- Placeholder for dynamically added course fields -->
-                        </div>
+                        <table id="courseFields" class="min-w-full">
+                            <thead>
+                                <tr>
+                                    <th>UTM Course</th>
+                                    <th>Target University Course</th>
+                                    <th>Course Description at Target University</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Initial course field will be added here by JavaScript -->
+                            </tbody>
+                        </table>
 
                         <!-- Button to add more subjects -->
                         <button type="button" onclick="addCourseField()"
-                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             Add More Subject
                         </button>
 
@@ -40,33 +50,37 @@
 
     <script>
         function addCourseField() {
-            const container = document.getElementById('courseFields');
-            const fieldHTML = `
-        <div class="course-field">
-            <label>UTM Course:</label>
+            const tableBody = document.querySelector('#courseFields tbody');
+            const row = document.createElement('tr');
+            row.className = 'course-field';
+            row.innerHTML = `
+        <td>
             <select name="utm_course_id[]" required>
                 <option value="">Select a Course</option>
                 @foreach ($courses as $course)
-                    <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                    <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
                 @endforeach
             </select>
-            <label>Target University Course:</label>
+        </td>
+        <td>
             <textarea name="target_course[]" rows="2" required></textarea>
-            <label>Course Description at Target University:</label>
+        </td>
+        <td>
             <textarea name="target_course_description[]" rows="2" required></textarea>
-            <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Remove</button>
-        </div>
+        </td>
+        <td>
+            <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
+        </td>
     `;
-            container.insertAdjacentHTML('beforeend', fieldHTML);
+            tableBody.appendChild(row);
         }
 
+
         function removeCourseField(button) {
-            button.parentElement.remove();
+            button.closest('tr').remove();
         }
 
         // Initial add of course field on page load
-        window.onload = function() {
-            addCourseField(); // Add first set of input fields
-        };
+        window.onload = addCourseField;
     </script>
 </x-app-layout>
