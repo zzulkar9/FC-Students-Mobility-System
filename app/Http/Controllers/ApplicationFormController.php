@@ -36,10 +36,12 @@ class ApplicationFormController extends Controller
         ]);
 
         $isDraft = $request->input('action') == 'save_draft';
+        $user = auth()->user();  // Fetch the authenticated user
 
         $applicationForm = new ApplicationForm();
-        $applicationForm->user_id = auth()->id();
+        $applicationForm->user_id = $user->id;
         $applicationForm->is_draft = $isDraft;
+        $applicationForm->intake_period = $user->intake_period;
         $applicationForm->save();
 
         foreach ($request->utm_course_id as $index => $courseId) {
@@ -49,7 +51,7 @@ class ApplicationFormController extends Controller
                 'utm_course_id' => $utmCourse->id,
                 'utm_course_code' => $utmCourse->course_code,
                 'utm_course_name' => $utmCourse->course_name,
-                'utm_course_description' => $utmCourse->description ?? 'No description available', // Provide a default if null
+                'utm_course_description' => $utmCourse->description ?? 'No description available',
                 'target_course' => $request->target_course[$index],
                 'target_course_description' => $request->target_course_description[$index],
                 'notes' => $request->target_course_notes[$index] ?? null,
@@ -60,6 +62,8 @@ class ApplicationFormController extends Controller
 
         return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
     }
+
+
 
     public function coordinatorIndex()
     {
