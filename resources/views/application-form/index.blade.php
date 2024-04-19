@@ -6,18 +6,19 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> --}}
+        <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <form method="POST" action="{{ route('application-form.submit') }}" id="applicationForm">
                         @csrf
-                        <table id="courseFields" class="min-w-full">
-                            <thead>
+                        <table id="courseFields" class="min-w-full table-auto break-words">
+                            <thead class="bg-gray-200">
                                 <tr>
-                                    <th>UTM Course</th>
-                                    <th>Target University Course</th>
-                                    <th>Course Description at Target University</th>
-                                    <th>Actions</th>
+                                    <th class="px-4 py-2 text-left">UTM Course</th>
+                                    <th class="px-4 py-2 text-left">Target University Course</th>
+                                    <th class="px-4 py-2 text-left">Course Description at Target University</th>
+                                    <th class="px-4 py-2 text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,39 +49,52 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2/dist/css/select2.min.css" rel="stylesheet" />
+
     <script>
         function addCourseField() {
             const tableBody = document.querySelector('#courseFields tbody');
             const row = document.createElement('tr');
             row.className = 'course-field';
             row.innerHTML = `
-        <td>
-            <select name="utm_course_id[]" required>
-                <option value="">Select a Course</option>
-                @foreach ($courses as $course)
-                    <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
-                @endforeach
-            </select>
-        </td>
-        <td>
-            <textarea name="target_course[]" rows="2" required></textarea>
-        </td>
-        <td>
-            <textarea name="target_course_description[]" rows="2" required></textarea>
-        </td>
-        <td>
-            <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
-        </td>
-    `;
+                <td class="border px-4 py-2" style="width: 20%;">
+                    <select name="utm_course_id[]" class="utmCourseSelect" required>
+                        <option value="">Select a Course</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td class="border px-4 py-2" style="width: 35%;">
+                    <textarea name="target_course[]" rows="2" required></textarea>
+                </td>
+                <td class="border px-4 py-2" style="width: 35%;">
+                    <textarea name="target_course_description[]" rows="2" required></textarea>
+                </td>
+                <td class="border px-4 py-2" style="width: 5%;">
+                    <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
+                </td>
+            `;
             tableBody.appendChild(row);
+            $(row).find('.utmCourseSelect').select2({ width: '100%' });  // Initialize Select2
         }
-
 
         function removeCourseField(button) {
-            button.closest('tr').remove();
+            const row = button.closest('tr');
+            $(row).find('.utmCourseSelect').select2('destroy');  // Destroy Select2 before removing row
+            row.remove();
         }
 
-        // Initial add of course field on page load
-        window.onload = addCourseField;
+        window.onload = function() {
+            addCourseField(); // Add first set of input fields on page load
+        };
     </script>
+
+    <style>
+        textarea {
+            width: 100%;
+        }
+    </style>
 </x-app-layout>

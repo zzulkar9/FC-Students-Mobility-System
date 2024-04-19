@@ -120,7 +120,7 @@ class ApplicationFormController extends Controller
 
     public function update(Request $request, $id)
     {
-        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id); // Load form with subjects
+        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);
 
         $request->validate([
             'utm_course_id' => 'required|array',
@@ -133,22 +133,22 @@ class ApplicationFormController extends Controller
             'target_course_notes.*' => 'nullable|string',
         ]);
 
+        // Update existing subjects or create new ones
         foreach ($request->utm_course_id as $index => $courseId) {
             $utmCourse = Course::findOrFail($courseId);
-            $subject = $applicationForm->subjects[$index]; // Assuming index aligns correctly with subjects
 
-            // Update each subject entry
+            $subject = $applicationForm->subjects->get($index) ?? new ApplicationFormSubject();
+            $subject->application_form_id = $applicationForm->id;
             $subject->utm_course_id = $utmCourse->id;
             $subject->utm_course_code = $utmCourse->course_code;
             $subject->utm_course_name = $utmCourse->course_name;
-            $subject->utm_course_description = $utmCourse->description;
+            $subject->utm_course_description = $utmCourse->description ?? 'No description available';
             $subject->target_course = $request->target_course[$index];
             $subject->target_course_description = $request->target_course_description[$index];
-            $subject->notes = $request->target_course_notes[$index] ?? $subject->notes; // Use existing notes if none provided
-            $subject->save(); // Make sure to save each subject update
-        }
+            $subject->notes = $request->target_course_notes[$index] ?? null;
 
-        $applicationForm->save(); // Save the overall form changes
+            $subject->save(); // This will update existing records or create new ones as necessary
+        }
 
         return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
     }
