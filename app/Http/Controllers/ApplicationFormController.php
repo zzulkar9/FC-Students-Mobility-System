@@ -18,8 +18,18 @@ class ApplicationFormController extends Controller
 
     public function index()
     {
-        $courses = Course::all();
-        return view('application-form.index', ['courses' => $courses]);
+        if (auth()->user()->isUtmStudent()) {
+            // For UTM students, show the form to submit a new application
+            $courses = Course::all(); // Assuming you need course data for the form
+            return view('application-form.index', compact('courses'));
+        } elseif (auth()->user()->isProgramCoordinator()) {
+            // For program coordinators, show the dashboard with all submissions
+            $applications = ApplicationForm::with('user')->latest()->paginate(10);
+            return view('application-form.pc-index', compact('applications'));
+        } else {
+            // Optionally handle other roles or redirect with an error
+            return abort(403, 'Unauthorized access.');
+        }
     }
 
     public function submit(Request $request)
@@ -65,13 +75,20 @@ class ApplicationFormController extends Controller
 
 
 
-    public function coordinatorIndex()
+    public function coordinatorIndex(Request $request)
     {
-        // Assuming each application form has a relation to a user where user details like name, matric number are stored
-        $applications = ApplicationForm::with('user')->get();
+        $searchTerm = $request->input('search', '');
+        $applications = ApplicationForm::with('user')
+            ->whereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+            })
+            ->latest()
+            ->paginate(10);
 
-        return view('dashboard.pc', ['applications' => $applications]);
+        return view('application-form.pc-index', compact('applications'));
     }
+
 
     public function review(Request $request)
     {

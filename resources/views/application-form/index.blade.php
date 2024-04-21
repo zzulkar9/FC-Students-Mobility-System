@@ -10,6 +10,19 @@
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <!-- Display student information -->
+                    <div class="mb-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                            Name: {{ Auth::user()->name }}
+                        </p>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                            Matric Number: {{ Auth::user()->matric_number }}
+                        </p>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                            Current Semester: {{ Auth::user()->getCurrentSemester() }}
+                        </p>
+                    </div>
                     <form method="POST" action="{{ route('application-form.submit') }}" id="applicationForm">
                         @csrf
                         <table id="courseFields" class="min-w-full table-auto break-words">

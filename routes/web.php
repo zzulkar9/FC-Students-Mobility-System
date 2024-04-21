@@ -44,11 +44,19 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Routes
     Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
-    Route::get('/dashboard-other-student', function () { return view('dashboard.other-student'); })->name('dashboard-other-student');
+    Route::get('/dashboard-other-student', function () {
+        return view('dashboard.other-student');
+    })->name('dashboard-other-student');
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('dashboard-admin');
-    Route::get('/dashboard-tda', function () { return view('dashboard.tda'); })->name('dashboard-tda');
-    Route::get('/dashboard-pc', [ApplicationFormController::class, 'review'])->name('dashboard-pc');
-    Route::get('/dashboard-staff', function () { return view('dashboard.staff'); })->name('dashboard-staff');
+    Route::get('/dashboard-tda', function () {
+        return view('dashboard.tda');
+    })->name('dashboard-tda');
+    // Update this to the correct method if changed
+    Route::get('/dashboard-pc', [ApplicationFormController::class, 'coordinatorIndex'])->name('dashboard-pc')->middleware('auth');
+
+    Route::get('/dashboard-staff', function () {
+        return view('dashboard.staff');
+    })->name('dashboard-staff');
 
     // User Management Routes
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -80,9 +88,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/application-form-subjects/{id}/update-notes', [ApplicationFormController::class, 'updateNotes'])->name('application-form.update-notes')->middleware('auth');
     Route::get('/application-form/{applicationForm}/edit', [ApplicationFormController::class, 'edit'])->name('application-form.edit')->middleware(['auth']);
     Route::put('/application-form/{applicationForm}', [ApplicationFormController::class, 'update'])->name('application-form.update')->middleware('auth');
-
-
-
 });
 
 // Profile Routes
