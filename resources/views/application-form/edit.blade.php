@@ -16,7 +16,7 @@
                         <h3>Student Information</h3>
                         <p>Name: {{ $applicationForm->user->name }}</p>
                         <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
-                        
+                        <p>Current Semester: {{ Auth::user()->getCurrentSemester() }}</p>
                         <!-- Table for dynamically adding/removing courses -->
                         <table class="min-w-full table-auto">
                             <thead class="bg-gray-200">

@@ -27,10 +27,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'name', 'email', 'password', 'user_type', 'matric_number', 'intake_period',
     ];
 
-
-
-
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -77,5 +73,33 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isProgramCoordinator(): bool
     {
         return $this->user_type === self::TYPE_PROGRAM_COORDINATOR;
+    }
+
+    // GET CURRENT SEMESTER
+
+    public function getCurrentSemester() {
+        if (!$this->matric_number) {
+            return null;  // Return null if no matric number is set
+        }
+
+        // Extract the year and the intake type ('A' or 'B') from the matric number
+        $year = intval(substr($this->matric_number, 1, 2));
+        $intakeType = substr($this->matric_number, 0, 1);
+
+        // Calculate the number of years since the matriculation year
+        $currentYear = intval(date('y'));
+        $yearsSinceMatric = $currentYear - $year;
+
+        // Determine the current semester
+        $currentMonth = intval(date('m'));
+        $semesterOffset = $currentMonth >= 9 || $currentMonth < 3 ? 0 : 1; // September to February is semester 1, March to August is semester 2
+        $currentSemester = $yearsSinceMatric * 2 + $semesterOffset;
+
+        // If the student had credit transfers (type 'B'), start counting from semester 3
+        if ($intakeType === 'B') {
+            $currentSemester += 2;
+        }
+
+        return min($currentSemester, 8); // Ensure it does not exceed 8 semesters
     }
 }
