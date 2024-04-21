@@ -18,11 +18,23 @@ class ApplicationFormController extends Controller
 
     public function index()
     {
-        if (auth()->user()->isUtmStudent()) {
-            // For UTM students, show the form to submit a new application
-            $courses = Course::all(); // Assuming you need course data for the form
-            return view('application-form.index', compact('courses'));
-        } elseif (auth()->user()->isProgramCoordinator()) {
+        $user = auth()->user();
+
+        if ($user->isUtmStudent()) {
+            // Check if the user has any existing applications
+            $applicationForm = ApplicationForm::where('user_id', $user->id)
+                ->latest('updated_at') // Make sure to get the most recent application
+                ->first();
+
+            if ($applicationForm) {
+                // If an application exists, redirect to edit the most recent one
+                return redirect()->route('application-form.show', $applicationForm->id);
+            } else {
+                // No applications found, show the form to submit a new application
+                $courses = Course::all(); // Assuming you need course data for the form
+                return view('application-form.index', compact('courses'));
+            }
+        } elseif ($user->isProgramCoordinator()) {
             // For program coordinators, show the dashboard with all submissions
             $applications = ApplicationForm::with('user')->latest()->paginate(10);
             return view('application-form.pc-index', compact('applications'));
@@ -31,6 +43,7 @@ class ApplicationFormController extends Controller
             return abort(403, 'Unauthorized access.');
         }
     }
+
 
     public function submit(Request $request)
     {
