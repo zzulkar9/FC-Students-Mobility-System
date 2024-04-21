@@ -1,11 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
-
 use App\Models\Course;
-
-
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -16,36 +12,37 @@ class CourseController extends Controller
     }
 
     public function store(Request $request)
-{
-    $inputStr = $request->course_data;
-    $yearSemester = $request->year_semester; // Capture the year_semester from the form
+    {
+        $inputStr = $request->course_data;
+        $yearSemester = $request->year_semester; // Capture the year_semester from the form
 
-    $lines = explode("\n", $inputStr); // Split input into lines
+        $lines = explode("\n", $inputStr); // Split input into lines
 
-    foreach ($lines as $line) {
-        $line = trim($line);
-        if (empty($line)) continue;
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line))
+                continue;
 
-        preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
+            preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
 
-        $courseCode = $matches[1] ?? null;
-        $courseName = $matches[2] ?? null;
-        $courseCredit = $matches[3] ?? null;
-        $prerequisites = $matches[4] ?? null;
+            $courseCode = $matches[1] ?? null;
+            $courseName = $matches[2] ?? null;
+            $courseCredit = $matches[3] ?? null;
+            $prerequisites = $matches[4] ?? null;
 
-        // Ensure year_semester is included in the create method
-        Course::create([
-            'course_code' => $courseCode,
-            'course_name' => $courseName,
-            'year_semester' => $yearSemester, // Include this in the database record
-            'course_credit' => $courseCredit,
-            'prerequisites' => $prerequisites,
-            // Include other fields as needed
-        ]);
+            // Ensure year_semester is included in the create method
+            Course::create([
+                'course_code' => $courseCode,
+                'course_name' => $courseName,
+                'year_semester' => $yearSemester, // Include this in the database record
+                'course_credit' => $courseCredit,
+                'prerequisites' => $prerequisites,
+                // Include other fields as needed
+            ]);
+        }
+
+        return redirect()->route('courses.create')->with('success', 'Courses added successfully.');
     }
-
-    return redirect()->route('courses.create')->with('success', 'Courses added successfully.');
-}
 
 
 

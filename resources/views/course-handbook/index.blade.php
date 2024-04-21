@@ -11,7 +11,7 @@
                 <div class="flex space-x-4 items-center mb-4">
                     <input type="text" name="search" class="rounded-md shadow-sm border-gray-300"
                         placeholder="Search courses..." value="{{ request('search') }}">
-                    <button type="submit" class="px-2 rounded-md">🔍</button>
+                    <button type="submit" class="rounded-md">🔍</button>
                 </div>
             </form>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

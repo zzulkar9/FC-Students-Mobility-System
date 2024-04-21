@@ -13,12 +13,12 @@
                         @csrf
                         @method('PUT')
 
-                        <h3>Student Information</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
                         <p>Name: {{ $applicationForm->user->name }}</p>
                         <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
                         <p>Current Semester: {{ Auth::user()->getCurrentSemester() }}</p>
                         <!-- Table for dynamically adding/removing courses -->
-                        <table class="min-w-full table-auto">
+                        <table class="mt-4 min-w-full table-auto">
                             <thead class="bg-gray-200">
                                 <tr>
                                     <th class="px-4 py-2 text-left">UTM Course</th>
@@ -57,7 +57,7 @@
                             </tbody>
                         </table>
 
-                        <button type="button" onclick="addSubject()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="button" onclick="addSubject()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
                             Add Subject
                         </button>
 

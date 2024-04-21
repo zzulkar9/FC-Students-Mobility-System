@@ -9,13 +9,13 @@
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3>Student Information</h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
                     <p>Name: {{ $applicationForm->user->name }}</p>
                     <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
                     <p>Current Semester: {{ Auth::user()->getCurrentSemester() }}</p>
                     <!-- Edit Button for UTM Students -->
                     @if(auth()->user()->isUtmStudent())
-                        <div class="mb-4 text-right">
+                        <div class="my-4 text-left">
                             <a href="{{ route('application-form.edit', $applicationForm->id) }}"
                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Edit My Application
@@ -51,8 +51,8 @@
                                                 method="POST">
                                                 @csrf
                                                 @method('PATCH')
-                                                <input type="text" name="notes" value="{{ $subject->notes }}"
-                                                    class="w-full">
+                                                <textarea type="text" name="notes" value="{{ $subject->notes }}"
+                                                    class="w-full">{{ $subject->notes }}</textarea>
                                                 <button type="submit"
                                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
                                                     Save
