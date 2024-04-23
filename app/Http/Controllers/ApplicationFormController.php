@@ -10,11 +10,60 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationFormController extends Controller
 {
-    public function indexForStudent()
-    {
-        $applications = ApplicationForm::where('user_id', Auth::id())->latest()->get();
-        return view('dashboard.utm-student', compact('applications'));
+    // Function to determine the current semester based on matric number
+    public function getCurrentSemester() {
+        if (!$this->matric_number) {
+            return null; // Return null if no matric number is set
+        }
+    
+        // Extract the year from the matric number
+        $matricYear = intval(substr($this->matric_number, 1, 2));
+        $intakeType = substr($this->matric_number, 0, 1);
+    
+        // Current year and month for calculating the current semester
+        $currentYear = intval(date('Y'));
+        $currentMonth = intval(date('m'));
+    
+        // Determine the intake month
+        $intakeMonth = ($this->intake_period === 'September') ? 9 : 3; // Assume March for "March/April"
+        $yearsSinceMatric = $currentYear - (2000 + $matricYear); // Adding 2000 to convert '23' to 2023, for example
+    
+        // Calculate the current semester based on month and year difference
+        $semesterCount = ($yearsSinceMatric * 2) + ($currentMonth >= $intakeMonth ? 1 : 0);
+    
+        // Adjust for the type 'B' students who start from the third semester
+        if ($intakeType === 'B') {
+            $semesterCount += 2;
+        }
+    
+        return min($semesterCount, 8); // Ensure it does not exceed 8 semesters
     }
+    
+
+    public function indexForStudent()
+{
+    $user = auth()->user();
+    $currentSemester = $user->getCurrentSemester();
+
+    if (!$currentSemester) {
+        return view('dashboard.utm-student', ['message' => 'Unable to determine your current semester.']);
+    }
+
+    $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
+
+    $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
+                     ->where('intake_year', (string)$intakeYear) // You need to make sure this field exists or adjust the database accordingly
+                     ->where('intake_semester', $user->intake_period)
+                     ->get();
+
+    return view('dashboard.utm-student', compact('courses'));
+}
+
+    
+    
+    
+    
+
 
     public function index()
     {

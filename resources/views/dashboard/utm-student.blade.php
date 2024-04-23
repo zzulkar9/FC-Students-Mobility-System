@@ -1,4 +1,4 @@
-<x-app-layout>
+{{-- <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Student Dashboard') }}
@@ -51,4 +51,39 @@
             </div>
         </div>
     </div>
+</x-app-layout> --}}
+
+<x-app-layout>
+    {{-- Display debug information if available --}}
+    @if(isset($debugInfo))
+        <div class="bg-gray-200 p-4 rounded-lg mb-6">
+            <strong>Debug Information:</strong>
+            <ul>
+                @foreach($debugInfo as $key => $value)
+                    <li>{{ $key }}: {{ $value }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Display courses or a message if no courses are available --}}
+    @if(isset($courses) && $courses->isNotEmpty())
+        <div class="mt-4">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Here are your courses for this semester:</h3>
+            <ul class="mt-3 list-disc list-inside text-sm text-gray-600">
+                @foreach($courses as $course)
+                    <li>
+                        {{ $course->course_code }} - {{ $course->course_name }}
+                        ({{ $course->year_semester }} - Credits: {{ $course->course_credit }})
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @else
+        <div class="mt-4 text-lg leading-6 font-medium text-red-500">You have no courses scheduled for this semester.</div>
+    @endif
 </x-app-layout>
+
+
+
+

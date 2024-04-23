@@ -6,87 +6,87 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    // Display the form for creating a new course.
     public function create()
     {
         return view('courses.create');
     }
 
+    // Store a newly created course in the database.
     public function store(Request $request)
     {
-        $inputStr = $request->course_data;
-        $yearSemester = $request->year_semester; // Capture the year_semester from the form
+        $request->validate([
+            'intake_year' => 'required|string|max:255',
+            'intake_semester' => 'required|string|max:255',
+            'year_semester' => 'required|string|max:255',
+            'course_data' => 'required|string'
+        ]);
 
-        $lines = explode("\n", $inputStr); // Split input into lines
+        $yearSemester = $request->year_semester;
+        $intakeYear = $request->intake_year;
+        $intakeSemester = $request->intake_semester;
+        $lines = explode("\n", $request->course_data);
 
         foreach ($lines as $line) {
             $line = trim($line);
-            if (empty($line))
+            if (empty($line)) {
                 continue;
+            }
 
             preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
-
             $courseCode = $matches[1] ?? null;
             $courseName = $matches[2] ?? null;
             $courseCredit = $matches[3] ?? null;
             $prerequisites = $matches[4] ?? null;
 
-            // Ensure year_semester is included in the create method
             Course::create([
                 'course_code' => $courseCode,
                 'course_name' => $courseName,
-                'year_semester' => $yearSemester, // Include this in the database record
+                'year_semester' => $yearSemester,
                 'course_credit' => $courseCredit,
                 'prerequisites' => $prerequisites,
-                // Include other fields as needed
+                'intake_year' => $intakeYear,
+                'intake_semester' => $intakeSemester
             ]);
         }
 
-        return redirect()->route('courses.create')->with('success', 'Courses added successfully.');
+        return redirect()->route('course-handbook.index')->with('success', 'Courses added successfully.');
     }
 
-
-
-    public function edit($id)
+    // Display the specified course.
+    public function show(Course $course)
     {
-        $course = Course::findOrFail($id); // Find the course by ID or fail
-        return view('courses.edit', compact('course')); // Return the edit view with the course
+        return view('courses.show', compact('course'));
     }
 
-    public function update(Request $request, $id)
+    // Show the form for editing the specified course.
+    public function edit(Course $course)
+    {
+        return view('courses.edit', compact('course'));
+    }
+
+    // Update the specified course in the database.
+    public function update(Request $request, Course $course)
     {
         $request->validate([
             'course_code' => 'required|string|max:255',
             'course_name' => 'required|string|max:255',
             'year_semester' => 'required|string|max:255',
             'course_credit' => 'required|numeric',
-            'prerequisites' => 'nullable|string|max:255', // Assuming this can be empty
-            'description' => 'nullable|string', // No max length specified, adjust as necessary
+            'prerequisites' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'intake_year' => 'required|string|max:255',
+            'intake_semester' => 'required|string|max:255'
         ]);
 
-        $course = Course::findOrFail($id);
-        $course->update([
-            'course_code' => $request->course_code,
-            'course_name' => $request->course_name,
-            'year_semester' => $request->year_semester,
-            'course_credit' => $request->course_credit,
-            'prerequisites' => $request->prerequisites,
-            'description' => $request->description, // Updating the course with description
-        ]);
-
-        return redirect()->route('course-handbook.index')->with('success', 'Course updated successfully.');
+        $course->update($request->all());
+        return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
     }
 
-
-
+    // Remove the specified course from the database.
     public function destroy(Course $course)
     {
         $course->delete();
-        return redirect()->route('course-handbook.index')->with('success', 'Course deleted successfully.');
-    }
-
-    public function show($id)
-    {
-        $course = Course::findOrFail($id); // Find the course or fail
-        return view('courses.show', compact('course')); // Return the show view with the course
+        return redirect()->route('courses.index')->with('success', 'Course deleted successfully.');
     }
 }
