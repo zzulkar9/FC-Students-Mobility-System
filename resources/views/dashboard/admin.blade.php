@@ -9,7 +9,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {{-- Search form --}}
-            <form method="GET" action="{{ route('dashboard-admin') }}"> <!-- Update the action route as necessary -->
+            <form method="GET" action="{{ route('dashboard-admin') }}">
                 <div class="flex space-x-4 items-center mb-4">
                     <input type="text" name="search" class="rounded-md shadow-sm border-gray-300" placeholder="Search users..." value="{{ request('search') }}">
                     <button type="submit" class="px-2 rounded-md">🔍</button>
@@ -29,24 +29,26 @@
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Email</th>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">User Type</th>
                                 <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Matric Number</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($users as $user)
                                 <tr class="hover:bg-gray-100">
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->name }}</td>
+                                    <td class="p-2 border-b border-gray-300 text-sm text-center">
+                                        {{ $user->name }}
+                                        <div class="text-xs mt-1 space-x-1">
+                                            <a href="{{ route('users.edit', $user->id) }}" class="text-green-500 hover:text-green-700">Edit</a>
+                                            <a> | </a>
+                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->email }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->user_type }}</td>
                                     <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->matric_number }}</td>
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit</a>
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-                                        </form>
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

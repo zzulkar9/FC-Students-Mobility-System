@@ -12,7 +12,12 @@
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
                     <p>Name: {{ $applicationForm->user->name }}</p>
                     <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
-                    <p>Current Semester: {{ Auth::user()->getCurrentSemester() }}</p>
+                    <p>Upcoming Semester: {{ Auth::user()->getCurrentSemester() }}</p>
+                    <p>Intake: {{ Auth::user()->intake_period }}</p>
+                    <!-- Display the link if available -->
+                    @if($applicationForm->link)
+                        <p>Link: <a href="{{ $applicationForm->link }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a></p>
+                    @endif
                     <!-- Edit Button for UTM Students -->
                     @if(auth()->user()->isUtmStudent())
                         <div class="my-4 text-left">
@@ -39,9 +44,9 @@
                                     <td class="border px-4 py-2" style="width: 15%;">
                                         {{ $subject->utm_course_code }} - {{ $subject->utm_course_name }}
                                     </td>
-                                    <td class="border px-4 py-2" style="width: 25%;">{{ $subject->utm_course_description }}</td>
+                                    <td class="border px-4 py-2" style="width: 25%;">{!! nl2br(e($subject->utm_course_description)) !!}</td>
                                     <td class="border px-4 py-2" style="width: 15%;">{{ $subject->target_course }}</td>
-                                    <td class="border px-4 py-2" style="width: 25%;">{{ $subject->target_course_description }}</td>
+                                    <td class="border px-4 py-2" style="width: 25%;">{!! nl2br(e($subject->target_course_description)) !!}</td>
                                     <td class="border px-4 py-2" style="width: 20%;">
                                         @if (auth()->user()->isUtmStudent())
                                             {{ $subject->notes }}

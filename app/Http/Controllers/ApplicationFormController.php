@@ -10,11 +10,92 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationFormController extends Controller
 {
+    // Function to determine the current semester based on matric number
+    public function getCurrentSemester()
+    {
+        if (!$this->matric_number) {
+            return null; // Return null if no matric number is set
+        }
+
+        // Extract the year from the matric number
+        $matricYear = intval(substr($this->matric_number, 1, 2));
+        $intakeType = substr($this->matric_number, 0, 1);
+
+        // Current year and month for calculating the current semester
+        $currentYear = intval(date('Y'));
+        $currentMonth = intval(date('m'));
+
+        // Determine the intake month
+        $intakeMonth = ($this->intake_period === 'September') ? 9 : 3; // Assume March for "March/April"
+        $yearsSinceMatric = $currentYear - (2000 + $matricYear); // Adding 2000 to convert '23' to 2023, for example
+
+        // Calculate the current semester based on month and year difference
+        $semesterCount = ($yearsSinceMatric * 2) + ($currentMonth >= $intakeMonth ? 1 : 0);
+
+        // Adjust for the type 'B' students who start from the third semester
+        if ($intakeType === 'B') {
+            $semesterCount += 2;
+        }
+
+        return min($semesterCount, 8); // Ensure it does not exceed 8 semesters
+    }
+
+
     public function indexForStudent()
     {
-        $applications = ApplicationForm::where('user_id', Auth::id())->latest()->get();
-        return view('dashboard.utm-student', compact('applications'));
+        $user = auth()->user();
+        $currentSemester = $user->getCurrentSemester();
+
+        if (!$currentSemester) {
+            return view('dashboard.utm-student', ['message' => 'Unable to determine your current semester.']);
+        }
+
+        $intakeYear = '20' . substr($user->matric_number, 1, 2);
+        $intakeSemester = $user->intake_period;
+
+        // Fetch all courses that the student is eligible for based on their intake year.
+        $allCourses = Course::where('intake_year', $intakeYear)
+            ->where('intake_semester', $intakeSemester)
+            ->orderBy('year_semester', 'asc')
+            ->get()
+            ->groupBy('year_semester');
+
+        // Check if the student has submitted any application forms
+        $applicationForm = ApplicationForm::where('user_id', $user->id)->first();
+
+        return view('dashboard.utm-student', compact('allCourses', 'applicationForm'));
     }
+
+    // public function index()
+    // {
+    //     $user = auth()->user();
+
+    //     if ($user->isUtmStudent()) {
+    //         $currentSemester = $user->getCurrentSemester();
+    //         if (!$currentSemester) {
+    //             return view('application-form.index', ['message' => 'Unable to determine your current semester.']);
+    //         }
+
+    //         $intakeYear = '20' . substr($user->matric_number, 1, 2);
+    //         $intakeSemester = $user->intake_period;
+
+    //         $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
+    //                          ->where('intake_year', $intakeYear)
+    //                          ->where('intake_semester', $intakeSemester)
+    //                          ->get();
+
+    //         $allCourses = Course::where('intake_year', $intakeYear)
+    //                             ->where('intake_semester', $intakeSemester)
+    //                             ->get();
+
+    //         return view('application-form.index', compact('courses', 'allCourses'));
+    //     } elseif ($user->isProgramCoordinator()) {
+    //         $applications = ApplicationForm::with('user')->latest()->paginate(10);
+    //         return view('application-form.pc-index', compact('applications'));
+    //     } else {
+    //         return abort(403, 'Unauthorized access.');
+    //     }
+    // }
 
     public function index()
     {
@@ -27,12 +108,28 @@ class ApplicationFormController extends Controller
                 ->first();
 
             if ($applicationForm) {
-                // If an application exists, redirect to edit the most recent one
+                // If an application exists, redirect to view the most recent one
                 return redirect()->route('application-form.show', $applicationForm->id);
             } else {
                 // No applications found, show the form to submit a new application
-                $courses = Course::all(); // Assuming you need course data for the form
-                return view('application-form.index', compact('courses'));
+                $currentSemester = $user->getCurrentSemester();
+                if (!$currentSemester) {
+                    return view('application-form.index', ['message' => 'Unable to determine your current semester.']);
+                }
+
+                $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
+                $intakeSemester = $user->intake_period;
+                
+                $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
+                    ->where('intake_year', (string)$intakeYear)
+                    ->where('intake_semester', $user->intake_period)
+                    ->get();
+
+                $allCourses = Course::where('intake_year', $intakeYear)
+                    ->where('intake_semester', $intakeSemester)
+                    ->get();
+
+                return view('application-form.index', compact('courses', 'allCourses'));
             }
         } elseif ($user->isProgramCoordinator()) {
             // For program coordinators, show the dashboard with all submissions
@@ -46,45 +143,49 @@ class ApplicationFormController extends Controller
 
 
     public function submit(Request $request)
-    {
-        $request->validate([
-            'utm_course_id' => 'required|array',
-            'utm_course_id.*' => 'exists:courses,id',
-            'target_course' => 'required|array',
-            'target_course.*' => 'required|string|max:255',
-            'target_course_description' => 'required|array',
-            'target_course_description.*' => 'required|string',
-            'target_course_notes' => 'nullable|array',
-            'target_course_notes.*' => 'nullable|string',
+{
+    $request->validate([
+        'utm_course_id' => 'required|array',
+        'utm_course_id.*' => 'exists:courses,id',
+        'target_course' => 'nullable|array',
+        'target_course.*' => 'nullable|string|max:255',
+        'target_course_description' => 'nullable|array',
+        'target_course_description.*' => 'nullable|string',
+        'target_course_notes' => 'nullable|array',
+        'target_course_notes.*' => 'nullable|string',
+        'link' => 'nullable|url',  // Validate the link
+    ]);
+
+    $isDraft = $request->input('action') == 'save_draft';
+    $user = auth()->user();  // Fetch the authenticated user
+
+    $applicationForm = new ApplicationForm([
+        'user_id' => $user->id,
+        'is_draft' => $isDraft,
+        'intake_period' => $user->intake_period,
+        'link' => $request->input('link'),  // Save the link
+    ]);
+    $applicationForm->save();
+
+    foreach ($request->utm_course_id as $index => $courseId) {
+        $utmCourse = Course::findOrFail($courseId);
+
+        $subject = new ApplicationFormSubject([
+            'utm_course_id' => $utmCourse->id,
+            'utm_course_code' => $utmCourse->course_code,
+            'utm_course_name' => $utmCourse->course_name,
+            'utm_course_description' => $utmCourse->description ?? 'No description available',
+            'target_course' => $request->target_course[$index],
+            'target_course_description' => $request->target_course_description[$index],
+            'notes' => $request->target_course_notes[$index] ?? null,
         ]);
 
-        $isDraft = $request->input('action') == 'save_draft';
-        $user = auth()->user();  // Fetch the authenticated user
-
-        $applicationForm = new ApplicationForm();
-        $applicationForm->user_id = $user->id;
-        $applicationForm->is_draft = $isDraft;
-        $applicationForm->intake_period = $user->intake_period;
-        $applicationForm->save();
-
-        foreach ($request->utm_course_id as $index => $courseId) {
-            $utmCourse = Course::findOrFail($courseId);
-
-            $subject = new ApplicationFormSubject([
-                'utm_course_id' => $utmCourse->id,
-                'utm_course_code' => $utmCourse->course_code,
-                'utm_course_name' => $utmCourse->course_name,
-                'utm_course_description' => $utmCourse->description ?? 'No description available',
-                'target_course' => $request->target_course[$index],
-                'target_course_description' => $request->target_course_description[$index],
-                'notes' => $request->target_course_notes[$index] ?? null,
-            ]);
-
-            $applicationForm->subjects()->save($subject);
-        }
-
-        return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
+        $applicationForm->subjects()->save($subject);
     }
+
+    return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
+}
+
 
 
 
@@ -155,7 +256,7 @@ class ApplicationFormController extends Controller
     public function update(Request $request, $id)
     {
         $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);
-
+    
         $request->validate([
             'utm_course_id' => 'required|array',
             'utm_course_id.*' => 'exists:courses,id',
@@ -165,12 +266,18 @@ class ApplicationFormController extends Controller
             'target_course_description.*' => 'required|string',
             'target_course_notes' => 'nullable|array',
             'target_course_notes.*' => 'nullable|string',
+            'link' => 'nullable|url',  // Validate the link
         ]);
-
+    
+        // Update the application form
+        $applicationForm->update([
+            'link' => $request->link  // Update the link field
+        ]);
+    
         // Update existing subjects or create new ones
         foreach ($request->utm_course_id as $index => $courseId) {
             $utmCourse = Course::findOrFail($courseId);
-
+    
             $subject = $applicationForm->subjects->get($index) ?? new ApplicationFormSubject();
             $subject->application_form_id = $applicationForm->id;
             $subject->utm_course_id = $utmCourse->id;
@@ -180,10 +287,11 @@ class ApplicationFormController extends Controller
             $subject->target_course = $request->target_course[$index];
             $subject->target_course_description = $request->target_course_description[$index];
             $subject->notes = $request->target_course_notes[$index] ?? null;
-
+    
             $subject->save(); // This will update existing records or create new ones as necessary
         }
-
+    
         return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
     }
+    
 }

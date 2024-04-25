@@ -17,6 +17,13 @@
                         <p>Name: {{ $applicationForm->user->name }}</p>
                         <p>Matric Number: {{ $applicationForm->user->matric_number }}</p>
                         <p>Current Semester: {{ Auth::user()->getCurrentSemester() }}</p>
+
+                        <!-- Input for Link -->
+                        <div class="mb-4">
+                            <label for="link" class="block text-sm font-medium text-gray-700">Link:</label>
+                            <input type="url" id="link" name="link" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter URL here" value="{{ $applicationForm->link }}">
+                        </div>
+
                         <!-- Table for dynamically adding/removing courses -->
                         <table class="mt-4 min-w-full table-auto">
                             <thead class="bg-gray-200">
@@ -24,7 +31,6 @@
                                     <th class="px-4 py-2 text-left">UTM Course</th>
                                     <th class="px-4 py-2 text-left">Target Course</th>
                                     <th class="px-4 py-2 text-left">Target Course Description</th>
-                                    <th class="px-4 py-2 text-left">Notes</th>
                                     <th class="px-4 py-2 text-left">Actions</th>
                                 </tr>
                             </thead>
@@ -32,24 +38,21 @@
                                 @foreach ($applicationForm->subjects as $subject)
                                 <tr class="hover:bg-gray-100 course-field">
                                     <td class="border px-4 py-2">
-                                        <select name="utm_course_id[]" class="utmCourseSelect" required>
-                                            @foreach ($courses as $course)
-                                                <option value="{{ $course->id }}" {{ $subject->utm_course_id == $course->id ? 'selected' : '' }}>
-                                                    {{ $course->course_code }} - {{ $course->course_name }}
+                                        <select name="utm_course_id[]" class="utm-course-select">
+                                            @foreach ($courses as $dropdownCourse)
+                                                <option value="{{ $dropdownCourse->id }}" {{ $subject->utm_course_id == $dropdownCourse->id ? 'selected' : '' }}>
+                                                    {{ $dropdownCourse->course_code }} - {{ $dropdownCourse->course_name }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td class="border px-4 py-2">
-                                        <input type="text" name="target_course[]" value="{{ $subject->target_course }}" class="w-full">
+                                        <textarea name="target_course[]" rows="2" class="w-full">{{ $subject->target_course }}</textarea>
                                     </td>
                                     <td class="border px-4 py-2">
-                                        <input type="text" name="target_course_description[]" value="{{ $subject->target_course_description }}" class="w-full">
+                                        <textarea name="target_course_description[]" rows="2" class="w-full">{{ $subject->target_course_description }}</textarea>
                                     </td>
-                                    <td class="border px-4 py-2">
-                                        {{ $subject->notes }}
-                                    </td>
-                                    <td class="border px-4 py-2">
+                                    <td class="border px-4 py-2 text-center">
                                         <button type="button" onclick="removeSubject(this)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
                                     </td>
                                 </tr>
@@ -89,11 +92,9 @@
                         @endforeach
                     </select>
                 </td>
-                <td class="border px-4 py-2"><input type="text" name="target_course[]" class="w-full"></td>
-                <td class="border px-4 py-2"><input type="text" name="target_course_description[]" class="w-full"></td>
-                {{--<td class="border px-4 py-2"><input type="text" name="notes[]" class="w-full"></td> --}}
-                <td class="border px-4 py-2"></td>
-                <td class="border px-4 py-2">
+                <td class="border px-4 py-2"><textarea name="target_course[]" rows="2" class="w-full"></textarea></td>
+                <td class="border px-4 py-2"><textarea name="target_course_description[]" rows="2" class="w-full"></textarea></td>
+                <td class="border px-4 py-2 text-center">
                     <button type="button" onclick="removeSubject(this)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
                 </td>
             `;

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Course;
 use Illuminate\Http\Request;
 
@@ -13,36 +14,47 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        $inputStr = $request->course_data;
-        $yearSemester = $request->year_semester; // Capture the year_semester from the form
-
-        $lines = explode("\n", $inputStr); // Split input into lines
-
+        $request->validate([
+            'intake_year' => 'required|string|max:255',
+            'intake_semester' => 'required|string|max:255',
+            'year_semester' => 'required|string|max:255',
+            'course_data' => 'required|string',
+            'description' => 'nullable|string' // Validate description if it's provided
+        ]);
+    
+        $yearSemester = $request->year_semester;
+        $intakeYear = $request->intake_year;
+        $intakeSemester = $request->intake_semester;
+        $description = $request->description; // Capture description from the request
+        $lines = explode("\n", $request->course_data);
+    
         foreach ($lines as $line) {
             $line = trim($line);
-            if (empty($line))
+            if (empty($line)) {
                 continue;
-
+            }
+    
             preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
-
             $courseCode = $matches[1] ?? null;
             $courseName = $matches[2] ?? null;
             $courseCredit = $matches[3] ?? null;
             $prerequisites = $matches[4] ?? null;
-
-            // Ensure year_semester is included in the create method
+    
             Course::create([
                 'course_code' => $courseCode,
                 'course_name' => $courseName,
-                'year_semester' => $yearSemester, // Include this in the database record
+                'year_semester' => $yearSemester,
                 'course_credit' => $courseCredit,
                 'prerequisites' => $prerequisites,
-                // Include other fields as needed
+                'intake_year' => $intakeYear,
+                'intake_semester' => $intakeSemester,
+                'description' => $description // Save description
             ]);
         }
-
-        return redirect()->route('courses.create')->with('success', 'Courses added successfully.');
+    
+        return redirect()->route('course-handbook.index')->with('success', 'Courses added successfully.');
     }
+    
 
 
 
@@ -54,8 +66,10 @@ class CourseController extends Controller
 
     public function update(Request $request, $id)
     {
+        $course = Course::findOrFail($id);  // Fetch the course first
+
         $request->validate([
-            'course_code' => 'required|string|max:255',
+            'course_code' => 'required|string|max:255|unique:courses,course_code,' . $course->id . ',id,intake_year,' . $request->intake_year . ',intake_semester,' . $request->intake_semester,
             'course_name' => 'required|string|max:255',
             'year_semester' => 'required|string|max:255',
             'course_credit' => 'required|numeric',
@@ -63,7 +77,6 @@ class CourseController extends Controller
             'description' => 'nullable|string', // No max length specified, adjust as necessary
         ]);
 
-        $course = Course::findOrFail($id);
         $course->update([
             'course_code' => $request->course_code,
             'course_name' => $request->course_name,
@@ -75,6 +88,7 @@ class CourseController extends Controller
 
         return redirect()->route('course-handbook.index')->with('success', 'Course updated successfully.');
     }
+
 
 
 

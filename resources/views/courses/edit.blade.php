@@ -72,6 +72,23 @@
                         @enderror
                     </div>
 
+                    <div class="mb-4">
+                        <label for="intake_year" class="block font-medium text-sm text-gray-700">Intake Year</label>
+                        <input type="text" name="intake_year" id="intake_year" value="{{ old('intake_year', $course->intake_year) }}" required class="rounded-md shadow-sm border-gray-300 mt-1 block w-full" />
+                        @error('intake_year')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="intake_semester" class="block font-medium text-sm text-gray-700">Intake Semester</label>
+                        <input type="text" name="intake_semester" id="intake_semester" value="{{ old('intake_semester', $course->intake_semester) }}" required class="rounded-md shadow-sm border-gray-300 mt-1 block w-full" />
+                        @error('intake_semester')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    
+
                     <!-- Update Button -->
                     <div class="flex items-center mt-4 justify-center">
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update

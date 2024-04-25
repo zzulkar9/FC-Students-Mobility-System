@@ -15,15 +15,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
-                        <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.*')">
-                            {{ __('Manage Course Handbook') }}
-                        </x-nav-link>
-                    @endif
                     @if (auth()->check() &&
                             (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
                         <x-nav-link :href="route('application-form.index')" :active="request()->routeIs('application-form.*')">
                             {{ __('Application Form') }}
+                        </x-nav-link>
+                    @endif
+                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+                        <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.*')">
+                            {{ __('Course Menu') }}
                         </x-nav-link>
                     @endif
 
