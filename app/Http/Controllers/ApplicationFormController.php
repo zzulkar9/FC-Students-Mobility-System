@@ -293,5 +293,21 @@ class ApplicationFormController extends Controller
     
         return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
     }
+
+    public function updateAllNotes(Request $request, $applicationFormId)
+{
+    $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
+    $notes = $request->notes;
+
+    foreach ($applicationForm->subjects as $subject) {
+        if (array_key_exists($subject->id, $notes)) {
+            $subject->notes = $notes[$subject->id];
+            $subject->save();
+        }
+    }
+
+    return back()->with('success', 'All notes updated successfully!');
+}
+
     
 }

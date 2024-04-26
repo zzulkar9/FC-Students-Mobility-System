@@ -1,4 +1,4 @@
-{{-- <x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Student Dashboard') }}
@@ -6,134 +6,155 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                   
-                    <div class="mb-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                            Name: {{ Auth::user()->name }}
-                        </p>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                            Matric Number: {{ Auth::user()->matric_number }}
-                        </p>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                            Current Semester: {{ Auth::user()->getCurrentSemester() }}
-                        </p>
+        <div class="flex mx-auto sm:px-6 lg:px-8">
+            <!-- Left Navigation for tabs -->
+            <div class="w-64 flex flex-col mr-8">
+                <!-- Navigation Tabs -->
+                <ul class="flex flex-col bg-white rounded-lg border shadow-sm">
+                    <li class="border-b">
+                        <a href="#studentInfo" class="student-dashboard-tab block p-4 hover:bg-gray-100">Student
+                            Information</a>
+                    </li>
+                    <li class="border-b">
+                        <a href="#applicationForm" class="student-dashboard-tab block p-4 hover:bg-gray-100">Application
+                            Form</a>
+                    </li>
+                    <li>
+                        <a href="#coursesBySemester" class="student-dashboard-tab block p-4 hover:bg-gray-100">Courses
+                            by Semester</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Content Area -->
+            <div class="flex-1 bg-white overflow-hidden shadow-sm sm:rounded-lg border-b border-gray-200 p-6">
+                <div id="studentInfo" class="tab-content active">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Student Information</h3>
+                    <table class="w-full text-sm px-4 py-2">
+                        <tbody>
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-4 py-2 font-medium bg-gray-200 w-6">Name:</td>
+                                <td class="px-4 py-2">{{ Auth::user()->name }}</td>
+                            </tr>
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-4 py-2 font-medium bg-gray-200">Matric Number:</td>
+                                <td class="px-4 py-2">{{ Auth::user()->matric_number }}</td>
+                            </tr>
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-4 py-2 font-medium bg-gray-200">Upcoming Semester:</td>
+                                <td class="px-4 py-2">{{ Auth::user()->getCurrentSemester() }}</td>
+                            </tr>
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-4 py-2 font-medium bg-gray-200">Intake:</td>
+                                <td class="px-4 py-2">{{ Auth::user()->intake_period }}</td>
+                            </tr>
+                            @if (isset($applicationForm) && $applicationForm->link)
+                                <tr class="hover:bg-gray-100">
+                                    <td class="px-4 py-2 font-medium bg-gray-200">Link:</td>
+                                    <td class="px-4 py-2"><a href="{{ $applicationForm->link }}" target="_blank"
+                                            class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="applicationForm" class="tab-content hidden">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg leading-6 font-medium text-gray-900">Application Form:</h4>
+                        @if (isset($applicationForm))
+                            <a href="{{ route('application-form.show', $applicationForm->id) }}"
+                                class="text-indigo-600 hover:text-indigo-900">Review Form</a>
+                        @else
+                            <p class="text-gray-500">No application submitted yet.</p>
+                        @endif
                     </div>
-                    
-                    <table class="min-w-full w-full">
+                    <table class="min-w-full w-full mt-2">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="px-4 py-2">Form ID</th>
                                 <th class="px-4 py-2">Status</th>
-                                <th class="px-4 py-2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($applications as $application)
+                            @if (isset($applicationForm))
                                 <tr class="hover:bg-gray-100">
-                                    <td class="border px-4 py-2">{{ $application->id }}</td>
-                                    <td class="border px-4 py-2">{{ $application->is_draft ? 'Draft' : 'Submitted' }}</td>
+                                    <td class="border px-4 py-2">{{ $applicationForm->id }}</td>
                                     <td class="border px-4 py-2">
-                                        <a href="{{ route('application-form.show', $application->id) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                    </td>
+                                        {{ $applicationForm->is_draft ? 'Draft' : 'Submitted' }}</td>
                                 </tr>
-                            @empty
+                            @else
                                 <tr class="hover:bg-gray-100">
-                                    <td colspan="3" class="border px-4 py-2 text-center">No applications found</td>
+                                    <td colspan="2" class="border px-4 py-2 text-center">No Application found</td>
                                 </tr>
-                            @endforelse
+                            @endif
                         </tbody>
                     </table>
+                </div>
+
+                <div id="coursesBySemester" class="tab-content hidden">
+                    @if (isset($allCourses))
+                        <h4 class="text-lg leading-6 font-medium text-gray-900">Courses by Semester:</h4>
+                        @foreach ($allCourses as $yearSemester => $courses)
+                            <details class="mt-2 group">
+                                <summary class="cursor-pointer text-gray-700 font-medium py-2 hover:bg-gray-100">
+                                    {{ $yearSemester }}
+                                </summary>
+                                <table class="min-w-full mt-2">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="border px-4 py-2 text-left">Course Code</th>
+                                            <th class="border px-4 py-2 text-left">Course Name</th>
+                                            <th class="border px-4 py-2 text-left">Credits</th>
+                                            <th class="border px-4 py-2 text-left">Prerequisites</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($courses as $course)
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="border px-4 py-2">{{ $course->course_code }}</td>
+                                                <td class="border px-4 py-2">{{ $course->course_name }}</td>
+                                                <td class="border px-4 py-2">{{ $course->course_credit }}</td>
+                                                <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </details>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>  --}}
-{{-- <x-app-layout>
-    @if(isset($debugInfo))
-        <div class="bg-gray-200 p-4 rounded-lg mb-6">
-            <strong>Debug Information:</strong>
-            <ul>
-                @foreach($debugInfo as $key => $value)
-                    <li>{{ $key }}: {{ $value }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    </x-app-layout> --}}
 
-    <x-app-layout>
-        <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Dashboard') }}
-            </h2>
-        </x-slot>
-    
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <div class="mb-6">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">Name: {{ Auth::user()->name }}</p>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">Matric Number: {{ Auth::user()->matric_number }}</p>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">Upcoming Semester: {{ Auth::user()->getCurrentSemester() }}</p>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">Intake: {{ Auth::user()->intake_period }}</p>
-                        </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.student-dashboard-tab');
+            const contents = document.querySelectorAll('.tab-content');
 
-                        <div class="mt-6">
-                            <table class="min-w-full w-full">
-                                <thead class="bg-gray-200">
-                                    <tr>
-                                        <th class="px-4 py-2">Form ID</th>
-                                        <th class="px-4 py-2">Status</th>
-                                        <th class="px-4 py-2">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if($applicationForm)
-                                        <tr class="hover:bg-gray-100">
-                                            <td class="border px-4 py-2">{{ $applicationForm->id }}</td>
-                                            <td class="border px-4 py-2">{{ $applicationForm->is_draft ? 'Draft' : 'Submitted' }}</td>
-                                            <td class="border px-4 py-2">
-                                                <a href="{{ route('application-form.show', $applicationForm->id) }}" class="text-indigo-600 hover:text-indigo-900">Review</a>
-                                            </td>
-                                        </tr>
-                                    @else
-                                        <tr class="hover:bg-gray-100">
-                                            <td colspan="3" class="border px-4 py-2 text-center">No Application found</td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-    
-                        @if(isset($allCourses))
-                            <h4 class="text-lg leading-6 font-medium text-gray-900 mb-4">Courses by Semester:</h4>
-                            @foreach($allCourses as $yearSemester => $courses)
-                                <div class="mt-2">
-                                    <h5 class="font-medium text-gray-700">{{ $yearSemester }}</h5>
-                                    <ul class="list-disc list-inside text-sm text-gray-600">
-                                        @foreach($courses as $course)
-                                            <li>{{ $course->course_code }} - {{ $course->course_name }} (Credits: {{ $course->course_credit }})</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endforeach
-                        @endif
-    
-                    </div>
-                </div>
-            </div>
-        </div>
-    </x-app-layout>
-    
-    
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const activeTab = document.querySelector('.student-dashboard-tab.active');
+                    const activeContent = document.querySelector('.tab-content.active');
 
+                    if (activeTab) {
+                        activeTab.classList.remove('active');
+                    }
+                    if (activeContent) {
+                        activeContent.classList.add('hidden');
+                        activeContent.classList.remove('active');
+                    }
 
-
-
-
+                    const targetContent = document.querySelector(this.getAttribute('href'));
+                    this.classList.add('active');
+                    targetContent.classList.remove('hidden');
+                    targetContent.classList.add('active');
+                });
+            });
+        });
+    </script>
+</x-app-layout>
