@@ -25,10 +25,10 @@
                     <table class="min-w-full w-full border-collapse border border-gray-300 break-words">
                         <thead>
                             <tr>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Name</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Email</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">User Type</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-gray-100 border border-gray-300 text-center">Matric Number</th>
+                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Name</th>
+                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Email</th>
+                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">User Type</th>
+                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Matric Number</th>
                             </tr>
                         </thead>
                         <tbody>

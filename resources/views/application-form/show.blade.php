@@ -34,7 +34,7 @@
                             <table class="w-full text-sm">
                                 <tbody>
                                     <tr class="hover:bg-gray-100">
-                                        <td class="px-4 py-2 font-medium bg-gray-200">Name:</td>
+                                        <td class="px-4 py-2 font-medium bg-gray-200 w-60">Name:</td>
                                         <td class="px-4 py-2">{{ $applicationForm->user->name }}</td>
                                     </tr>
                                     <tr class="hover:bg-gray-100">

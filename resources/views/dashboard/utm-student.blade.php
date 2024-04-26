@@ -33,7 +33,7 @@
                     <table class="w-full text-sm px-4 py-2">
                         <tbody>
                             <tr class="hover:bg-gray-100">
-                                <td class="px-4 py-2 font-medium bg-gray-200 w-6">Name:</td>
+                                <td class="px-4 py-2 font-medium bg-gray-200 w-60">Name:</td>
                                 <td class="px-4 py-2">{{ Auth::user()->name }}</td>
                             </tr>
                             <tr class="hover:bg-gray-100">
@@ -71,7 +71,7 @@
                         @endif
                     </div>
                     <table class="min-w-full w-full mt-2">
-                        <thead class="bg-gray-200">
+                        <thead class="bg-cyan-100">
                             <tr>
                                 <th class="px-4 py-2">Form ID</th>
                                 <th class="px-4 py-2">Status</th>
@@ -103,7 +103,7 @@
                                 </summary>
                                 <table class="min-w-full mt-2">
                                     <thead>
-                                        <tr class="bg-gray-100">
+                                        <tr class="bg-cyan-100">
                                             <th class="border px-4 py-2 text-left">Course Code</th>
                                             <th class="border px-4 py-2 text-left">Course Name</th>
                                             <th class="border px-4 py-2 text-left">Credits</th>
@@ -130,31 +130,42 @@
         </div>
     </div>
 
+    <style>
+        ul li .active {
+            background-color: #dedfe1;
+            /* Light gray background */
+            color: blue;
+            /* Dark text color for readability */
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.student-dashboard-tab');
             const contents = document.querySelectorAll('.tab-content');
 
+            function activateTab(tab) {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => {
+                    c.classList.add('hidden'); // Hide all content areas
+                    c.classList.remove('active');
+                });
+                tab.classList.add('active');
+                const targetContent = document.querySelector(tab.getAttribute('href'));
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('active');
+            }
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', function(event) {
                     event.preventDefault();
-                    const activeTab = document.querySelector('.student-dashboard-tab.active');
-                    const activeContent = document.querySelector('.tab-content.active');
-
-                    if (activeTab) {
-                        activeTab.classList.remove('active');
-                    }
-                    if (activeContent) {
-                        activeContent.classList.add('hidden');
-                        activeContent.classList.remove('active');
-                    }
-
-                    const targetContent = document.querySelector(this.getAttribute('href'));
-                    this.classList.add('active');
-                    targetContent.classList.remove('hidden');
-                    targetContent.classList.add('active');
+                    activateTab(this);
                 });
             });
+
+            // Activate the first tab by default on page load
+            activateTab(tabs[0]); // Assuming the first tab is "Student Information"
         });
     </script>
+
 </x-app-layout>

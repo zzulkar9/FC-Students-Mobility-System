@@ -37,18 +37,18 @@
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="py-6 bg-white border-b border-gray-200">
                             <table class="min-w-full divide-y divide-gray-300 border">
-                                <thead class="bg-gray-100">
+                                <thead class="bg-cyan-100">
                                     <tr>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                             Student Name
                                         </th>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                             Matric Number
                                         </th>
                                         <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                                             Actions
                                         </th>
                                     </tr>
