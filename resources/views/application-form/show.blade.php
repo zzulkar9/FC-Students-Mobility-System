@@ -67,7 +67,7 @@
                             @if (auth()->user()->isUtmStudent())
                                 <div class="my-4">
                                     <a href="{{ route('application-form.edit', $applicationForm->id) }}"
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit
+                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit
                                         My
                                         Application</a>
                                 </div>
@@ -80,9 +80,9 @@
                                     <thead class="bg-gray-200 font-medium">
                                         <tr>
                                             <th class="px-4 py-2 text-left" style="width: 10%;">UTM Course</th>
-                                            <th class="px-4 py-2 text-left" style="width: 20%;">UTM Description</th>
+                                            <th class="px-4 py-2 text-left" style="width: 30%;">UTM Description</th>
                                             <th class="px-4 py-2 text-left" style="width: 10%;">Target Course</th>
-                                            <th class="px-4 py-2 text-left" style="width: 20%;">Target Course Description</th>
+                                            <th class="px-4 py-2 text-left" style="width: 30%;">Target Course Description</th>
                                             <th class="px-4 py-2 text-left" style="width: 20%;">Notes/Remarks</th>
                                         </tr>
                                     </thead>
