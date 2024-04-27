@@ -12,16 +12,13 @@
                 <!-- Navigation Tabs -->
                 <ul class="flex flex-col bg-white rounded-lg border shadow-sm">
                     <li class="border-b">
-                        <a href="#studentInfo" class="student-dashboard-tab block p-4 hover:bg-gray-100">Student
-                            Information</a>
+                        <a href="#studentInfo" class="student-dashboard-tab block p-4 hover:bg-gray-100">Student Information</a>
                     </li>
                     <li class="border-b">
-                        <a href="#applicationForm" class="student-dashboard-tab block p-4 hover:bg-gray-100">Application
-                            Form</a>
+                        <a href="#applicationForm" class="student-dashboard-tab block p-4 hover:bg-gray-100">Application Form</a>
                     </li>
                     <li>
-                        <a href="#coursesBySemester" class="student-dashboard-tab block p-4 hover:bg-gray-100">Courses
-                            by Semester</a>
+                        <a href="#coursesBySemester" class="student-dashboard-tab block p-4 hover:bg-gray-100">Courses by Semester</a>
                     </li>
                 </ul>
             </div>
@@ -63,30 +60,27 @@
                 <div id="applicationForm" class="tab-content hidden">
                     <div class="flex justify-between items-center">
                         <h4 class="text-lg leading-6 font-medium text-gray-900">Application Form:</h4>
-                        @if (isset($applicationForm))
-                            <a href="{{ route('application-form.show', $applicationForm->id) }}"
-                                class="text-indigo-600 hover:text-indigo-900">Review Form</a>
-                        @else
-                            <p class="text-gray-500">No application submitted yet.</p>
-                        @endif
                     </div>
-                    <table class="min-w-full w-full mt-2">
+                    <table class="min-w-full w-full mt-2 text-sm">
                         <thead class="bg-cyan-100">
                             <tr>
                                 <th class="px-4 py-2">Form ID</th>
                                 <th class="px-4 py-2">Status</th>
+                                <th class="px-4 py-2">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (isset($applicationForm))
                                 <tr class="hover:bg-gray-100">
-                                    <td class="border px-4 py-2">{{ $applicationForm->id }}</td>
-                                    <td class="border px-4 py-2">
-                                        {{ $applicationForm->is_draft ? 'Draft' : 'Submitted' }}</td>
+                                    <td class="border px-4 py-2 text-center">{{ $applicationForm->id }}</td>
+                                    <td class="border px-4 py-2 text-center">{{ $applicationForm->is_draft ? 'Draft' : 'Submitted' }}</td>
+                                    <td class="border px-4 py-2 text-center">
+                                        <a href="{{ route('application-form.show', $applicationForm->id) }}" class="text-indigo-600 hover:text-indigo-900">Review</a>
+                                    </td>
                                 </tr>
                             @else
                                 <tr class="hover:bg-gray-100">
-                                    <td colspan="2" class="border px-4 py-2 text-center">No Application found</td>
+                                    <td colspan="3" class="border px-4 py-2 text-center">No Application found</td>
                                 </tr>
                             @endif
                         </tbody>
@@ -101,23 +95,25 @@
                                 <summary class="cursor-pointer text-gray-700 font-medium py-2 hover:bg-gray-100">
                                     {{ $yearSemester }}
                                 </summary>
-                                <table class="min-w-full mt-2">
+                                <table class="min-w-full mt-2 text-sm">
                                     <thead>
                                         <tr class="bg-cyan-100">
-                                            <th class="border px-4 py-2 text-left">Course Code</th>
-                                            <th class="border px-4 py-2 text-left">Course Name</th>
-                                            <th class="border px-4 py-2 text-left">Credits</th>
-                                            <th class="border px-4 py-2 text-left">Prerequisites</th>
+                                            <th class="border px-4 py-2">Course Code</th>
+                                            <th class="border px-4 py-2">Course Name</th>
+                                            <th class="border px-4 py-2">Credits</th>
+                                            <th class="border px-4 py-2">Prerequisites</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($courses as $course)
                                             <tr class="hover:bg-gray-50">
                                                 <td class="border px-4 py-2">{{ $course->course_code }}</td>
-                                                <td class="border px-4 py-2">{{ $course->course_name }}</td>
-                                                <td class="border px-4 py-2">{{ $course->course_credit }}</td>
-                                                <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}
+                                                <td class="border px-4 py-2">
+                                                    {{ $course->course_name }}
+                                                    <div><a href="#" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
                                                 </td>
+                                                <td class="border px-4 py-2">{{ $course->course_credit }}</td>
+                                                <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

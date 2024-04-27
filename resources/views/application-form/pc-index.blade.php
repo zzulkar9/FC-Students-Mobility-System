@@ -56,10 +56,10 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($applications as $application)
                                         <tr class="hover:bg-gray-100">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 {{ $application->user->name }}
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 {{ $application->user->matric_number }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
