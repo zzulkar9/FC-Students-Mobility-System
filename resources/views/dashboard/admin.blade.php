@@ -19,16 +19,16 @@
                 <div class="p-6 text-gray-900">
                     <div class="mb-4">
                         <a href="{{ route('users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Add User
+                            + Add User
                         </a>
                     </div>
                     <table class="min-w-full w-full border-collapse border border-gray-300 break-words">
                         <thead>
                             <tr>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Name</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Email</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">User Type</th>
-                                <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 bg-cyan-100 text-xs border border-gray-300 text-center">Matric Number</th>
+                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Name</th>
+                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Email</th>
+                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">User Type</th>
+                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Matric Number</th>
                             </tr>
                         </thead>
                         <tbody>

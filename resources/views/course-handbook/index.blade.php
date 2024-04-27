@@ -10,7 +10,14 @@
         activeIntake: 'March/April', 
         search: ''
     }">
+
+   
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-4">
+                <a href="{{ route('courses.create') }}" class="ml-4 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:shadow-outline-blue disabled:opacity-25 transition">
+                    + Add Course
+                </a>
+            </div>
             <!-- Tabs and Content Area -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 border-b border-gray-200">
@@ -42,9 +49,6 @@
                     <!-- Search and Add Course -->
                     <div class="flex justify-between mb-4">
                         <input x-model="search" type="text" placeholder="Search courses..." class="form-input block w-full sm:text-sm sm:leading-5">
-                        <a href="{{ route('courses.create') }}" class="ml-4 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:shadow-outline-blue disabled:opacity-25 transition">
-                            + Add Course
-                        </a>
                     </div>
 
                     <!-- Courses Table -->
