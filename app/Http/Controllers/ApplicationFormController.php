@@ -66,36 +66,6 @@ class ApplicationFormController extends Controller
         return view('dashboard.utm-student', compact('allCourses', 'applicationForm'));
     }
 
-    // public function index()
-    // {
-    //     $user = auth()->user();
-
-    //     if ($user->isUtmStudent()) {
-    //         $currentSemester = $user->getCurrentSemester();
-    //         if (!$currentSemester) {
-    //             return view('application-form.index', ['message' => 'Unable to determine your current semester.']);
-    //         }
-
-    //         $intakeYear = '20' . substr($user->matric_number, 1, 2);
-    //         $intakeSemester = $user->intake_period;
-
-    //         $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
-    //                          ->where('intake_year', $intakeYear)
-    //                          ->where('intake_semester', $intakeSemester)
-    //                          ->get();
-
-    //         $allCourses = Course::where('intake_year', $intakeYear)
-    //                             ->where('intake_semester', $intakeSemester)
-    //                             ->get();
-
-    //         return view('application-form.index', compact('courses', 'allCourses'));
-    //     } elseif ($user->isProgramCoordinator()) {
-    //         $applications = ApplicationForm::with('user')->latest()->paginate(10);
-    //         return view('application-form.pc-index', compact('applications'));
-    //     } else {
-    //         return abort(403, 'Unauthorized access.');
-    //     }
-    // }
 
     public function index()
     {
@@ -132,8 +102,12 @@ class ApplicationFormController extends Controller
                 return view('application-form.index', compact('courses', 'allCourses'));
             }
         } elseif ($user->isProgramCoordinator()) {
-            // For program coordinators, show the dashboard with all submissions
-            $applications = ApplicationForm::with('user')->latest()->paginate(10);
+            // For program coordinators, show the dashboard with all submitted applications, excluding drafts
+            $applications = ApplicationForm::with('user')
+                ->where('is_draft', false)  // Exclude draft applications
+                ->latest()
+                ->paginate(10);
+        
             return view('application-form.pc-index', compact('applications'));
         } else {
             // Optionally handle other roles or redirect with an error
@@ -189,19 +163,21 @@ class ApplicationFormController extends Controller
 
 
 
-    public function coordinatorIndex(Request $request)
-    {
-        $searchTerm = $request->input('search', '');
-        $applications = ApplicationForm::with('user')
-            ->whereHas('user', function ($query) use ($searchTerm) {
-                $query->where('name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
-            })
-            ->latest()
-            ->paginate(10);
+public function coordinatorIndex(Request $request)
+{
+    $searchTerm = $request->input('search', '');
+    $applications = ApplicationForm::with('user')
+        ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
+        ->whereHas('user', function ($query) use ($searchTerm) {
+            $query->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+        })
+        ->latest()
+        ->paginate(10);
 
-        return view('application-form.pc-index', compact('applications'));
-    }
+    return view('application-form.pc-index', compact('applications'));
+}
+
 
 
     public function review(Request $request)
