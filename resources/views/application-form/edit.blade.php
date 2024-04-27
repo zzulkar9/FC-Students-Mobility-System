@@ -21,51 +21,59 @@
                         <!-- Input for Link -->
                         <div class="mb-4">
                             <label for="link" class="block text-sm font-medium text-gray-700">Link:</label>
-                            <input type="url" id="link" name="link" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter URL here" value="{{ $applicationForm->link }}">
+                            <input type="url" id="link" name="link"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                placeholder="Enter URL here" value="{{ $applicationForm->link }}">
                         </div>
 
                         <!-- Table for dynamically adding/removing courses -->
                         <table class="mt-4 min-w-full table-auto">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="px-4 py-2 text-left">UTM Course</th>
-                                    <th class="px-4 py-2 text-left">Target Course</th>
-                                    <th class="px-4 py-2 text-left">Target Course Description</th>
-                                    <th class="px-4 py-2 text-left">Actions</th>
+                                    <th class="px-4 py-2 text-left" style="width: 20%;">UTM Course</th>
+                                    <th class="px-4 py-2 text-left" style="width: 30%;">Target University Course</th>
+                                    <th class="px-4 py-2 text-left" style="width: 45%;">Course Description at Target
+                                        University</th>
+                                    <th class="px-4 py-2 text-left" style="width: 5%;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($applicationForm->subjects as $subject)
-                                <tr class="hover:bg-gray-100 course-field">
-                                    <td class="border px-4 py-2">
-                                        <select name="utm_course_id[]" class="utm-course-select">
-                                            @foreach ($courses as $dropdownCourse)
-                                                <option value="{{ $dropdownCourse->id }}" {{ $subject->utm_course_id == $dropdownCourse->id ? 'selected' : '' }}>
-                                                    {{ $dropdownCourse->course_code }} - {{ $dropdownCourse->course_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td class="border px-4 py-2">
-                                        <textarea name="target_course[]" rows="2" class="w-full">{{ $subject->target_course }}</textarea>
-                                    </td>
-                                    <td class="border px-4 py-2">
-                                        <textarea name="target_course_description[]" rows="2" class="w-full">{{ $subject->target_course_description }}</textarea>
-                                    </td>
-                                    <td class="border px-4 py-2 text-center">
-                                        <button type="button" onclick="removeSubject(this)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
-                                    </td>
-                                </tr>
+                                    <tr class="hover:bg-gray-100 course-field">
+                                        <td class="border px-4 py-2">
+                                            <select name="utm_course_id[]" class="utm-course-select">
+                                                @foreach ($courses as $dropdownCourse)
+                                                    <option value="{{ $dropdownCourse->id }}"
+                                                        {{ $subject->utm_course_id == $dropdownCourse->id ? 'selected' : '' }}>
+                                                        {{ $dropdownCourse->course_code }} -
+                                                        {{ $dropdownCourse->course_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td class="border px-4 py-2">
+                                            <textarea name="target_course[]" rows="2" class="w-full">{{ $subject->target_course }}</textarea>
+                                        </td>
+                                        <td class="border px-4 py-2">
+                                            <textarea name="target_course_description[]" rows="2" class="w-full">{{ $subject->target_course_description }}</textarea>
+                                        </td>
+                                        <td class="border px-4 py-2 text-center">
+                                            <button type="button" onclick="removeSubject(this)"
+                                                class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
 
-                        <button type="button" onclick="addSubject()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
+                        <button type="button" onclick="addSubject()"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
                             Add Subject
                         </button>
 
                         <div class="mt-4">
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Update
                             </button>
                         </div>

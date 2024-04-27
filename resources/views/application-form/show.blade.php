@@ -79,11 +79,11 @@
                                 <table class="min-w-full table-auto break-words text-sm">
                                     <thead class="bg-gray-200 font-medium">
                                         <tr>
-                                            <th class="px-4 py-2 text-left">UTM Course</th>
-                                            <th class="px-4 py-2 text-left">UTM Description</th>
-                                            <th class="px-4 py-2 text-left">Target Course</th>
-                                            <th class="px-4 py-2 text-left">Target Course Description</th>
-                                            <th class="px-4 py-2 text-left">Notes/Remarks</th>
+                                            <th class="px-4 py-2 text-left" style="width: 20%;">UTM Course</th>
+                                            <th class="px-4 py-2 text-left" style="width: 20%;">UTM Description</th>
+                                            <th class="px-4 py-2 text-left" style="width: 20%;">Target Course</th>
+                                            <th class="px-4 py-2 text-left" style="width: 20%;">Target Course Description</th>
+                                            <th class="px-4 py-2 text-left" style="width: 20%;">Notes/Remarks</th>
                                         </tr>
                                     </thead>
                                     <tbody>
