@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12" x-data="{ 
-        activeYear: '{{ $years->first()->intake_year }}', 
+        activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', 
         activeIntake: 'March/April', 
         search: ''
     }">

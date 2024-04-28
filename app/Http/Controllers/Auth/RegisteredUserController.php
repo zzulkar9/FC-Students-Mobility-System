@@ -32,7 +32,16 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8', // minimum length 8 characters
+                'confirmed',
+                'regex:/[A-Z]/',       // must contain at least one uppercase letter
+                'regex:/[a-z]/',       // must contain at least one lowercase letter
+                'regex:/[0-9]/',       // must contain at least one digit
+                'regex:/[@$!%*#?&]/',  // must contain a special character
+            ],
             'user_type' => ['required', 'string', 'in:utm_student,other_uni_student'],
             'matric_number' => ['nullable', 'string', 'required_if:user_type,utm_student', 'max:255'],
             'intake_period' => ['nullable', 'string', 'required_if:user_type,utm_student'],
@@ -44,9 +53,9 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'user_type' => $request->user_type, // Save this
-            'matric_number' => $request->matric_number, // Save this
-            'intake_period' => $request->intake_period, // Save this
+            'user_type' => $request->user_type,
+            'matric_number' => $request->matric_number,
+            'intake_period' => $request->intake_period,
         ]);
 
         event(new Registered($user));
