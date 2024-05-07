@@ -89,7 +89,7 @@ class ApplicationFormController extends Controller
 
                 $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
                 $intakeSemester = $user->intake_period;
-                
+
                 $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
                     ->where('intake_year', (string)$intakeYear)
                     ->where('intake_semester', $user->intake_period)
@@ -107,7 +107,7 @@ class ApplicationFormController extends Controller
                 ->where('is_draft', false)  // Exclude draft applications
                 ->latest()
                 ->paginate(10);
-        
+
             return view('application-form.pc-index', compact('applications'));
         } else {
             // Optionally handle other roles or redirect with an error
@@ -117,66 +117,66 @@ class ApplicationFormController extends Controller
 
 
     public function submit(Request $request)
-{
-    $request->validate([
-        'utm_course_id' => 'required|array',
-        'utm_course_id.*' => 'exists:courses,id',
-        'target_course' => 'nullable|array',
-        'target_course.*' => 'nullable|string|max:255',
-        'target_course_description' => 'nullable|array',
-        'target_course_description.*' => 'nullable|string',
-        'target_course_notes' => 'nullable|array',
-        'target_course_notes.*' => 'nullable|string',
-        'link' => 'nullable|url',  // Validate the link
-    ]);
-
-    $isDraft = $request->input('action') == 'save_draft';
-    $user = auth()->user();  // Fetch the authenticated user
-
-    $applicationForm = new ApplicationForm([
-        'user_id' => $user->id,
-        'is_draft' => $isDraft,
-        'intake_period' => $user->intake_period,
-        'link' => $request->input('link'),  // Save the link
-    ]);
-    $applicationForm->save();
-
-    foreach ($request->utm_course_id as $index => $courseId) {
-        $utmCourse = Course::findOrFail($courseId);
-
-        $subject = new ApplicationFormSubject([
-            'utm_course_id' => $utmCourse->id,
-            'utm_course_code' => $utmCourse->course_code,
-            'utm_course_name' => $utmCourse->course_name,
-            'utm_course_description' => $utmCourse->description ?? 'No description available',
-            'target_course' => $request->target_course[$index],
-            'target_course_description' => $request->target_course_description[$index],
-            'notes' => $request->target_course_notes[$index] ?? null,
+    {
+        $request->validate([
+            'utm_course_id' => 'required|array',
+            'utm_course_id.*' => 'exists:courses,id',
+            'target_course' => 'nullable|array',
+            'target_course.*' => 'nullable|string|max:255',
+            'target_course_description' => 'nullable|array',
+            'target_course_description.*' => 'nullable|string',
+            'target_course_notes' => 'nullable|array',
+            'target_course_notes.*' => 'nullable|string',
+            'link' => 'nullable|url',  // Validate the link
         ]);
 
-        $applicationForm->subjects()->save($subject);
+        $isDraft = $request->input('action') == 'save_draft';
+        $user = auth()->user();  // Fetch the authenticated user
+
+        $applicationForm = new ApplicationForm([
+            'user_id' => $user->id,
+            'is_draft' => $isDraft,
+            'intake_period' => $user->intake_period,
+            'link' => $request->input('link'),  // Save the link
+        ]);
+        $applicationForm->save();
+
+        foreach ($request->utm_course_id as $index => $courseId) {
+            $utmCourse = Course::findOrFail($courseId);
+
+            $subject = new ApplicationFormSubject([
+                'utm_course_id' => $utmCourse->id,
+                'utm_course_code' => $utmCourse->course_code,
+                'utm_course_name' => $utmCourse->course_name,
+                'utm_course_description' => $utmCourse->description ?? 'No description available',
+                'target_course' => $request->target_course[$index],
+                'target_course_description' => $request->target_course_description[$index],
+                'notes' => $request->target_course_notes[$index] ?? null,
+            ]);
+
+            $applicationForm->subjects()->save($subject);
+        }
+
+        return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
     }
 
-    return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
-}
 
 
 
+    public function coordinatorIndex(Request $request)
+    {
+        $searchTerm = $request->input('search', '');
+        $applications = ApplicationForm::with('user')
+            ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
+            ->whereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+            })
+            ->latest()
+            ->paginate(10);
 
-public function coordinatorIndex(Request $request)
-{
-    $searchTerm = $request->input('search', '');
-    $applications = ApplicationForm::with('user')
-        ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
-        ->whereHas('user', function ($query) use ($searchTerm) {
-            $query->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
-        })
-        ->latest()
-        ->paginate(10);
-
-    return view('application-form.pc-index', compact('applications'));
-}
+        return view('application-form.pc-index', compact('applications'));
+    }
 
 
 
@@ -230,60 +230,57 @@ public function coordinatorIndex(Request $request)
 
 
     public function update(Request $request, $id)
-    {
-        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);
-    
-        $request->validate([
-            'utm_course_id' => 'required|array',
-            'utm_course_id.*' => 'exists:courses,id',
-            'target_course' => 'required|array',
-            'target_course.*' => 'required|string|max:255',
-            'target_course_description' => 'required|array',
-            'target_course_description.*' => 'required|string',
-            'target_course_notes' => 'nullable|array',
-            'target_course_notes.*' => 'nullable|string',
-            'link' => 'nullable|url',  // Validate the link
-        ]);
-    
-        // Update the application form
-        $applicationForm->update([
-            'link' => $request->link  // Update the link field
-        ]);
-    
-        // Update existing subjects or create new ones
-        foreach ($request->utm_course_id as $index => $courseId) {
-            $utmCourse = Course::findOrFail($courseId);
-    
-            $subject = $applicationForm->subjects->get($index) ?? new ApplicationFormSubject();
-            $subject->application_form_id = $applicationForm->id;
-            $subject->utm_course_id = $utmCourse->id;
-            $subject->utm_course_code = $utmCourse->course_code;
-            $subject->utm_course_name = $utmCourse->course_name;
-            $subject->utm_course_description = $utmCourse->description ?? 'No description available';
-            $subject->target_course = $request->target_course[$index];
-            $subject->target_course_description = $request->target_course_description[$index];
-            $subject->notes = $request->target_course_notes[$index] ?? null;
-    
-            $subject->save(); // This will update existing records or create new ones as necessary
-        }
-    
-        return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
-    }
-
-    public function updateAllNotes(Request $request, $applicationFormId)
 {
-    $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
-    $notes = $request->notes;
+    $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);
 
-    foreach ($applicationForm->subjects as $subject) {
-        if (array_key_exists($subject->id, $notes)) {
-            $subject->notes = $notes[$subject->id];
-            $subject->save();
-        }
+    $request->validate([
+        'utm_course_id' => 'required|array',
+        'utm_course_id.*' => 'exists:courses,id',
+        'target_course' => 'required|array',
+        'target_course.*' => 'required|string|max:255',
+        'target_course_description' => 'required|array',
+        'target_course_description.*' => 'required|string',
+        'target_course_notes' => 'nullable|array',
+        'target_course_notes.*' => 'nullable|string',
+        'link' => 'nullable|url',
+    ]);
+
+    $applicationForm->update([
+        'link' => $request->input('link'),
+    ]);
+
+    foreach ($request->utm_course_id as $index => $courseId) {
+        $utmCourse = Course::findOrFail($courseId);
+        $subject = $applicationForm->subjects->where('utm_course_id', $utmCourse->id)->first() ?? new ApplicationFormSubject();
+        
+        $subject->application_form_id = $applicationForm->id;
+        $subject->utm_course_id = $utmCourse->id;
+        $subject->utm_course_code = $utmCourse->course_code;
+        $subject->utm_course_name = $utmCourse->course_name;
+        $subject->utm_course_description = $utmCourse->description ?? 'No description available';
+        $subject->target_course = $request->target_course[$index];
+        $subject->target_course_description = $request->target_course_description[$index];
+        $subject->notes = $request->target_course_notes[$index] ?? $subject->notes;  // Maintain existing notes if not provided
+
+        $subject->save();
     }
 
-    return back()->with('success', 'All notes updated successfully!');
+    return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
 }
 
-    
+
+    public function updateAllNotes(Request $request, $applicationFormId)
+    {
+        $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
+        $notes = $request->notes;
+
+        foreach ($applicationForm->subjects as $subject) {
+            if (array_key_exists($subject->id, $notes)) {
+                $subject->notes = $notes[$subject->id];
+                $subject->save();
+            }
+        }
+
+        return back()->with('success', 'All notes updated successfully!');
+    }
 }

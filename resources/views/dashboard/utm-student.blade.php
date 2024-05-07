@@ -110,7 +110,7 @@
                                                 <td class="border px-4 py-2">{{ $course->course_code }}</td>
                                                 <td class="border px-4 py-2">
                                                     {{ $course->course_name }}
-                                                    <div><a href="#" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
+                                                    <div><a href="{{ route('courses.show', $course->id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
                                                 </td>
                                                 <td class="border px-4 py-2">{{ $course->course_credit }}</td>
                                                 <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>

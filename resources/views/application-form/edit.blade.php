@@ -27,13 +27,15 @@
                         </div>
 
                         <!-- Table for dynamically adding/removing courses -->
+                        <!-- Existing Course Table in your form -->
                         <table class="mt-4 min-w-full table-auto">
                             <thead class="bg-gray-200">
                                 <tr>
-                                    <th class="px-4 py-2 text-left" style="width: 20%;">UTM Course</th>
+                                    <th class="px-4 py-2 text-left" style="width: 15%;">UTM Course</th>
                                     <th class="px-4 py-2 text-left" style="width: 30%;">Target University Course</th>
-                                    <th class="px-4 py-2 text-left" style="width: 45%;">Course Description at Target
+                                    <th class="px-4 py-2 text-left" style="width: 40%;">Course Description at Target
                                         University</th>
+                                    <th class="px-4 py-2 text-left" style="width: 10%;">Notes</th>
                                     <th class="px-4 py-2 text-left" style="width: 5%;">Actions</th>
                                 </tr>
                             </thead>
@@ -57,6 +59,9 @@
                                         <td class="border px-4 py-2">
                                             <textarea name="target_course_description[]" rows="2" class="w-full">{{ $subject->target_course_description }}</textarea>
                                         </td>
+                                        <td class="border px-4 py-2">
+                                            {{ $subject->notes }}
+                                        </td>
                                         <td class="border px-4 py-2 text-center">
                                             <button type="button" onclick="removeSubject(this)"
                                                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
@@ -65,6 +70,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+
 
                         <button type="button" onclick="addSubject()"
                             class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
@@ -89,7 +95,7 @@
     <script>
         $(document).ready(function() {
             $('.utm-course-select').select2(); // Initialize Select2 on existing selects
-
+    
             function addSubject() {
                 const tableBody = document.querySelector('table tbody');
                 const row = document.createElement('tr');
@@ -102,8 +108,15 @@
                             @endforeach
                         </select>
                     </td>
-                    <td class="border px-4 py-2"><textarea name="target_course[]" rows="2" required class="w-full"></textarea></td>
-                    <td class="border px-4 py-2"><textarea name="target_course_description[]" rows="2" required class="w-full"></textarea></td>
+                    <td class="border px-4 py-2">
+                        <textarea name="target_course[]" rows="2" class="w-full"></textarea>
+                    </td>
+                    <td class="border px-4 py-2">
+                        <textarea name="target_course_description[]" rows="2" class="w-full"></textarea>
+                    </td>
+                    <td class="border px-4 py-2">
+                        <textarea name="target_course_notes[]" rows="2" class="w-full" readonly></textarea>
+                    </td>
                     <td class="border px-4 py-2 text-center">
                         <button type="button" onclick="removeSubject(this)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Remove</button>
                     </td>
@@ -111,14 +124,15 @@
                 tableBody.appendChild(row);
                 $(row).find('.utm-course-select').select2(); // Initialize Select2 on the new select
             }
-
+    
             window.addSubject = addSubject; // Make the function global for inline onclick
         });
-
+    
         function removeSubject(button) {
             const row = button.closest('tr');
-            $(row).find('.utm-course-select').select2('destroy'); // Destroy Select2 before removing row
+            $(row).find('.utm-course-select').select2('destroy'); // Destroy Select2 before removing the row
             row.remove();
         }
     </script>
+    
 </x-app-layout>
