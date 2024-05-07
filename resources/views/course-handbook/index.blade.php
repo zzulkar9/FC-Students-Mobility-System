@@ -4,6 +4,7 @@
             {{ __('Course Handbook') }}
         </h2>
     </x-slot>
+    
 
     <div class="py-12" x-data="{
         activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}',
@@ -64,6 +65,10 @@
                                             <h3
                                                 class="px-6 py-3 border-b border-gray-200 bg-cyan-100 text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
                                                 {{ $semester }}
+                                                <a href="{{ route('courses.createForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}"
+                                                    class="mr-6 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                                     + Add
+                                                 </a>                                                 
                                             </h3>
                                             <table class="min-w-full">
                                                 <thead>
@@ -96,6 +101,24 @@
                                                             <td
                                                                 class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-600">
                                                                 {{ $course->course_name }}
+                                                                <div class="text-xs mt-1 space-x-1">
+                                                                    <a href="{{ route('courses.show', $course->id) }}"
+                                                                        class="text-blue-500 hover:text-blue-700">View</a>
+                                                                    <a> | </a>
+                                                                    <a href="{{ route('courses.edit', $course->id) }}"
+                                                                        class="text-green-500 hover:text-green-700">Update</a>
+                                                                    <a> | </a>
+                                                                    <form
+                                                                        action="{{ route('courses.destroy', $course->id) }}"
+                                                                        method="POST"
+                                                                        onsubmit="return confirm('Are you sure?');"
+                                                                        class="inline">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                            class="text-red-500 hover:text-red-700">Delete</button>
+                                                                    </form>
+                                                                </div>
                                                             </td>
                                                             <td
                                                                 class="px-6 py-4 whitespace-no-wrap text-sm leading-5 font-medium text-gray-600">

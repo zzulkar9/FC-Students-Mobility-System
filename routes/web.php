@@ -79,6 +79,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit')->middleware('auth');
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->middleware('auth');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
+    Route::post('/courses/storeForSemester', [CourseController::class, 'storeForSemester'])->name('courses.storeForSemester');
+    Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
+
+
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');
