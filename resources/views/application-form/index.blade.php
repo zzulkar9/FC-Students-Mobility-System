@@ -10,110 +10,77 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Student Information</h3>
-                        <table class="w-full text-sm mt-4">
-                            <tbody>
-                                <tr class="hover:bg-gray-100">
-                                    <td class="px-4 py-2 font-medium bg-gray-200 w-60">Name:</td>
-                                    <td class="px-4 py-2">{{ Auth::user()->name }}</td>
-                                </tr>
-                                <tr class="hover:bg-gray-100">
-                                    <td class="px-4 py-2 font-medium bg-gray-200">Matric Number:</td>
-                                    <td class="px-4 py-2">{{ Auth::user()->matric_number }}</td>
-                                </tr>
-                                @if (Auth::user()->isUtmStudent())
-                                    <tr class="hover:bg-gray-100">
-                                        <td class="px-4 py-2 font-medium bg-gray-200">Upcoming Semester:</td>
-                                        <td class="px-4 py-2">{{ Auth::user()->getCurrentSemester() }}</td>
-                                    </tr>
-                                @endif
-                                <tr class="hover:bg-gray-100">
-                                    <td class="px-4 py-2 font-medium bg-gray-200">Intake:</td>
-                                    <td class="px-4 py-2">{{ Auth::user()->intake_period }}</td>
-                                </tr>
-                                @if (isset($applicationForm) && $applicationForm->link)
-                                    <tr class="hover:bg-gray-100">
-                                        <td class="px-4 py-2 font-medium bg-gray-200">Link:</td>
-                                        <td class="px-4 py-2">
-                                            <a href="{{ $applicationForm->link }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
-                                        </td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                        <!-- Tab Navigation -->
+                        <nav class="border-b border-gray-200">
+                            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab"
+                                data-tabs-toggle="#myTabContent" role="tablist">
+                                <li class="mr-2" role="presentation">
+                                    <button
+                                        class="inline-block p-4 rounded-t-lg border-b-2 active-tab"
+                                        data-tabs-target="#tab1" type="button" role="tab">
+                                        Student Info
+                                    </button>
+                                </li>
+                                <li class="mr-2" role="presentation">
+                                    <button
+                                        class="inline-block p-4 rounded-t-lg border-b-2"
+                                        data-tabs-target="#tab2" type="button" role="tab">
+                                        Course Selection
+                                    </button>
+                                </li>
+                                <li class="mr-2" role="presentation">
+                                    <button
+                                        class="inline-block p-4 rounded-t-lg border-b-2"
+                                        data-tabs-target="#tab3" type="button" role="tab">
+                                        Submission Details
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <!-- Tab Content -->
+                        <div id="myTabContent">
+                            <div class="block p-4 bg-gray-100 rounded-lg bg-white" id="tab1" role="tabpanel">
+                                @include('application-form.partials.tab1')
+                            </div>
+                            <div class="hidden p-4 bg-gray-100 rounded-lg bg-white" id="tab2" role="tabpanel">
+                                @include('application-form.partials.tab2')
+                            </div>
+                            <div class="hidden p-4 bg-gray-100 rounded-lg bg-white" id="tab3" role="tabpanel">
+                                @include('application-form.partials.tab3')
+                            </div>
+                        </div>
                     </div>
-                    
-                    
-                    @if (Auth::user()->isUtmStudent())
-                        @if (!empty($courses))
-                            <form method="POST" action="{{ route('application-form.submit') }}">
-                                @csrf
-                                <div class="mb-4">
-                                    <label for="link" class="block text-sm font-medium text-gray-700">Enter Link:</label>
-                                    <input type="url" id="link" name="link" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter URL here">
-                                </div>
-                                <div class="overflow-hidden overflow-x-auto min-w-full align-middle">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-200">
-                                            <tr>
-                                                <th class="px-4 py-2 text-left" style="width: 25%;">UTM Course</th>
-                                                <th class="px-4 py-2 text-left" style="width: 25%;">Target University Course</th>
-                                                <th class="px-4 py-2 text-left" style="width: 45%;">Course Description at Target University</th>
-                                                <th class="px-4 py-2 text-left" style="width: 5%;">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            @foreach ($courses as $course)
-                                                <tr class="course-field">
-                                                    <td class="border px-4 py-2">
-                                                        <select name="utm_course_id[]" class="utm-course-select w-full">
-                                                            @foreach ($allCourses as $dropdownCourse)
-                                                                <option value="{{ $dropdownCourse->id }}" {{ $dropdownCourse->id == $course->id ? 'selected' : '' }}>
-                                                                    {{ $dropdownCourse->course_code }} - {{ $dropdownCourse->course_name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td class="border px-4 py-2">
-                                                        <textarea name="target_course[]" rows="4" class="w-full"></textarea>
-                                                    </td>
-                                                    <td class="border px-4 py-2">
-                                                        <textarea name="target_course_description[]" rows="4" class="w-full"></textarea>
-                                                    </td>
-                                                    <td class="border px-4 py-2 text-center">
-                                                        <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <button type="button" onclick="addCourseField()" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add More Subject</button>
-                                <div class="flex items-center justify-center mt-4 space-x-4">
-                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
-                                    <button type="submit" name="action" value="save_draft" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Save Draft</button>
-                                </div>
-                            </form>
-                        @else
-                            <div class="text-center p-4">{{ $message ?? 'No courses scheduled for this semester.' }}</div>
-                        @endif
-                    @else
-                        <p class="text-center">Only UTM students can access this page.</p>
-                    @endif
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('[data-tabs-target]');
+            const tabContents = document.querySelectorAll('[role="tabpanel"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active-tab'));
+                    tab.classList.add('active-tab');
+
+                    const target = document.querySelector(tab.dataset.tabsTarget);
+                    tabContents.forEach(tc => tc.classList.add('hidden'));
+                    target.classList.remove('hidden');
+                });
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2/dist/js/select2.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2/dist/css/select2.min.css" rel="stylesheet" />
     <script>
         $(document).ready(function() {
             $('.utm-course-select').select2(); // Initialize Select2 on existing selects
-
-            function addCourseField() {
-                const tableBody = document.querySelector('#courseFields tbody');
+    
+            window.addCourseField = function() {
+                const tableBody = document.querySelector('.min-w-full tbody'); // Ensure this selector correctly points to your table body
                 const row = document.createElement('tr');
                 row.className = 'course-field';
                 row.innerHTML = `
@@ -136,15 +103,14 @@
                 `;
                 tableBody.appendChild(row);
                 $(row).find('.utm-course-select').select2(); // Initialize Select2 on the new select
+            };
+    
+            function removeCourseField(button) {
+                const row = button.closest('tr');
+                $(row).find('.utm-course-select').select2('destroy'); // Destroy Select2 before removing the row
+                row.remove();
             }
-
-            window.addCourseField = addCourseField; // Make the function global for inline onclick
+            window.removeCourseField = removeCourseField; // Make it global for inline onclick
         });
-
-        function removeCourseField(button) {
-            const row = button.closest('tr');
-            $(row).find('.utm-course-select').select2('destroy'); // Destroy Select2 before removing row
-            row.remove();
-        }
     </script>
 </x-app-layout>
