@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\ApplicationForm;
 use App\Models\ApplicationFormSubject;
+use App\Models\ApplicantDetail;
+use App\Models\EducationDetail;
+use App\Models\FinancialDetail;
+use App\Models\AdvisorFacultyApprovalDetail;
 use Illuminate\Support\Facades\Auth;
 
 class ApplicationFormController extends Controller
@@ -77,30 +81,42 @@ class ApplicationFormController extends Controller
                 ->latest('updated_at') // Make sure to get the most recent application
                 ->first();
 
-            if ($applicationForm) {
-                // If an application exists, redirect to view the most recent one
-                return redirect()->route('application-form.show', $applicationForm->id);
-            } else {
-                // No applications found, show the form to submit a new application
-                $currentSemester = $user->getCurrentSemester();
-                if (!$currentSemester) {
-                    return view('application-form.index', ['message' => 'Unable to determine your current semester.']);
-                }
-
-                $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
-                $intakeSemester = $user->intake_period;
-
-                $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
-                    ->where('intake_year', (string)$intakeYear)
-                    ->where('intake_semester', $user->intake_period)
-                    ->get();
-
-                $allCourses = Course::where('intake_year', $intakeYear)
-                    ->where('intake_semester', $intakeSemester)
-                    ->get();
-
-                return view('application-form.index', compact('courses', 'allCourses'));
+            // If no application form exists, create a new one as a draft
+            if (!$applicationForm) {
+                $applicationForm = ApplicationForm::create([
+                    'user_id' => $user->id,
+                    'is_draft' => true, // Assume it's a draft initially
+                    'intake_period' => $user->intake_period // Assume some default or calculated intake period
+                ]);
             }
+
+            $currentSemester = $user->getCurrentSemester();
+            if (!$currentSemester) {
+                return view('application-form.index', [
+                    'message' => 'Unable to determine your current semester.',
+                    'applicationFormId' => $applicationForm->id
+                ]);
+            }
+
+            $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
+            $intakeSemester = $user->intake_period;
+
+            $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
+                ->where('intake_year', (string)$intakeYear)
+                ->where('intake_semester', $intakeSemester)
+                ->get();
+
+            $allCourses = Course::where('intake_year', $intakeYear)
+                ->where('intake_semester', $intakeSemester)
+                ->get();
+
+            // Now pass the applicationFormId to the view correctly
+            return view('application-form.index', [
+                'courses' => $courses,
+                'allCourses' => $allCourses,
+                'applicationForm' => $applicationForm,
+                'applicationFormId' => $applicationForm->id
+            ]);
         } elseif ($user->isProgramCoordinator()) {
             // For program coordinators, show the dashboard with all submitted applications, excluding drafts
             $applications = ApplicationForm::with('user')
@@ -115,11 +131,31 @@ class ApplicationFormController extends Controller
         }
     }
 
-
     public function submit(Request $request)
     {
         $request->validate([
-            'utm_course_id' => 'required|array',
+            // Validation rules for tabs A, B, C, D, and E
+            'program_type' => 'nullable|string',
+            'religion' => 'nullable|string',
+            'citizenship' => 'nullable|string',
+            'ic_passport_number' => 'nullable|string',
+            'contact_number' => 'nullable|string',
+            'race' => 'nullable|string',
+            'home_address' => 'nullable|string',
+            'next_of_kin' => 'nullable|string',
+            'emergency_contact' => 'nullable|string',
+            'parents_occupation' => 'nullable|string',
+            'parents_monthly_income' => 'nullable|string',
+            'faculty' => 'nullable|string',
+            'current_semester' => 'nullable|string',
+            'field_of_study' => 'nullable|string',
+            'expected_graduation' => 'nullable|date',
+            'program' => 'nullable|string',
+            'cgpa' => 'nullable|numeric',
+            'co_curriculum' => 'nullable|string',
+            'achievements' => 'nullable|string',
+            'special_skills' => 'nullable|string',
+            'utm_course_id' => 'nullable|array',
             'utm_course_id.*' => 'exists:courses,id',
             'target_course' => 'nullable|array',
             'target_course.*' => 'nullable|string|max:255',
@@ -127,24 +163,49 @@ class ApplicationFormController extends Controller
             'target_course_description.*' => 'nullable|string',
             'target_course_notes' => 'nullable|array',
             'target_course_notes.*' => 'nullable|string',
-            'link' => 'nullable|url',  // Validate the link
+            'link' => 'nullable|url',
+            'finance_method' => 'nullable|string',
+            'sponsorship_details' => 'nullable|string',
+            'budget_details' => 'nullable|string',
+            'advisor_name' => 'nullable|string',
+            'advisor_email' => 'nullable|email',
+            'advisor_phone' => 'nullable|string',
+            'advisor_remarks' => 'nullable|string',
+            'approval' => 'nullable|string',
+            'faculty_remarks' => 'nullable|string'
         ]);
 
         $isDraft = $request->input('action') == 'save_draft';
         $user = auth()->user();  // Fetch the authenticated user
 
-        $applicationForm = new ApplicationForm([
-            'user_id' => $user->id,
-            'is_draft' => $isDraft,
-            'intake_period' => $user->intake_period,
-            'link' => $request->input('link'),  // Save the link
-        ]);
-        $applicationForm->save();
+        // Create or update the main application form
+        $applicationForm = ApplicationForm::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'is_draft' => $isDraft,
+                'intake_period' => $user->intake_period,
+                'link' => $request->input('link'),
+            ]
+        );
 
-        foreach ($request->utm_course_id as $index => $courseId) {
+        // Save or update details for Tab A
+        $applicationForm->applicantDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['program_type', 'religion', 'citizenship', 'ic_passport_number', 'contact_number', 'race', 'home_address', 'next_of_kin', 'emergency_contact', 'parents_occupation', 'parents_monthly_income'])
+        );
+
+        // Save or update details for Tab B
+        $applicationForm->educationDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['faculty', 'current_semester', 'field_of_study', 'expected_graduation', 'program', 'cgpa', 'co_curriculum', 'achievements', 'special_skills'])
+        );
+
+        // Handle courses selection for Tab C
+        foreach ($request->utm_course_id ?? [] as $index => $courseId) {
             $utmCourse = Course::findOrFail($courseId);
 
             $subject = new ApplicationFormSubject([
+                'application_form_id' => $applicationForm->id,
                 'utm_course_id' => $utmCourse->id,
                 'utm_course_code' => $utmCourse->course_code,
                 'utm_course_name' => $utmCourse->course_name,
@@ -157,9 +218,21 @@ class ApplicationFormController extends Controller
             $applicationForm->subjects()->save($subject);
         }
 
+        // Save or update details for Tab D
+        $applicationForm->financialDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['finance_method', 'sponsorship_details', 'budget_details'])
+        );
+
+        // Save or update details for Tab E (Advisor and Approval)
+        $applicationForm->advisorFacultyApprovalDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['advisor_name', 'advisor_email', 'advisor_phone', 'advisor_remarks', 'approval', 'faculty_remarks'])
+        );
+
+
         return redirect()->route('dashboard')->with('success', $isDraft ? 'Draft saved successfully!' : 'Application submitted successfully!');
     }
-
 
 
 
@@ -167,7 +240,7 @@ class ApplicationFormController extends Controller
     {
         $searchTerm = $request->input('search', '');
         $applications = ApplicationForm::with('user')
-            ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
+            ->where('is_draft', true)  // Ensure drafts are not shown to coordinators
             ->whereHas('user', function ($query) use ($searchTerm) {
                 $query->where('name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
@@ -194,11 +267,24 @@ class ApplicationFormController extends Controller
         return view('dashboard.pc', compact('applications'));
     }
 
+
     public function show($id)
     {
-        $applicationForm = ApplicationForm::with(['user', 'subjects'])->findOrFail($id);
-        return view('application-form.show', compact('applicationForm'));
+        // Assuming 'applicantDetails' is the relationship defined in ApplicationForm to access Tab A details
+        $applicationForm = ApplicationForm::with(['user', 'subjects', 'applicantDetails'])->findOrFail($id);
+
+
+        // Extract details for the view
+        $details = $applicationForm->applicantDetails;
+        $educations = $applicationForm->educationDetails;
+        $financial = $applicationForm->financialDetails;
+        $approval = $applicationForm->advisorFacultyApprovalDetails;
+
+        // Pass the necessary details along with the ApplicationForm to the view
+        return view('application-form.show', compact('applicationForm', 'details', 'educations', 'financial', 'approval'));
     }
+
+
 
     public function updateNotes(Request $request, $subjectId)
     {
@@ -213,60 +299,153 @@ class ApplicationFormController extends Controller
         return back()->with('success', 'Notes updated successfully.');
     }
 
-
     public function edit($id)
     {
-        $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);  // Make sure to load related subjects if needed
+        // Assuming 'applicantDetails' is the relationship defined in ApplicationForm to access Tab A details
+        $applicationForm = ApplicationForm::with(['user', 'subjects', 'applicantDetails'])->findOrFail($id);
 
-        // Check if the currently authenticated user is the owner of the form
-        if (auth()->id() !== $applicationForm->user_id && !auth()->user()->isAdmin()) {
-            abort(403); // Added admin check if admins can edit any form
-        }
+        // Extract details for the view
+        $courses = Course::all();
+        $details = $applicationForm->applicantDetails;
+        $educations = $applicationForm->educationDetails;
+        $financial = $applicationForm->financialDetails;
+        $approval = $applicationForm->advisorFacultyApprovalDetails;
 
-        $courses = Course::all(); // Fetch all courses for dropdown options
-
-        return view('application-form.edit', compact('applicationForm', 'courses'));
+        // Pass the necessary details along with the ApplicationForm to the view
+        return view('application-form.edit', compact('applicationForm', 'details', 'educations', 'financial', 'approval', 'courses'));
     }
-
 
     public function update(Request $request, $id)
-{
-    $applicationForm = ApplicationForm::with('subjects')->findOrFail($id);
+    {
+        $applicationForm = ApplicationForm::with([
+            'subjects',
+            'applicantDetails',
+            'educationDetails',
+            'financialDetails',
+            'advisorFacultyApprovalDetails'
+        ])->findOrFail($id);
 
-    $request->validate([
-        'utm_course_id' => 'required|array',
-        'utm_course_id.*' => 'exists:courses,id',
-        'target_course' => 'required|array',
-        'target_course.*' => 'required|string|max:255',
-        'target_course_description' => 'required|array',
-        'target_course_description.*' => 'required|string',
-        'target_course_notes' => 'nullable|array',
-        'target_course_notes.*' => 'nullable|string',
-        'link' => 'nullable|url',
-    ]);
+        $request->validate([
+            'utm_course_id' => 'required|array',
+            'utm_course_id.*' => 'exists:courses,id',
+            'target_course' => 'required|array',
+            'target_course.*' => 'required|string|max:255',
+            'target_course_description' => 'required|array',
+            'target_course_description.*' => 'required|string',
+            'target_course_notes' => 'nullable|array',
+            'target_course_notes.*' => 'nullable|string',
+            'link' => 'nullable|url',
 
-    $applicationForm->update([
-        'link' => $request->input('link'),
-    ]);
+            'program_type' => 'nullable|string',
+            'religion' => 'nullable|string',
+            'citizenship' => 'nullable|string',
+            'ic_passport_number' => 'nullable|string',
+            'contact_number' => 'nullable|string',
+            'race' => 'nullable|string',
+            'home_address' => 'nullable|string',
+            'next_of_kin' => 'nullable|string',
+            'emergency_contact' => 'nullable|string',
+            'parents_occupation' => 'nullable|string',
+            'parents_monthly_income' => 'nullable|string',
 
-    foreach ($request->utm_course_id as $index => $courseId) {
-        $utmCourse = Course::findOrFail($courseId);
-        $subject = $applicationForm->subjects->where('utm_course_id', $utmCourse->id)->first() ?? new ApplicationFormSubject();
-        
-        $subject->application_form_id = $applicationForm->id;
-        $subject->utm_course_id = $utmCourse->id;
-        $subject->utm_course_code = $utmCourse->course_code;
-        $subject->utm_course_name = $utmCourse->course_name;
-        $subject->utm_course_description = $utmCourse->description ?? 'No description available';
-        $subject->target_course = $request->target_course[$index];
-        $subject->target_course_description = $request->target_course_description[$index];
-        $subject->notes = $request->target_course_notes[$index] ?? $subject->notes;  // Maintain existing notes if not provided
+            'faculty' => 'nullable|string',
+            'current_semester' => 'nullable|string',
+            'field_of_study' => 'nullable|string',
+            'expected_graduation' => 'nullable|string',
+            'program' => 'nullable|string',
+            'cgpa' => 'nullable|numeric',
+            'co_curriculum' => 'nullable|string',
+            'achievements' => 'nullable|string',
+            'special_skills' => 'nullable|string',
 
-        $subject->save();
+            'finance_method' => 'nullable|string',
+            'sponsorship_details' => 'nullable|string',
+            'item' => 'nullable|array',
+            'expenditure' => 'nullable|array',
+            'total' => 'nullable|array',
+
+            'advisor_name' => 'nullable|string',
+            'advisor_email' => 'nullable|string|email',
+            'advisor_phone' => 'nullable|string',
+            'advisor_remarks' => 'nullable|string',
+            'approval' => 'nullable|string',
+            'faculty_remarks' => 'nullable|string',
+        ]);
+
+        $applicationForm->update([
+            'link' => $request->input('link'),
+        ]);
+
+        // Save or update details for Tab A (Applicant Details)
+        $applicationForm->applicantDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only([
+                'program_type', 'religion', 'citizenship', 'ic_passport_number', 'contact_number', 'race',
+                'home_address', 'next_of_kin', 'emergency_contact', 'parents_occupation', 'parents_monthly_income'
+            ])
+        );
+
+        // Save or update details for Tab B (Education & Co-Curriculum)
+        $applicationForm->educationDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only([
+                'faculty', 'current_semester', 'field_of_study', 'expected_graduation', 'program', 'cgpa',
+                'co_curriculum', 'achievements', 'special_skills'
+            ])
+        );
+
+        // Collect current subject IDs from the form submission
+        $currentSubjectIds = [];
+        foreach ($request->utm_course_id as $index => $courseId) {
+            $utmCourse = Course::findOrFail($courseId);
+            $subject = $applicationForm->subjects->where('utm_course_id', $utmCourse->id)->first() ?? new ApplicationFormSubject();
+
+            $subject->application_form_id = $applicationForm->id;
+            $subject->utm_course_id = $utmCourse->id;
+            $subject->utm_course_code = $utmCourse->course_code;
+            $subject->utm_course_name = $utmCourse->course_name;
+            $subject->utm_course_description = $utmCourse->description ?? 'No description available';
+            $subject->target_course = $request->target_course[$index];
+            $subject->target_course_description = $request->target_course_description[$index];
+            $subject->notes = $request->target_course_notes[$index] ?? $subject->notes;  // Maintain existing notes if not provided
+
+            $subject->save();
+
+            // Add to current subject IDs
+            $currentSubjectIds[] = $subject->id;
+        }
+
+        // Delete subjects that are no longer present in the form submission
+        $applicationForm->subjects()->whereNotIn('id', $currentSubjectIds)->delete();
+
+        // Save or update details for Tab D (Financial)
+        $applicationForm->financialDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['finance_method', 'sponsorship_details'])
+        );
+
+        if ($request->item && $request->expenditure && $request->total) {
+            $financialDetails = [];
+            foreach ($request->item as $index => $item) {
+                $financialDetails[] = [
+                    'item' => $item,
+                    'expenditure' => $request->expenditure[$index],
+                    'total' => $request->total[$index],
+                ];
+            }
+            $applicationForm->financialDetails()->update(['details' => json_encode($financialDetails)]);
+        }
+
+        // Save or update details for Tab E (Advisor and Approval)
+        $applicationForm->advisorFacultyApprovalDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['advisor_name', 'advisor_email', 'advisor_phone', 'advisor_remarks', 'approval', 'faculty_remarks'])
+        );
+
+        return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
     }
 
-    return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
-}
+
 
 
     public function updateAllNotes(Request $request, $applicationFormId)

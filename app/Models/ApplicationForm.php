@@ -22,4 +22,29 @@ class ApplicationForm extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function applicantDetails()
+    {
+        return $this->hasOne(ApplicantDetail::class);
+    }
+
+    public function educationDetails()
+    {
+        return $this->hasOne(EducationDetail::class);
+    }
+
+    public function financialDetails()
+    {
+        return $this->hasOne(FinancialDetail::class);
+    }
+
+    // public function supportApprovalDetails()
+    // {
+    //     return $this->hasOne(SupportApprovalDetail::class);
+    // }
+
+    public function advisorFacultyApprovalDetails()
+    {
+        return $this->hasOne(AdvisorFacultyApprovalDetail::class);
+    }
 }

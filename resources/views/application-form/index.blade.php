@@ -9,53 +9,50 @@
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="mb-6">
+                    <!-- Form Start -->
+                    <form method="POST" action="{{ route('application-form.submit') }}">
+                        @csrf
+
                         <!-- Tab Navigation -->
                         <nav class="border-b border-gray-200">
                             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab"
                                 data-tabs-toggle="#myTabContent" role="tablist">
-                                <li class="mr-2" role="presentation">
-                                    <button
-                                        class="inline-block p-4 rounded-t-lg border-b-2 active-tab"
-                                        data-tabs-target="#tab1" type="button" role="tab">
-                                        Student Info
-                                    </button>
-                                </li>
-                                <li class="mr-2" role="presentation">
-                                    <button
-                                        class="inline-block p-4 rounded-t-lg border-b-2"
-                                        data-tabs-target="#tab2" type="button" role="tab">
-                                        Course Selection
-                                    </button>
-                                </li>
-                                <li class="mr-2" role="presentation">
-                                    <button
-                                        class="inline-block p-4 rounded-t-lg border-b-2"
-                                        data-tabs-target="#tab3" type="button" role="tab">
-                                        Submission Details
-                                    </button>
-                                </li>
+                                @foreach (['A' => 'Applicant Details', 'B' => 'Education & Co-Curriculum', 'C' => 'Mobility Program Information', 'D' => 'Financial', 'E' => 'Support / Approval', 'H' => 'Full Report'] as $key => $title)
+                                    <li class="mr-2" role="presentation">
+                                        <button
+                                            class="inline-block p-4 rounded-t-lg border-b-2 {{ $loop->first ? 'active-tab' : '' }}"
+                                            data-tabs-target="#tab{{ $key }}" type="button" role="tab">
+                                            {{ $key }}. {{ $title }}
+                                        </button>
+                                    </li>
+                                @endforeach
                             </ul>
                         </nav>
 
                         <!-- Tab Content -->
                         <div id="myTabContent">
-                            <div class="block p-4 bg-gray-100 rounded-lg bg-white" id="tab1" role="tabpanel">
-                                @include('application-form.partials.tab1')
-                            </div>
-                            <div class="hidden p-4 bg-gray-100 rounded-lg bg-white" id="tab2" role="tabpanel">
-                                @include('application-form.partials.tab2')
-                            </div>
-                            <div class="hidden p-4 bg-gray-100 rounded-lg bg-white" id="tab3" role="tabpanel">
-                                @include('application-form.partials.tab3')
-                            </div>
+                            @foreach (['A', 'B', 'C', 'D', 'E'] as $key)
+                                <div class="{{ $loop->first ? 'block' : 'hidden' }} p-4 bg-gray-100 rounded-lg bg-white"
+                                    id="tab{{ $key }}" role="tabpanel">
+                                    @include('application-form.partials.tab' . $key)
+                                </div>
+                            @endforeach
                         </div>
-                    </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end mt-4">
+                            <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Submit Application
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts for Tabs and Additional Functionalities -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('[data-tabs-target]');
@@ -78,9 +75,10 @@
     <script>
         $(document).ready(function() {
             $('.utm-course-select').select2(); // Initialize Select2 on existing selects
-    
+
             window.addCourseField = function() {
-                const tableBody = document.querySelector('.min-w-full tbody'); // Ensure this selector correctly points to your table body
+                const tableBody = document.querySelector(
+                '.min-w-full tbody'); // Ensure this selector correctly points to your table body
                 const row = document.createElement('tr');
                 row.className = 'course-field';
                 row.innerHTML = `
@@ -104,13 +102,18 @@
                 tableBody.appendChild(row);
                 $(row).find('.utm-course-select').select2(); // Initialize Select2 on the new select
             };
-    
+
             function removeCourseField(button) {
                 const row = button.closest('tr');
                 $(row).find('.utm-course-select').select2('destroy'); // Destroy Select2 before removing the row
                 row.remove();
             }
             window.removeCourseField = removeCourseField; // Make it global for inline onclick
+        });
+
+        document.querySelector('button[type="submit"]').addEventListener('click', function(event) {
+            console.log('Submit button clicked');
+            // event.preventDefault(); // Uncomment to test without submitting the form
         });
     </script>
 </x-app-layout>
