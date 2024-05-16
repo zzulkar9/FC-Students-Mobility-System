@@ -1,40 +1,40 @@
 <!-- Content for Tab B -->
-<h3 class="text-lg leading-6 font-medium text-gray-900">Education & Co-Curriculum</h3>
-<div class="grid grid-cols-2 gap-6">
-    <div>
+<h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Education & Co-Curriculum</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-2xl">
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Faculty:</label>
-        <div>{{ $educations->faculty ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ $educations->faculty ?? 'N/A' }}</div>
     </div>
-    <div>
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Current Semester:</label>
-        <div>{{ $educations->current_semester ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ $educations->current_semester ?? 'N/A' }}</div>
     </div>
-    <div>
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Field of Study:</label>
-        <div>{{ $educations->field_of_study ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ $educations->field_of_study ?? 'N/A' }}</div>
     </div>
-    <div>
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Expected Graduation:</label>
-        <div>{{ $educations->expected_graduation ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ $educations->expected_graduation ?? 'N/A' }}</div>
     </div>
-    <div>
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Program:</label>
-        <div>{{ $educations->program ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ $educations->program ?? 'N/A' }}</div>
     </div>
-    <div>
+    <div class="space-y-2">
         <label class="block font-medium text-gray-700">Current Result (CGPA):</label>
-        <div>{{ number_format($educations->cgpa, 2) ?? 'N/A' }}</div>
+        <div class="bg-gray-50 p-2 rounded-md border">{{ number_format($educations->cgpa, 2) ?? 'N/A' }}</div>
     </div>
-    <div class="col-span-2">
+    <div class="col-span-2 space-y-2">
         <label class="block font-medium text-gray-700">Co-Curriculum:</label>
-        <div>{{ $educations->co_curriculum ?? 'N/A' }}</div>
+        <textarea class="bg-gray-50 p-2 rounded-md border w-full" rows="3" readonly>{{ $educations->co_curriculum ?? 'N/A' }}</textarea>
     </div>
-    <div class="col-span-2">
+    <div class="col-span-2 space-y-2">
         <label class="block font-medium text-gray-700">Achievements (Academic & Co-curriculum):</label>
-        <div>{{ $educations->achievements ?? 'N/A' }}</div>
+        <textarea class="bg-gray-50 p-2 rounded-md border w-full" rows="3" readonly>{{ $educations->achievements ?? 'N/A' }}</textarea>
     </div>
-    <div class="col-span-2">
+    <div class="col-span-2 space-y-2">
         <label class="block font-medium text-gray-700">Special Skills / Soft Skills:</label>
-        <div>{{ $educations->special_skills ?? 'N/A' }}</div>
+        <textarea class="bg-gray-50 p-2 rounded-md border w-full" rows="3" readonly>{{ $educations->special_skills ?? 'N/A' }}</textarea>
     </div>
 </div>
