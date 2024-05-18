@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 // });
 
 Route::get('/', [MobilityProgramController::class, 'index']);
+Route::resource('mobility-programs', MobilityProgramController::class);
 
 // Dashboard Route based on user type
 Route::get('/dashboard', function () {

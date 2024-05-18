@@ -51,6 +51,15 @@
             margin-top: 0.5rem;
         }
 
+        .grid-item .links {
+            margin-top: 1rem;
+        }
+
+        .grid-item .links a {
+            margin-right: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -111,26 +120,22 @@
     </style>
 </head>
 
-
 <body class="font-sans antialiased dark:bg-black dark:text-white/50">
-    <div
-        class="background relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+    <div class="background relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
         @if (Route::has('login'))
             <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                 @auth
-                    <a href="{{ url('/dashboard') }}"
-                        class="text-sm font-semibold text-white hover:text-gray-300">Dashboard</a>
+                    <a href="{{ url('/dashboard') }}" class="text-sm font-semibold text-white hover:text-gray-300">Dashboard</a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm font-semibold text-white hover:text-gray-300">Log in</a>
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="ml-4 text-sm font-semibold text-white hover:text-gray-300">Register</a>
+                        <a href="{{ route('register') }}" class="ml-4 text-sm font-semibold text-white hover:text-gray-300">Register</a>
                     @endif
                 @endauth
             </div>
         @endif
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-20">
             <div class="flex justify-center pt-8 sm:justify-start sm:pt-0">
                 <h1 class="text-4xl font-bold text-white px-4 py-2 rounded">Mobility Programs</h1>
             </div>
@@ -138,11 +143,15 @@
             <div class="mt-8 bg-white dark:bg-gray-800 bg-opacity-50 overflow-hidden shadow sm:rounded-lg">
                 <div class="grid-container p-6">
                     @foreach ($programs as $program)
-                        <div class="grid-item" onclick="openModal('{{ $program->id }}')">
+                        <div class="grid-item">
                             <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}">
                             <div class="details p-4 text-center">
                                 <h3 class="title">{{ $program->title }}</h3>
                                 <p class="date">{{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
+                                <div class="links">
+                                    <a href="javascript:void(0);" onclick="openModal('{{ $program->id }}')" class="text-blue-500 hover:text-blue-700">Quick View</a>
+                                    <a href="{{ route('mobility-programs.show', $program->id) }}" class="text-blue-500 hover:text-blue-700">Full Details &rarr;</a>
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -155,12 +164,10 @@
         <div id="modal-{{ $program->id }}" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('{{ $program->id }}')">&times;</span>
-                <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}"
-                    class="w-full rounded-md mb-4">
+                <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}" class="w-full rounded-md mb-4">
                 <h2 class="text-2xl font-semibold mb-2">{{ $program->title }}</h2>
                 <p class="text-gray-700 mb-2">{{ $program->description }}</p>
-                <p class="text-gray-700 mb-2"><strong>Due Date:</strong>
-                    {{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
+                <p class="text-gray-700 mb-2"><strong>Due Date:</strong> {{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
                 <p class="text-gray-700">{{ $program->extra_info }}</p>
             </div>
         </div>

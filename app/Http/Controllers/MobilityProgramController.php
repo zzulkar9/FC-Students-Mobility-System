@@ -43,4 +43,10 @@ class MobilityProgramController extends Controller
 
         return redirect()->route('mobility-programs.create')->with('success', 'Mobility program advertisement created successfully.');
     }
+
+    public function show($id)
+    {
+        $program = MobilityProgram::findOrFail($id);
+        return view('mobility-programs.show', compact('program'));
+    }
 }

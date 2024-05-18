@@ -26,7 +26,6 @@
                             {{ __('Course Menu') }}
                         </x-nav-link>
                     @endif
-
                 </div>
             </div>
 
