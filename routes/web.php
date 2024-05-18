@@ -6,14 +6,17 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseHandbookController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ApplicationFormController;
+use App\Http\Controllers\MobilityProgramController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 // Welcome Route
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [MobilityProgramController::class, 'index']);
 
 // Dashboard Route based on user type
 Route::get('/dashboard', function () {
@@ -82,18 +85,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/courses/storeForSemester', [CourseController::class, 'storeForSemester'])->name('courses.storeForSemester');
     Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
 
+    // ADVERTISE ROUTE
+    Route::get('/mobility-programs/create', [MobilityProgramController::class, 'create'])->name('mobility-programs.create');
+    Route::post('/mobility-programs', [MobilityProgramController::class, 'store'])->name('mobility-programs.store');
 
 
     // Application Form Routes
-    // Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');
-    // Route::post('/application-forms/{applicationFormId}/details', [ApplicationFormController::class, 'storeApplicantDetails'])->name('applicant-details.store');
-    // Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
-    // Route::get('/application-form/review', [ApplicationFormController::class, 'review'])->name('application-form.review');
-    // Route::get('/application-form/{applicationForm}/review', [ApplicationFormController::class, 'show'])->name('application-form.show')->middleware('auth');
-    // Route::patch('/application-form/{applicationForm}/update-all-notes', [ApplicationFormController::class, 'updateAllNotes'])->name('application-form.update-all-notes')->middleware('auth');
-    // Route::patch('/application-form-subjects/{id}/update-notes', [ApplicationFormController::class, 'updateNotes'])->name('application-form.update-notes')->middleware('auth');
-    // Route::get('/application-form/{applicationForm}/edit', [ApplicationFormController::class, 'edit'])->name('application-form.edit')->middleware(['auth']);
-    // Route::put('/application-form/{applicationForm}', [ApplicationFormController::class, 'update'])->name('application-form.update')->middleware('auth');
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');
     Route::post('/application-form/submit', [ApplicationFormController::class, 'submit'])->name('application-form.submit')->middleware('auth');
     Route::get('/application-form/review', [ApplicationFormController::class, 'review'])->name('application-form.review');
