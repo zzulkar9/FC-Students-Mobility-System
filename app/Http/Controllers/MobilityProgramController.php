@@ -49,4 +49,38 @@ class MobilityProgramController extends Controller
         $program = MobilityProgram::findOrFail($id);
         return view('mobility-programs.show', compact('program'));
     }
+
+    public function edit($id)
+    {
+        $program = MobilityProgram::findOrFail($id);
+        return view('mobility-programs.edit', compact('program'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'due_date' => 'required|date',
+            'extra_info' => 'nullable|string',
+        ]);
+
+        $program = MobilityProgram::findOrFail($id);
+
+        $imagePath = $program->image;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('mobility_program_images', 'public');
+        }
+
+        $program->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'image' => $imagePath,
+            'due_date' => $request->input('due_date'),
+            'extra_info' => $request->input('extra_info'),
+        ]);
+
+        return redirect()->route('mobility-programs.show', $program->id)->with('success', 'Mobility program advertisement updated successfully.');
+    }
 }

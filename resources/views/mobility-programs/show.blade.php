@@ -1,4 +1,3 @@
-<!-- resources/views/mobility-programs/full-details.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -42,10 +41,15 @@
             </div>
         @endif
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-20">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                 <div class="p-6">
-                    <a href="javascript:history.back()" class="text-blue-500 hover:text-blue-700">&larr; Go Back</a>
+                    <div class="flex justify-between items-center">
+                        <a href="{{ route('welcome') }}" class="text-blue-500 hover:text-blue-700">&larr; Go Back</a>
+                        @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isStaff()))
+                            <a href="{{ route('mobility-programs.edit', $program->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
+                        @endif
+                    </div>
                     <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}" class="w-full rounded-md mb-4 mt-4">
                     <h2 class="text-3xl font-semibold mb-2">{{ $program->title }}</h2>
                     <p class="text-gray-700 dark:text-gray-300 mb-4">{{ $program->description }}</p>

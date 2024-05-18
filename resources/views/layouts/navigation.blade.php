@@ -26,6 +26,9 @@
                             {{ __('Course Menu') }}
                         </x-nav-link>
                     @endif
+                    <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
+                        {{ __('Programs') }}
+                    </x-nav-link>                
                 </div>
             </div>
 
@@ -100,6 +103,9 @@
                     {{ __('Course Menu') }}
                 </x-nav-link>
             @endif
+            <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
+                {{ __('Programs') }}
+            </x-nav-link>
 
         </div>
 

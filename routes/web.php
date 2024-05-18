@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 //     return view('welcome');
 // });
 
-Route::get('/', [MobilityProgramController::class, 'index']);
+Route::get('/', [MobilityProgramController::class, 'index'])->name('welcome');
 Route::resource('mobility-programs', MobilityProgramController::class);
 
 // Dashboard Route based on user type
@@ -89,6 +89,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ADVERTISE ROUTE
     Route::get('/mobility-programs/create', [MobilityProgramController::class, 'create'])->name('mobility-programs.create');
     Route::post('/mobility-programs', [MobilityProgramController::class, 'store'])->name('mobility-programs.store');
+    Route::get('/mobility-programs/{program}/edit', [MobilityProgramController::class, 'edit'])->name('mobility-programs.edit');
+    Route::put('/mobility-programs/{program}', [MobilityProgramController::class, 'update'])->name('mobility-programs.update');
+    Route::get('/mobility-programs/{program}', [MobilityProgramController::class, 'show'])->name('mobility-programs.show');
 
 
     // Application Form Routes
