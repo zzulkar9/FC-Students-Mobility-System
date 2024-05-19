@@ -102,4 +102,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return min($currentSemester, 8); // Ensure it does not exceed 8 semesters
     }
+
+    public function studyPlans()
+    {
+        return $this->hasMany(StudyPlan::class);
+    }
 }

@@ -14,4 +14,9 @@ class Course extends Model
         'course_code', 'course_name', 'year_semester', 'course_credit',
         'prerequisites', 'description', 'intake_year', 'intake_semester'
     ];
+
+    public function studyPlanCourses()
+    {
+        return $this->hasMany(StudyPlan::class);
+    }
 }

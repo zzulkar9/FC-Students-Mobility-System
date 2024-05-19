@@ -38,11 +38,6 @@ class ApplicationForm extends Model
         return $this->hasOne(FinancialDetail::class);
     }
 
-    // public function supportApprovalDetails()
-    // {
-    //     return $this->hasOne(SupportApprovalDetail::class);
-    // }
-
     public function advisorFacultyApprovalDetails()
     {
         return $this->hasOne(AdvisorFacultyApprovalDetail::class);

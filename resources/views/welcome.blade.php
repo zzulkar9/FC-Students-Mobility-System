@@ -15,7 +15,7 @@
 
         .grid-item {
             overflow: hidden;
-            cursor: pointer;
+            /* cursor: pointer; */
             border-radius: 0.5rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             background-color: #fff;
@@ -139,7 +139,7 @@
             <div class="flex justify-between items-center pt-8 sm:pt-0">
                 <h1 class="text-4xl font-bold text-white px-4 py-2 rounded">Mobility Programs</h1>
                 <!-- Add More Button -->
-                @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isStaff()))
+                @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
                     <a href="{{ route('mobility-programs.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add More</a>
                 @endif
             </div>

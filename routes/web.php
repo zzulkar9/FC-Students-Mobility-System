@@ -7,6 +7,7 @@ use App\Http\Controllers\CourseHandbookController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\MobilityProgramController;
+use App\Http\Controllers\StudyPlanController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -92,6 +93,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mobility-programs/{program}/edit', [MobilityProgramController::class, 'edit'])->name('mobility-programs.edit');
     Route::put('/mobility-programs/{program}', [MobilityProgramController::class, 'update'])->name('mobility-programs.update');
     Route::get('/mobility-programs/{program}', [MobilityProgramController::class, 'show'])->name('mobility-programs.show');
+
+    //STUDY PLANS
+    Route::get('/study-plans', [StudyPlanController::class, 'index'])->name('study-plans.index');
+    Route::post('/study-plans/update', [StudyPlanController::class, 'update'])->name('study-plans.update');
 
 
     // Application Form Routes
