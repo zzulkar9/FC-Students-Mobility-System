@@ -17,55 +17,52 @@ class StudyPlanController extends Controller
         // Fetch the user's study plans
         $studyPlans = StudyPlan::where('user_id', $user->id)->get()->groupBy('year_semester');
 
-        // Check if there are any study plans
-        if ($studyPlans->isEmpty()) {
-            // If no study plans, fall back to guided courses
-            $studyPlans = collect();
-            $allCourses = Course::where('intake_year', '20' . substr($user->matric_number, 1, 2))
-                                ->where('intake_semester', $user->intake_period)
-                                ->orderBy('year_semester', 'asc')
-                                ->get()
-                                ->groupBy('year_semester');
+        // Fetch all guided courses
+        $allCourses = Course::where('intake_year', '20' . substr($user->matric_number, 1, 2))
+            ->where('intake_semester', $user->intake_period)
+            ->orderBy('year_semester', 'asc')
+            ->get()
+            ->groupBy('year_semester');
 
-            // Create a fallback study plan structure
-            foreach ($allCourses as $yearSemester => $courses) {
-                foreach ($courses as $course) {
-                    if (!isset($studyPlans[$yearSemester])) {
-                        $studyPlans[$yearSemester] = collect();
-                    }
-                    $studyPlans[$yearSemester][] = new StudyPlan([
+        // Merge guided courses with study plans
+        $mergedCourses = collect();
+
+        foreach ($allCourses as $yearSemester => $courses) {
+            if (isset($studyPlans[$yearSemester])) {
+                // If there are study plans for this year_semester, use them
+                $mergedCourses[$yearSemester] = $studyPlans[$yearSemester]->map(function ($plan) {
+                    $plan->course = Course::find($plan->course_id);
+                    return $plan;
+                });
+            } else {
+                // Otherwise, use the guided courses
+                $mergedCourses[$yearSemester] = $courses->map(function ($course) {
+                    return new StudyPlan([
                         'course_id' => $course->id,
-                        'year_semester' => $yearSemester,
+                        'year_semester' => $course->year_semester,
                         'course' => $course,
                     ]);
-                }
-            }
-        } else {
-            // If study plans exist, we need to fetch courses for the study plans
-            foreach ($studyPlans as $yearSemester => $plans) {
-                foreach ($plans as $plan) {
-                    $plan->course = Course::find($plan->course_id);
-                }
+                });
             }
         }
 
-        return view('study-plans.index', compact('studyPlans'));
+        return view('study-plans.index', compact('mergedCourses'));
     }
 
     public function update(Request $request)
     {
         $user = Auth::user();
         $data = $request->validate([
-            'courses' => 'array',
-            'courses.*.course_id' => 'required|exists:courses,id',
-            'courses.*.year_semester' => 'required|string',
+            'study_plan_data' => 'required|string',
         ]);
+
+        $studyPlanData = json_decode($data['study_plan_data'], true);
 
         // Remove existing study plan
         StudyPlan::where('user_id', $user->id)->delete();
 
         // Add new study plan
-        foreach ($data['courses'] as $courseData) {
+        foreach ($studyPlanData as $courseData) {
             StudyPlan::create([
                 'user_id' => $user->id,
                 'course_id' => $courseData['course_id'],
@@ -73,6 +70,6 @@ class StudyPlanController extends Controller
             ]);
         }
 
-        return redirect()->route('study-plans.index')->with('success', 'Study plan updated successfully.');
+        return redirect()->back()->with('success', 'Study plan updated successfully.');
     }
 }
