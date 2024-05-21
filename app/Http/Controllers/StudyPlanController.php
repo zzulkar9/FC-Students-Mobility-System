@@ -41,15 +41,15 @@ class StudyPlanController extends Controller
                 }
             }
         } else {
-            // If study plans exist, fetch all courses for display
-            $allCourses = Course::where('intake_year', '20' . substr($user->matric_number, 1, 2))
-                                ->where('intake_semester', $user->intake_period)
-                                ->orderBy('year_semester', 'asc')
-                                ->get()
-                                ->groupBy('year_semester');
+            // If study plans exist, we need to fetch courses for the study plans
+            foreach ($studyPlans as $yearSemester => $plans) {
+                foreach ($plans as $plan) {
+                    $plan->course = Course::find($plan->course_id);
+                }
+            }
         }
 
-        return view('study-plans.index', compact('studyPlans', 'allCourses'));
+        return view('study-plans.index', compact('studyPlans'));
     }
 
     public function update(Request $request)

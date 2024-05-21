@@ -26,7 +26,7 @@
                     <form method="POST" action="{{ route('study-plans.update') }}">
                         @csrf
 
-                        @foreach ($allCourses as $yearSemester => $courses)
+                        @foreach ($studyPlans as $yearSemester => $plans)
                             <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">{{ $yearSemester }}</h3>
                             <table class="min-w-full mt-2 text-sm">
                                 <thead class="bg-cyan-100">
@@ -39,25 +39,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($courses as $course)
-                                        @php
-                                            $studyPlanCourse = $studyPlans->flatten()->firstWhere('course_id', $course->id);
-                                            $selectedYearSemester = $studyPlanCourse ? $studyPlanCourse->year_semester : $yearSemester;
-                                        @endphp
+                                    @foreach ($plans as $plan)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="border px-4 py-2">{{ $course->course_code }}</td>
-                                            <td class="border px-4 py-2">{{ $course->course_name }}</td>
-                                            <td class="border px-4 py-2">{{ $course->course_credit }}</td>
-                                            <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>
+                                            <td class="border px-4 py-2">{{ $plan->course->course_code }}</td>
+                                            <td class="border px-4 py-2">{{ $plan->course->course_name }}</td>
+                                            <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
+                                            <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                             <td class="border px-4 py-2">
-                                                <select name="courses[{{ $course->id }}][year_semester]" class="form-select mt-1 block w-full">
-                                                    @foreach ($allCourses as $ys => $cs)
-                                                        <option value="{{ $ys }}" {{ $ys == $selectedYearSemester ? 'selected' : '' }}>
+                                                <select name="courses[{{ $plan->course_id }}][year_semester]" class="form-select mt-1 block w-full">
+                                                    @foreach ($studyPlans as $ys => $ps)
+                                                        <option value="{{ $ys }}" {{ $ys == $plan->year_semester ? 'selected' : '' }}>
                                                             {{ $ys }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                <input type="hidden" name="courses[{{ $course->id }}][course_id]" value="{{ $course->id }}">
+                                                <input type="hidden" name="courses[{{ $plan->course_id }}][course_id]" value="{{ $plan->course_id }}">
                                             </td>
                                         </tr>
                                     @endforeach
