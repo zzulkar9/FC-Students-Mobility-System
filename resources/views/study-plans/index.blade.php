@@ -24,9 +24,12 @@
                     <form method="POST" action="{{ route('study-plans.update') }}" id="studyPlanForm">
                         @csrf
                         <div id="study-plan-container">
-                            @foreach ($mergedCourses as $yearSemester => $courses)
+                            @foreach ($studyPlans as $yearSemester => $plans)
                                 <div class="semester-block" data-semester="{{ $yearSemester }}">
                                     <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">{{ $yearSemester }}</h3>
+                                    <button type="button"
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2"
+                                        onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button>
                                     <table class="min-w-full mt-2 text-sm">
                                         <thead class="bg-cyan-100">
                                             <tr>
@@ -34,18 +37,28 @@
                                                 <th class="border px-4 py-2">Course Name</th>
                                                 <th class="border px-4 py-2">Credits</th>
                                                 <th class="border px-4 py-2">Prerequisites</th>
+                                                <th class="border px-4 py-2">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="sortable" data-semester="{{ $yearSemester }}">
-                                            @foreach ($courses as $plan)
-                                                <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course->id }}">
+                                        <tbody class="sortable">
+                                            @foreach ($plans as $plan)
+                                                <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
                                                     <td class="border px-4 py-2">{{ $plan->course->course_code }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->course_name }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
-                                                    <td class="border px-4 py-2">{{ $plan->course->prerequisites }}</td>
+                                                    <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
+                                                    <td class="border px-4 py-2">
+                                                        <button type="button" class="text-red-500 hover:text-red-700" onclick="removeSubject(this)">Remove</button>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot class="bg-cyan-100">
+                                            <tr>
+                                                <td colspan="2" class="border px-4 py-2 text-right font-bold">Total Credits</td>
+                                                <td colspan="3" class="border px-4 py-2 font-bold">{{ $plans->sum('course.course_credit') }}</td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             @endforeach
@@ -62,12 +75,43 @@
         </div>
     </div>
 
+    <!-- Add Subject Modal -->
+    <div id="addSubjectModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full p-6">
+            <h2 class="text-xl font-semibold mb-4">Add Subject</h2>
+            <input type="hidden" id="selectedSemester">
+            <select id="courseSelect" class="w-full border-gray-300 rounded-md shadow-sm">
+                <option value="">Select a Course</option>
+                @foreach ($allCourses as $courses)
+                    @foreach ($courses as $course)
+                        <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
+                    @endforeach
+                @endforeach
+            </select>
+            <div class="flex justify-end mt-4">
+                <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2" onclick="closeAddSubjectModal()">Cancel</button>
+                <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="addSubject()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const studyPlanForm = document.getElementById('studyPlanForm');
             const studyPlanContainer = document.getElementById('study-plan-container');
             const studyPlanDataInput = document.getElementById('studyPlanData');
+
+            // Initialize Select2 on courseSelect
+            $('#courseSelect').select2({
+                width: '100%',
+                placeholder: 'Select a course',
+                allowClear: true
+            });
 
             // Initialize Sortable.js on each semester block
             const semesterBlocks = document.querySelectorAll('.sortable');
@@ -97,5 +141,82 @@
             // Update study plan data on form submission
             studyPlanForm.addEventListener('submit', updateStudyPlanData);
         });
+
+        function openAddSubjectModal(semester) {
+            document.getElementById('selectedSemester').value = semester;
+            document.getElementById('addSubjectModal').classList.remove('hidden');
+        }
+
+        function closeAddSubjectModal() {
+            document.getElementById('addSubjectModal').classList.add('hidden');
+        }
+
+        function addSubject() {
+            const semester = document.getElementById('selectedSemester').value;
+            const courseSelect = $('#courseSelect');
+            const courseId = courseSelect.val();
+            const courseText = courseSelect.find('option:selected').text();
+
+            if (!courseId) {
+                alert('Please select a course.');
+                return;
+            }
+
+            // Fetch course details
+            const allCourses = @json($allCourses);
+            console.log('allCourses:', allCourses); // Log the structure of allCourses
+
+            // Determine the structure and flatten accordingly
+            let flattenedCourses = [];
+            if (Array.isArray(allCourses)) {
+                if (Array.isArray(allCourses[0])) {
+                    // Array of arrays
+                    flattenedCourses = allCourses.reduce((acc, curr) => acc.concat(curr), []);
+                } else {
+                    // Single array of objects
+                    flattenedCourses = allCourses;
+                }
+            } else if (typeof allCourses === 'object' && allCourses !== null) {
+                // Object with arrays as values
+                flattenedCourses = Object.values(allCourses).reduce((acc, curr) => acc.concat(curr), []);
+            } else {
+                console.error('Unexpected allCourses structure:', allCourses);
+                return;
+            }
+
+            const selectedCourse = flattenedCourses.find(course => course.id == courseId);
+
+            if (!selectedCourse) {
+                console.error('Selected course not found:', courseId);
+                return;
+            }
+
+            // Create a new row for the selected course
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-course-id', courseId);
+            newRow.classList.add('hover:bg-gray-50');
+            newRow.innerHTML = `
+                <td class="border px-4 py-2">${selectedCourse.course_code}</td>
+                <td class="border px-4 py-2">${selectedCourse.course_name}</td>
+                <td class="border px-4 py-2">${selectedCourse.course_credit}</td>
+                <td class="border px-4 py-2">${selectedCourse.prerequisites ?? 'None'}</td>
+                <td class="border px-4 py-2"><button type="button" class="text-red-500 hover:text-red-700" onclick="removeSubject(this)">Remove</button></td>
+            `;
+
+            // Append the new row to the corresponding semester block
+            document.querySelector(`.semester-block[data-semester="${semester}"] .sortable`).appendChild(newRow);
+
+            // Close the modal
+            closeAddSubjectModal();
+
+            // Update the study plan data
+            updateStudyPlanData();
+        }
+
+        function removeSubject(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateStudyPlanData();
+        }
     </script>
 </x-app-layout>

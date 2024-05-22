@@ -28,7 +28,13 @@
                     @endif
                     <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                         {{ __('Programs') }}
-                    </x-nav-link>                
+                    </x-nav-link>
+                    @if (auth()->check() &&
+                            (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
+                        <x-nav-link :href="route('study-plans.index')" :active="request()->routeIs('study-plans.*')">
+                            {{ __('Study Plans') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -106,6 +112,12 @@
             <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                 {{ __('Programs') }}
             </x-nav-link>
+            @if (auth()->check() &&
+                    (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
+                <x-nav-link :href="route('study-plans.index')" :active="request()->routeIs('study-plans.*')">
+                    {{ __('Study Plans') }}
+                </x-nav-link>
+            @endif
 
         </div>
 

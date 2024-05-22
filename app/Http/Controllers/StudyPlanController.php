@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Course;
 use App\Models\StudyPlan;
 use Illuminate\Http\Request;
@@ -24,29 +23,34 @@ class StudyPlanController extends Controller
             ->get()
             ->groupBy('year_semester');
 
-        // Merge guided courses with study plans
-        $mergedCourses = collect();
+        // Check if there are any study plans
+        if ($studyPlans->isEmpty()) {
+            // If no study plans, fall back to guided courses
+            $studyPlans = collect();
 
-        foreach ($allCourses as $yearSemester => $courses) {
-            if (isset($studyPlans[$yearSemester])) {
-                // If there are study plans for this year_semester, use them
-                $mergedCourses[$yearSemester] = $studyPlans[$yearSemester]->map(function ($plan) {
-                    $plan->course = Course::find($plan->course_id);
-                    return $plan;
-                });
-            } else {
-                // Otherwise, use the guided courses
-                $mergedCourses[$yearSemester] = $courses->map(function ($course) {
-                    return new StudyPlan([
+            // Create a fallback study plan structure
+            foreach ($allCourses as $yearSemester => $courses) {
+                foreach ($courses as $course) {
+                    if (!isset($studyPlans[$yearSemester])) {
+                        $studyPlans[$yearSemester] = collect();
+                    }
+                    $studyPlans[$yearSemester][] = new StudyPlan([
                         'course_id' => $course->id,
-                        'year_semester' => $course->year_semester,
+                        'year_semester' => $yearSemester,
                         'course' => $course,
                     ]);
-                });
+                }
+            }
+        } else {
+            // If study plans exist, we need to fetch courses for the study plans
+            foreach ($studyPlans as $yearSemester => $plans) {
+                foreach ($plans as $plan) {
+                    $plan->course = Course::find($plan->course_id);
+                }
             }
         }
 
-        return view('study-plans.index', compact('mergedCourses'));
+        return view('study-plans.index', compact('studyPlans', 'allCourses'));
     }
 
     public function update(Request $request)
