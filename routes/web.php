@@ -97,6 +97,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //STUDY PLANS
     Route::get('/study-plans', [StudyPlanController::class, 'index'])->name('study-plans.index');
     Route::post('/study-plans/update', [StudyPlanController::class, 'update'])->name('study-plans.update');
+    Route::get('/study-plans/review/{user}', [StudyPlanController::class, 'review'])->name('study-plans.review');
 
 
     // Application Form Routes

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Course;
 use App\Models\StudyPlan;
 use Illuminate\Http\Request;
@@ -12,6 +13,14 @@ class StudyPlanController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // Check if user is TDA or Program Coordinator
+        if ($user->isTDA() || $user->isProgramCoordinator()) {
+            // Fetch all users with study plans
+            $students = User::whereHas('studyPlans')->get();
+
+            return view('study-plans.review', compact('students'));
+        }
 
         // Fetch the user's study plans
         $studyPlans = StudyPlan::where('user_id', $user->id)->get()->groupBy('year_semester');
@@ -75,5 +84,13 @@ class StudyPlanController extends Controller
         }
 
         return redirect()->back()->with('success', 'Study plan updated successfully.');
+    }
+
+    public function review($userId)
+    {
+        $student = User::findOrFail($userId);
+        $studyPlans = StudyPlan::where('user_id', $student->id)->get()->groupBy('year_semester');
+
+        return view('study-plans.review-detail', compact('student', 'studyPlans'));
     }
 }
