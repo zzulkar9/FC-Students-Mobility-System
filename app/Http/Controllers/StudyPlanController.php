@@ -68,21 +68,26 @@ class StudyPlanController extends Controller
         $data = $request->validate([
             'study_plan_data' => 'required|string',
         ]);
-
+    
         $studyPlanData = json_decode($data['study_plan_data'], true);
-
+    
+        // Get existing remarks
+        $existingRemarks = StudyPlan::where('user_id', $user->id)->pluck('remark', 'course_id')->toArray();
+    
         // Remove existing study plan
         StudyPlan::where('user_id', $user->id)->delete();
-
-        // Add new study plan
+    
+        // Add new study plan and preserve remarks
         foreach ($studyPlanData as $courseData) {
+            $remark = isset($existingRemarks[$courseData['course_id']]) ? $existingRemarks[$courseData['course_id']] : null;
             StudyPlan::create([
                 'user_id' => $user->id,
                 'course_id' => $courseData['course_id'],
                 'year_semester' => $courseData['year_semester'],
+                'remark' => $remark,
             ]);
         }
-
+    
         return redirect()->back()->with('success', 'Study plan updated successfully.');
     }
 
@@ -92,5 +97,21 @@ class StudyPlanController extends Controller
         $studyPlans = StudyPlan::where('user_id', $student->id)->get()->groupBy('year_semester');
 
         return view('study-plans.review-detail', compact('student', 'studyPlans'));
+    }
+
+    public function saveRemarks(Request $request, $userId)
+    {
+        $data = $request->validate([
+            'remarks' => 'array',
+            'remarks.*' => 'nullable|string',
+        ]);
+
+        foreach ($data['remarks'] as $yearSemester => $remark) {
+            StudyPlan::where('user_id', $userId)
+                ->where('year_semester', $yearSemester)
+                ->update(['remark' => $remark]);
+        }
+
+        return redirect()->back()->with('success', 'Remarks updated successfully.');
     }
 }

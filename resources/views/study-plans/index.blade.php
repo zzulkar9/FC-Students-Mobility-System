@@ -1,3 +1,4 @@
+<!-- resources/views/study-plans/index.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -48,18 +49,23 @@
                                                     <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                                     <td class="border px-4 py-2">
-                                                        <button type="button" class="text-red-500 hover:text-red-700" onclick="removeSubject(this)">Remove</button>
+                                                        <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="removeSubject(this)">Remove</button>
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
-                                        <tfoot class="bg-cyan-100">
-                                            <tr>
-                                                <td colspan="2" class="border px-4 py-2 text-right font-bold">Total Credits</td>
-                                                <td colspan="3" class="border px-4 py-2 font-bold">{{ $plans->sum('course.course_credit') }}</td>
+                                        <tfoot>
+                                            <tr class="bg-gray-100">
+                                                <td colspan="2" class="text-right px-4 py-2 font-medium">Total Credits:</td>
+                                                <td class="px-4 py-2 font-medium">{{ $plans->sum('course.course_credit') }}</td>
+                                                <td colspan="2"></td>
                                             </tr>
                                         </tfoot>
                                     </table>
+                                    <div class="mt-4">
+                                        <label for="remark_{{ $yearSemester }}" class="block text-sm font-medium text-gray-700">Remark</label>
+                                        <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="3" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -200,7 +206,9 @@
                 <td class="border px-4 py-2">${selectedCourse.course_name}</td>
                 <td class="border px-4 py-2">${selectedCourse.course_credit}</td>
                 <td class="border px-4 py-2">${selectedCourse.prerequisites ?? 'None'}</td>
-                <td class="border px-4 py-2"><button type="button" class="text-red-500 hover:text-red-700" onclick="removeSubject(this)">Remove</button></td>
+                <td class="border px-4 py-2">
+                    <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="removeSubject(this)">Remove</button>
+                </td>
             `;
 
             // Append the new row to the corresponding semester block
@@ -215,7 +223,7 @@
 
         function removeSubject(button) {
             const row = button.closest('tr');
-            row.remove();
+            row.parentNode.removeChild(row);
             updateStudyPlanData();
         }
     </script>
