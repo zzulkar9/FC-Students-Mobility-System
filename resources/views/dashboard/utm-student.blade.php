@@ -17,8 +17,11 @@
                     <li class="border-b">
                         <a href="#applicationForm" class="student-dashboard-tab block p-4 hover:bg-gray-100">Application Form</a>
                     </li>
-                    <li>
+                    <li class="border-b">
                         <a href="#coursesBySemester" class="student-dashboard-tab block p-4 hover:bg-gray-100">Courses by Semester</a>
+                    </li>
+                    <li>
+                        <a href="#studyPlans" class="student-dashboard-tab block p-4 hover:bg-gray-100">Study Plans</a>
                     </li>
                 </ul>
             </div>
@@ -114,6 +117,42 @@
                                                 </td>
                                                 <td class="border px-4 py-2">{{ $course->course_credit }}</td>
                                                 <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </details>
+                        @endforeach
+                    @endif
+                </div>
+
+                <div id="studyPlans" class="tab-content hidden">
+                    @if (isset($studyPlans))
+                        <h4 class="text-lg leading-6 font-medium text-gray-900">Study Plans:</h4>
+                        @foreach ($studyPlans as $yearSemester => $plans)
+                            <details class="mt-2 group">
+                                <summary class="cursor-pointer text-gray-700 font-medium py-2 hover:bg-gray-100">
+                                    {{ $yearSemester }}
+                                </summary>
+                                <table class="min-w-full mt-2 text-sm">
+                                    <thead>
+                                        <tr class="bg-cyan-100">
+                                            <th class="border px-4 py-2">Course Code</th>
+                                            <th class="border px-4 py-2">Course Name</th>
+                                            <th class="border px-4 py-2">Credits</th>
+                                            <th class="border px-4 py-2">Prerequisites</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($plans as $plan)
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="border px-4 py-2">{{ $plan->course->course_code }}</td>
+                                                <td class="border px-4 py-2">
+                                                    {{ $plan->course->course_name }}
+                                                    <div><a href="{{ route('courses.show', $plan->course_id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
+                                                </td>
+                                                <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
+                                                <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

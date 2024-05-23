@@ -1,4 +1,3 @@
-<!-- resources/views/study-plans/index.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -43,13 +42,13 @@
                                         </thead>
                                         <tbody class="sortable">
                                             @foreach ($plans as $plan)
-                                                <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
+                                                <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}" onclick="location.href='{{ route('courses.show', $plan->course_id) }}'" style="cursor:pointer;">
                                                     <td class="border px-4 py-2">{{ $plan->course->course_code }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->course_name }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
                                                     <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                                     <td class="border px-4 py-2">
-                                                        <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="removeSubject(this)">Remove</button>
+                                                        <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="event.stopPropagation(); removeSubject(this)">Remove</button>
                                                     </td>
                                                 </tr>
                                             @endforeach

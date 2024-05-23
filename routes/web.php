@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\MobilityProgramController;
 use App\Http\Controllers\StudyPlanController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,8 @@ Route::get('/dashboard', function () {
 // Authenticated User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Routes
-    Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
+    // Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
+    Route::get('/dashboard-utm-student', [DashboardController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
     Route::get('/dashboard-other-student', function () {
         return view('dashboard.other-student');
     })->name('dashboard-other-student');
