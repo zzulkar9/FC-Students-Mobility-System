@@ -4,15 +4,12 @@
             {{ __('Course Handbook') }}
         </h2>
     </x-slot>
-    
 
     <div class="py-12" x-data="{
         activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}',
         activeIntake: 'March/April',
         search: ''
     }">
-
-
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-4">
                 <a href="{{ route('courses.create') }}"
@@ -61,6 +58,17 @@
                             <div x-show="activeYear === '{{ $year }}'" x-cloak>
                                 @foreach ($intakes as $intake => $semesters)
                                     <div x-show="activeIntake === '{{ $intake }}'">
+                                        <h3
+                                            class="px-6 py-3 border-b border-gray-200 bg-cyan-100 text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
+                                            {{ $intake }}
+                                            <form method="POST" action="{{ route('notes.store') }}" class="inline">
+                                                @csrf
+                                                <input type="hidden" name="intake_year" value="{{ $year }}">
+                                                <input type="hidden" name="intake_semester" value="{{ $intake }}">
+                                                <textarea name="note" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter note for {{ $intake }} here...">{{ isset($notes["$year-$intake"]) && $notes["$year-$intake"]->firstWhere('year_semester', null) ? $notes["$year-$intake"]->firstWhere('year_semester', null)->note : '' }}</textarea>
+                                                <button type="submit" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Save Note</button>
+                                            </form>
+                                        </h3>
                                         @foreach ($semesters as $semester => $courses)
                                             <h3
                                                 class="px-6 py-3 border-b border-gray-200 bg-cyan-100 text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider">
@@ -139,6 +147,19 @@
                                                         </td>
                                                         <td></td> <!-- Empty cell for alignment -->
                                                     </tr>
+                                                    <!-- Note for the semester -->
+                                                    <tr class="bg-gray-100">
+                                                        <td colspan="4" class="px-6 py-4">
+                                                            <form method="POST" action="{{ route('notes.store') }}">
+                                                                @csrf
+                                                                <input type="hidden" name="intake_year" value="{{ $year }}">
+                                                                <input type="hidden" name="intake_semester" value="{{ $intake }}">
+                                                                <input type="hidden" name="year_semester" value="{{ $semester }}">
+                                                                <textarea name="note" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter note here...">{{ isset($notes["$year-$intake-$semester"]) ? $notes["$year-$intake-$semester"]->first()->note : '' }}</textarea>
+                                                                <button type="submit" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">Save Note</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         @endforeach
@@ -146,7 +167,6 @@
                                 @endforeach
                             </div>
                         @endforeach
-
                     </div>
                 </div>
             </div>

@@ -45,30 +45,30 @@ class ApplicationFormController extends Controller
     }
 
 
-    public function indexForStudent()
-    {
-        $user = auth()->user();
-        $currentSemester = $user->getCurrentSemester();
+    // public function indexForStudent()
+    // {
+    //     $user = auth()->user();
+    //     $currentSemester = $user->getCurrentSemester();
 
-        if (!$currentSemester) {
-            return view('dashboard.utm-student', ['message' => 'Unable to determine your current semester.']);
-        }
+    //     if (!$currentSemester) {
+    //         return view('dashboard.utm-student', ['message' => 'Unable to determine your current semester.']);
+    //     }
 
-        $intakeYear = '20' . substr($user->matric_number, 1, 2);
-        $intakeSemester = $user->intake_period;
+    //     $intakeYear = '20' . substr($user->matric_number, 1, 2);
+    //     $intakeSemester = $user->intake_period;
 
-        // Fetch all courses that the student is eligible for based on their intake year.
-        $allCourses = Course::where('intake_year', $intakeYear)
-            ->where('intake_semester', $intakeSemester)
-            ->orderBy('year_semester', 'asc')
-            ->get()
-            ->groupBy('year_semester');
+    //     // Fetch all courses that the student is eligible for based on their intake year.
+    //     $allCourses = Course::where('intake_year', $intakeYear)
+    //         ->where('intake_semester', $intakeSemester)
+    //         ->orderBy('year_semester', 'asc')
+    //         ->get()
+    //         ->groupBy('year_semester');
 
-        // Check if the student has submitted any application forms
-        $applicationForm = ApplicationForm::where('user_id', $user->id)->first();
+    //     // Check if the student has submitted any application forms
+    //     $applicationForm = ApplicationForm::where('user_id', $user->id)->first();
 
-        return view('dashboard.utm-student', compact('allCourses', 'applicationForm'));
-    }
+    //     return view('dashboard.utm-student', compact('allCourses', 'applicationForm'));
+    // }
 
 
     public function index()

@@ -9,6 +9,7 @@ use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\MobilityProgramController;
 use App\Http\Controllers\StudyPlanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NoteController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -88,6 +89,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
     Route::post('/courses/storeForSemester', [CourseController::class, 'storeForSemester'])->name('courses.storeForSemester');
     Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
+
+    // SEMESTER NOTE
+    Route::post('/notes', [NoteController::class, 'store'])->name('notes.store')->middleware('auth');
+    Route::put('/notes/{note}', [NoteController::class, 'update'])->name('notes.update')->middleware('auth');
+    Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy')->middleware('auth');
 
     // ADVERTISE ROUTE
     Route::get('/mobility-programs/create', [MobilityProgramController::class, 'create'])->name('mobility-programs.create');
