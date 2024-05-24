@@ -1,4 +1,4 @@
-<x-app-layout>
+{{-- <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Course Handbook') }}
@@ -174,4 +174,102 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/alpinejs" defer></script>
+</x-app-layout> --}}
+
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Course Handbook') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="flex">
+            <!-- Tabs Navigation -->
+            <div class="w-1/6 bg-gray-200 p-4 border-r border-gray-300">
+                <button class="tab-button active-tab w-full px-4 py-2 mb-2 rounded-lg hover:bg-blue-500" data-tab="view-tab-content">View</button>
+                <button class="tab-button inactive-tab w-full px-4 py-2 mb-2 rounded-lg hover:bg-blue-200" data-tab="edit-tab-content">Edit</button>
+                <a href="{{ route('courses.create') }}" class="inactive-tab w-full px-4 py-2 rounded-lg block text-center mt-2 bg-blue-500 hover:bg-blue-700 text-white">Add</a>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="w-5/6 bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-b border-gray-200">
+                <div id="view-tab-content" class="tab-content active">
+                    @include('course-handbook.course-handbook-partials.view', ['years' => $years, 'coursesByYearAndIntake' => $coursesByYearAndIntake, 'totalCreditsBySemester' => $totalCreditsBySemester, 'notes' => $notes])
+                </div>
+                <div id="edit-tab-content" class="tab-content">
+                    @include('course-handbook.course-handbook-partials.edit', ['years' => $years, 'coursesByYearAndIntake' => $coursesByYearAndIntake, 'totalCreditsBySemester' => $totalCreditsBySemester, 'notes' => $notes])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .active-tab {
+            background-color: #1D4ED8; /* Tailwind Blue-500 */
+            color: #FFFFFF; /* White */
+            border: 1px solid #1D4ED8; /* Border color to match the background */
+        }
+
+        .active-tab:hover {
+            background-color: #1D4ED8; /* Tailwind Blue-500 */
+        }
+
+        .inactive-tab {
+            background-color: #E5E7EB; /* Tailwind Gray-200 */
+            color: #1F2937; /* Tailwind Gray-800 */
+            border: 1px solid #D1D5DB; /* Tailwind Gray-300 */
+        }
+
+        .inactive-tab:hover {
+            background-color: #BFDBFE; /* Tailwind Blue-200 */
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function switchTab(tabId) {
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.classList.remove('active-tab');
+                    button.classList.add('inactive-tab');
+                });
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active-tab');
+                document.querySelector(`[data-tab="${tabId}"]`).classList.remove('inactive-tab');
+            }
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // Activate the default tab
+            switchTab('view-tab-content');
+        });
+    </script>
 </x-app-layout>
+
+
+
+
+
+
+
+
+
+
