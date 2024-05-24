@@ -144,4 +144,66 @@ class CourseController extends Controller
             'yearSemester' => $yearSemester
         ]);
     }
+
+    public function editForSemester($intakeYear, $intakeSemester, $yearSemester)
+    {
+        $courses = Course::where('intake_year', $intakeYear)
+            ->where('intake_semester', $intakeSemester)
+            ->where('year_semester', $yearSemester)
+            ->get();
+
+        $courseData = $courses->map(function ($course) {
+            return "{$course->course_code} {$course->course_name} {$course->course_credit}";
+        })->implode("\n");
+
+        return view('course-handbook.edit-for-semester', compact('intakeYear', 'intakeSemester', 'yearSemester', 'courseData'));
+    }
+
+    public function updateForSemester(Request $request)
+    {
+        $request->validate([
+            'intake_year' => 'required|string',
+            'intake_semester' => 'required|string',
+            'year_semester' => 'required|string',
+            'course_data' => 'required|string',
+        ]);
+
+        $courseData = explode("\n", $request->course_data);
+
+        // Delete existing courses for this semester
+        Course::where('intake_year', $request->intake_year)
+            ->where('intake_semester', $request->intake_semester)
+            ->where('year_semester', $request->year_semester)
+            ->delete();
+
+        // Add updated courses
+        foreach ($courseData as $courseLine) {
+            $courseDetails = preg_split('/\s+/', trim($courseLine));
+
+            if (count($courseDetails) < 3) {
+                // Skip invalid lines
+                continue;
+            }
+
+            $course_code = $courseDetails[0];
+            $course_credit = array_pop($courseDetails); // Get the last element
+            $course_name = implode(' ', array_slice($courseDetails, 1)); // Rest is course name
+
+            // Validate the course credit is a valid integer
+            if (!is_numeric($course_credit)) {
+                return back()->withErrors(['course_data' => 'Invalid course credit value: ' . $course_credit]);
+            }
+
+            Course::create([
+                'intake_year' => $request->intake_year,
+                'intake_semester' => $request->intake_semester,
+                'year_semester' => $request->year_semester,
+                'course_code' => $course_code,
+                'course_name' => $course_name,
+                'course_credit' => intval($course_credit),
+            ]);
+        }
+
+        return redirect()->route('course-handbook.index')->with('success', 'Courses updated successfully.');
+    }
 }

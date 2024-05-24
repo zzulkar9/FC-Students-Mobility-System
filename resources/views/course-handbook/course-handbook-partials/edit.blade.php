@@ -40,6 +40,10 @@
                                 <a href="{{ route('courses.createForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}" class="mr-6 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
                                     + Add
                                 </a>
+                                <a href="{{ route('courses.editForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}"
+                                    class="mr-6 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                     Edit
+                                 </a>
                             </h3>
                             <table class="min-w-full border-collapse border border-gray-300">
                                 <thead>

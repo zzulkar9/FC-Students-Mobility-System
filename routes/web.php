@@ -89,6 +89,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
     Route::post('/courses/storeForSemester', [CourseController::class, 'storeForSemester'])->name('courses.storeForSemester');
     Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
+    Route::get('/courses/editForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'editForSemester'])->name('courses.editForSemester')->middleware('auth');
+    Route::post('/courses/updateForSemester', [CourseController::class, 'updateForSemester'])->name('courses.updateForSemester')->middleware('auth');
+
 
     // SEMESTER NOTE
     Route::post('/notes', [NoteController::class, 'store'])->name('notes.store')->middleware('auth');
