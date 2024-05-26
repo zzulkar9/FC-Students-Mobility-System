@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\TargetCredit;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -205,5 +206,28 @@ class CourseController extends Controller
         }
 
         return redirect()->route('course-handbook.index')->with('success', 'Courses updated successfully.');
+    }
+
+    public function setTargetCredits(Request $request)
+    {
+        $request->validate([
+            'intake_year' => 'required|string',
+            'intake_semester' => 'required|string',
+            'year_semester' => 'required|string',
+            'target_credits' => 'required|integer',
+        ]);
+
+        TargetCredit::updateOrCreate(
+            [
+                'intake_year' => $request->intake_year,
+                'intake_semester' => $request->intake_semester,
+                'year_semester' => $request->year_semester,
+            ],
+            [
+                'target_credits' => $request->target_credits,
+            ]
+        );
+
+        return back()->with('success', 'Target credits set successfully.');
     }
 }

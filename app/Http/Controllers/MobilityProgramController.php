@@ -13,6 +13,12 @@ class MobilityProgramController extends Controller
         return view('welcome', compact('programs'));
     }
 
+    public function Programindex()
+    {
+        $programs = MobilityProgram::all();
+        return view('mobility-programs.program-index', compact('programs'));
+    }
+
     public function create()
     {
         return view('mobility-programs.create');

@@ -81,6 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
         return abort(403);
     })->name('course-handbook.index')->middleware('auth');
+    Route::get('/full-course-handbook', [CourseHandbookController::class, 'FullHandbookIndex'])->name('course-handbook.full-handbook-index')->middleware('auth');
 
     // Course Resource Routes
     Route::resource('courses', CourseController::class)->except(['index', 'show', 'edit', 'destroy'])->middleware('auth');
@@ -91,7 +92,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
     Route::get('/courses/editForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'editForSemester'])->name('courses.editForSemester')->middleware('auth');
     Route::post('/courses/updateForSemester', [CourseController::class, 'updateForSemester'])->name('courses.updateForSemester')->middleware('auth');
-
+    Route::post('/set-target-credits', [CourseController::class, 'setTargetCredits'])->name('courses.setTargetCredits')->middleware('auth');
 
     // SEMESTER NOTE
     Route::post('/notes', [NoteController::class, 'store'])->name('notes.store')->middleware('auth');
@@ -99,6 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy')->middleware('auth');
 
     // ADVERTISE ROUTE
+    Route::get('/mobility-programs', [MobilityProgramController::class, 'Programindex'])->name('mobility-programs.Programindex');
     Route::get('/mobility-programs/create', [MobilityProgramController::class, 'create'])->name('mobility-programs.create');
     Route::post('/mobility-programs', [MobilityProgramController::class, 'store'])->name('mobility-programs.store');
     Route::get('/mobility-programs/{program}/edit', [MobilityProgramController::class, 'edit'])->name('mobility-programs.edit');

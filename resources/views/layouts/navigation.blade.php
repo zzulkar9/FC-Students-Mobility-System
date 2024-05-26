@@ -26,8 +26,11 @@
                             {{ __('Course Menu') }}
                         </x-nav-link>
                     @endif
-                    <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
+                    <x-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                         {{ __('Programs') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
+                        {{ __('Full Course Handbook') }}
                     </x-nav-link>
                     @if (auth()->check() &&
                             (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
