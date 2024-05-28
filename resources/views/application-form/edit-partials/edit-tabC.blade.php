@@ -16,7 +16,9 @@
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                                 style="width: 20%;">UTM Course</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
-                                style="width: 20%;">Target University Course</th>
+                                style="width: 15%;">Target University Course</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                                style="width: 15%;">Target University Course Credit</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
                                 style="width: 45%;">Course Description at Target University</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider" style="width: 15%;">Notes</th>
@@ -40,6 +42,10 @@
                                 <td class="px-4 py-4 whitespace-nowrap">
                                     <textarea name="target_course[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm"
                                         placeholder="Enter target university course">{{ $subject->target_course }}</textarea>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                    <textarea name="target_course_credit[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm"
+                                        placeholder="Enter target university course credit">{{ $subject->target_course_credit }}</textarea>
                                 </td>
                                 <td class="px-4 py-4 whitespace-nowrap">
                                     <textarea name="target_course_description[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm"

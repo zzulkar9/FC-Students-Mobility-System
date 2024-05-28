@@ -16,6 +16,7 @@ class ApplicationFormSubject extends Model
         'utm_course_name',
         'utm_course_description',
         'target_course',
+        'target_course_credit',
         'target_course_description',
         'notes'
     ];

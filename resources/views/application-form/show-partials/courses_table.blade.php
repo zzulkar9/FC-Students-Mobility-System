@@ -5,8 +5,7 @@
                 <tr class="hover:bg-gray-100">
                     <td class="px-4 py-2 font-medium bg-gray-200">Link:</td>
                     <td class="px-4 py-2">
-                        <a href="{{ $applicationForm->link }}" target="_blank"
-                            class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
+                        <a href="{{ $applicationForm->link }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
                     </td>
                 </tr>
             </table>
@@ -20,9 +19,9 @@
             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead class="bg-gray-200 font-medium text-gray-700">
                     <tr>
-                        <th class="px-4 py-2 text-left" style="width: 10%;">UTM Course</th>
+                        <th class="px-4 py-2 text-left" style="width: 15%;">UTM Course</th>
                         <th class="px-4 py-2 text-left" style="width: 30%;">UTM Description</th>
-                        <th class="px-4 py-2 text-left" style="width: 10%;">Target Course</th>
+                        <th class="px-4 py-2 text-left" style="width: 25%;">Target Course</th>
                         <th class="px-4 py-2 text-left" style="width: 30%;">Target Course Description</th>
                         <th class="px-4 py-2 text-left" style="width: 20%;">Notes/Remarks</th>
                     </tr>
@@ -32,7 +31,10 @@
                         <tr class="hover:bg-gray-100">
                             <td class="border px-4 py-2">{{ $subject->utm_course_code }} - {{ $subject->utm_course_name }}</td>
                             <td class="border px-4 py-2">{!! nl2br(e($subject->utm_course_description)) !!}</td>
-                            <td class="border px-4 py-2">{{ $subject->target_course }}</td>
+                            <td class="border px-4 py-2">
+                                <div>{{ $subject->target_course }}</div>
+                                <div class="text-gray-500 text-sm">{{ $subject->target_course_credit }} credits</div>
+                            </td>
                             <td class="border px-4 py-2">{!! nl2br(e($subject->target_course_description)) !!}</td>
                             <td class="border px-4 py-2">
                                 @if (auth()->user()->isUtmStudent())

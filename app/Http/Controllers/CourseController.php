@@ -13,6 +13,49 @@ class CourseController extends Controller
         return view('courses.create');
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'intake_year' => 'required|string|max:255',
+    //         'intake_semester' => 'required|string|max:255',
+    //         'year_semester' => 'required|string|max:255',
+    //         'course_data' => 'required|string',
+    //         'description' => 'nullable|string' // Validate description if it's provided
+    //     ]);
+
+    //     $yearSemester = $request->year_semester;
+    //     $intakeYear = $request->intake_year;
+    //     $intakeSemester = $request->intake_semester;
+    //     $description = $request->description; // Capture description from the request
+    //     $lines = explode("\n", $request->course_data);
+
+    //     foreach ($lines as $line) {
+    //         $line = trim($line);
+    //         if (empty($line)) {
+    //             continue;
+    //         }
+
+    //         preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
+    //         $courseCode = $matches[1] ?? null;
+    //         $courseName = $matches[2] ?? null;
+    //         $courseCredit = $matches[3] ?? null;
+    //         $prerequisites = $matches[4] ?? null;
+
+    //         Course::create([
+    //             'course_code' => $courseCode,
+    //             'course_name' => $courseName,
+    //             'year_semester' => $yearSemester,
+    //             'course_credit' => $courseCredit,
+    //             'prerequisites' => $prerequisites,
+    //             'intake_year' => $intakeYear,
+    //             'intake_semester' => $intakeSemester,
+    //             'description' => $description // Save description
+    //         ]);
+    //     }
+
+    //     return redirect()->route('course-handbook.index')->with('success', 'Courses added successfully.');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -22,25 +65,26 @@ class CourseController extends Controller
             'course_data' => 'required|string',
             'description' => 'nullable|string' // Validate description if it's provided
         ]);
-
+    
         $yearSemester = $request->year_semester;
         $intakeYear = $request->intake_year;
         $intakeSemester = $request->intake_semester;
         $description = $request->description; // Capture description from the request
         $lines = explode("\n", $request->course_data);
-
+    
         foreach ($lines as $line) {
             $line = trim($line);
             if (empty($line)) {
                 continue;
             }
-
+    
             preg_match('/(\w+)\s+(.+)\s+(\d+)\s*(.*)/', $line, $matches);
             $courseCode = $matches[1] ?? null;
             $courseName = $matches[2] ?? null;
             $courseCredit = $matches[3] ?? null;
             $prerequisites = $matches[4] ?? null;
-
+    
+            // Proceed to store the new course
             Course::create([
                 'course_code' => $courseCode,
                 'course_name' => $courseName,
@@ -52,11 +96,13 @@ class CourseController extends Controller
                 'description' => $description // Save description
             ]);
         }
-
+    
         return redirect()->route('course-handbook.index')->with('success', 'Courses added successfully.');
     }
-
-
+    
+    
+    
+    
 
 
     public function edit($id)

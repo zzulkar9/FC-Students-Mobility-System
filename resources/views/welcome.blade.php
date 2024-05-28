@@ -148,7 +148,7 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-24">
                 <!-- Full Width Banner -->
                 <div class="w-full mb-8">
-                    <img src="{{ asset('images/test2.gif') }}" alt="Banner"
+                    <img src="{{ asset('images/banner-welcome.png') }}" alt="Banner"
                         class="w-full h-96 object-cover rounded-lg shadow-lg">
                 </div>
             </div>
@@ -171,7 +171,7 @@
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
                             <h3 class="text-xl font-semibold text-gray-900">Website</h3>
-                            <p class="text-gray-700">international.utm.my</p>
+                            <a href="https://international.utm.my" target="_blank" class="text-gray-700 hover:underline">international.utm.my</a>
                         </div>
                     </div>
                     <!-- Box 2 -->
@@ -180,16 +180,16 @@
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
                             <h3 class="text-xl font-semibold text-gray-900">Student Helpdesk</h3>
-                            <p class="text-gray-700">#</p>
+                            <p class="text-gray-700">+6 07-553 3333</p>
                         </div>
                     </div>
                     <!-- Box 3 -->
                     <div class="flex items-center bg-white rounded-lg shadow-md p-6">
-                        <img src="{{ asset('images/box-3.png') }}" alt="Placeholder Image 3"
+                        <img src="{{ asset('images/telegram.png') }}" alt="Placeholder Image 3"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
-                            <h3 class="text-xl font-semibold text-gray-900">Lecturer Helpdesk</h3>
-                            <p class="text-gray-700">#</p>
+                            <h3 class="text-xl font-semibold text-gray-900">Mobility Group</h3>
+                            <a href="https://t.me/UTMmobility" target="_blank"><p class="text-gray-700 hover:underline">t.me/UTMmobility</p></a>
                         </div>
                     </div>
                     <!-- Box 4 -->
@@ -198,7 +198,7 @@
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
                             <h3 class="text-xl font-semibold text-gray-900">Email</h3>
-                            <p class="text-gray-700">#</p>
+                            <a href="mailto:international@utm.my"><p class="text-gray-700 hover:underline">international@utm.my</p></a>
                         </div>
                     </div>
                 </div>

@@ -91,7 +91,25 @@
                                                 <td class="border px-4 py-2">{{ $course->course_code }}</td>
                                                 <td class="border px-4 py-2">
                                                     {{ $course->course_name }}
-                                                    <div><a href="{{ route('courses.show', $course->id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
+                                                    {{-- <div><a href="{{ route('courses.show', $course->id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div> --}}
+                                                    <div class="text-xs mt-1 space-x-1">
+                                                        <a href="{{ route('courses.show', $course->id) }}"
+                                                            class="text-blue-500 hover:text-blue-700">View</a>
+                                                        <a> | </a>
+                                                        <a href="{{ route('courses.edit', $course->id) }}"
+                                                            class="text-green-500 hover:text-green-700">Update</a>
+                                                        <a> | </a>
+                                                        <form
+                                                            action="{{ route('courses.destroy', $course->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure?');"
+                                                            class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="text-red-500 hover:text-red-700">Delete</button>
+                                                        </form>
+                                                    </div>
                                                 </td>
                                                 <td class="border px-4 py-2">{{ $course->course_credit }}</td>
                                                 <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>

@@ -8,8 +8,8 @@
         </div>
         <div class="mb-4">
             <label for="advisor_email" class="block text-sm font-medium text-gray-700">Email:</label>
-            <input type="email" id="advisor_email" name="advisor_email" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter email" value="{{ $approval->advisor_email ?? 'N/A' }}">
-        </div>
+            <input type="email" id="advisor_email" name="advisor_email" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter email" value="{{ $approval->advisor_email ?? '' }}">
+        </div>        
         <div class="mb-4">
             <label for="advisor_phone" class="block text-sm font-medium text-gray-700">Phone Number:</label>
             <input type="tel" id="advisor_phone" name="advisor_phone" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter phone number" value="{{ $approval->advisor_phone ?? 'N/A' }}">
