@@ -10,6 +10,8 @@ use App\Http\Controllers\MobilityProgramController;
 use App\Http\Controllers\StudyPlanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\CreditTransferController;
+use App\Http\Controllers\CreditCalculationController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -113,6 +115,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/study-plans/review/{user}', [StudyPlanController::class, 'review'])->name('study-plans.review');
     Route::post('/study-plans/review/{userId}/save-remarks', [StudyPlanController::class, 'saveRemarks'])->name('study-plans.save-remarks');
 
+    // REAL CALCULATE CREDIT
+    Route::get('/calculate-credits', [CreditCalculationController::class, 'calculateAndShowCredits'])->name('credits.calculateAndShow');
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');

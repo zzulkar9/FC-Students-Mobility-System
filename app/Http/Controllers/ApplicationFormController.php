@@ -211,6 +211,7 @@ class ApplicationFormController extends Controller
                 'utm_course_id' => $utmCourse->id,
                 'utm_course_code' => $utmCourse->course_code,
                 'utm_course_name' => $utmCourse->course_name,
+                'utm_course_credit' => $utmCourse->course_credit,
                 'utm_course_description' => $utmCourse->description ?? 'No description available',
                 'target_course' => $request->target_course[$index],
                 'target_course_credit' => $request->target_course_credit[$index],

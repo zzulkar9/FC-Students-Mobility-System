@@ -14,6 +14,7 @@ class ApplicationFormSubject extends Model
         'utm_course_id',
         'utm_course_code',
         'utm_course_name',
+        'utm_course_credit',
         'utm_course_description',
         'target_course',
         'target_course_credit',
@@ -25,4 +26,16 @@ class ApplicationFormSubject extends Model
     {
         return $this->belongsTo(ApplicationForm::class);
     }
+
+    // public function creditCalculation()
+    // {
+    //     return $this->hasOne(CreditCalculation::class, 'application_form_subject_id');
+    // }
+
+    public function creditCalculations()
+    {
+        return $this->hasOne(CreditCalculation::class, 'application_form_subject_id');
+    }
+
+
 }

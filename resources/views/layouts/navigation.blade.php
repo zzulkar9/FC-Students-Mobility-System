@@ -38,6 +38,9 @@
                             {{ __('Study Plans') }}
                         </x-nav-link>
                     @endif
+                    <x-nav-link :href="route('credits.calculateAndShow')" :active="request()->routeIs('credits.calculateAndShow')">
+                        {{ __('Calculate Credits') }}
+                    </x-nav-link>
                 </div>
             </div>
 

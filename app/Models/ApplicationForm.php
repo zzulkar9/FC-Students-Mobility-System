@@ -42,4 +42,17 @@ class ApplicationForm extends Model
     {
         return $this->hasOne(AdvisorFacultyApprovalDetail::class);
     }
+
+    public function calculatedCredits()
+    {
+        return $this->hasManyThrough(
+            CreditCalculation::class,
+            ApplicationFormSubject::class,
+            'application_form_id', // Foreign key on ApplicationFormSubject table...
+            'application_form_subject_id', // Foreign key on CreditCalculation table...
+            'id', // Local key on ApplicationForm table...
+            'id' // Local key on ApplicationFormSubject table...
+        );
+    }
+
 }
