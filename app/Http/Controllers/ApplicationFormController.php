@@ -272,11 +272,34 @@ class ApplicationFormController extends Controller
     }
 
 
+    // public function show($id)
+    // {
+    //     // Assuming 'applicantDetails' is the relationship defined in ApplicationForm to access Tab A details
+    //     $applicationForm = ApplicationForm::with(['user', 'subjects', 'applicantDetails'])->findOrFail($id);
+
+
+    //     // Extract details for the view
+    //     $details = $applicationForm->applicantDetails;
+    //     $educations = $applicationForm->educationDetails;
+    //     $financial = $applicationForm->financialDetails;
+    //     $approval = $applicationForm->advisorFacultyApprovalDetails;
+
+    //     // Pass the necessary details along with the ApplicationForm to the view
+    //     return view('application-form.show', compact('applicationForm', 'details', 'educations', 'financial', 'approval'));
+    // }
+
     public function show($id)
     {
-        // Assuming 'applicantDetails' is the relationship defined in ApplicationForm to access Tab A details
-        $applicationForm = ApplicationForm::with(['user', 'subjects', 'applicantDetails'])->findOrFail($id);
-
+        // Load the application form with the necessary relationships
+        $applicationForm = ApplicationForm::with([
+            'user',
+            'subjects',
+            'applicantDetails',
+            'educationDetails',
+            'financialDetails',
+            'advisorFacultyApprovalDetails',
+            'subjects.creditCalculations' // Load the credit calculations for the subjects
+        ])->findOrFail($id);
 
         // Extract details for the view
         $details = $applicationForm->applicantDetails;
@@ -287,6 +310,7 @@ class ApplicationFormController extends Controller
         // Pass the necessary details along with the ApplicationForm to the view
         return view('application-form.show', compact('applicationForm', 'details', 'educations', 'financial', 'approval'));
     }
+
 
 
 
@@ -328,7 +352,7 @@ class ApplicationFormController extends Controller
             'financialDetails',
             'advisorFacultyApprovalDetails'
         ])->findOrFail($id);
-    
+
         $request->validate([
             'utm_course_id' => 'required|array',
             'utm_course_id.*' => 'exists:courses,id',
@@ -341,7 +365,7 @@ class ApplicationFormController extends Controller
             'target_course_notes' => 'nullable|array',
             'target_course_notes.*' => 'nullable|string',
             'link' => 'nullable|url',
-    
+
             'program_type' => 'nullable|string',
             'religion' => 'nullable|string',
             'citizenship' => 'nullable|string',
@@ -353,7 +377,7 @@ class ApplicationFormController extends Controller
             'emergency_contact' => 'nullable|string',
             'parents_occupation' => 'nullable|string',
             'parents_monthly_income' => 'nullable|string',
-    
+
             'faculty' => 'nullable|string',
             'current_semester' => 'nullable|string',
             'field_of_study' => 'nullable|string',
@@ -363,13 +387,13 @@ class ApplicationFormController extends Controller
             'co_curriculum' => 'nullable|string',
             'achievements' => 'nullable|string',
             'special_skills' => 'nullable|string',
-    
+
             'finance_method' => 'nullable|string',
             'sponsorship_details' => 'nullable|string',
             'item' => 'nullable|array',
             'expenditure' => 'nullable|array',
             'total' => 'nullable|array',
-    
+
             'advisor_name' => 'nullable|string',
             'advisor_email' => 'nullable|string|email',
             'advisor_phone' => 'nullable|string',
@@ -377,11 +401,11 @@ class ApplicationFormController extends Controller
             'approval' => 'nullable|string',
             'faculty_remarks' => 'nullable|string',
         ]);
-    
+
         $applicationForm->update([
             'link' => $request->input('link'),
         ]);
-    
+
         // Save or update details for Tab A (Applicant Details)
         $applicationForm->applicantDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
@@ -399,7 +423,7 @@ class ApplicationFormController extends Controller
                 'parents_monthly_income'
             ])
         );
-    
+
         // Save or update details for Tab B (Education & Co-Curriculum)
         $applicationForm->educationDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
@@ -415,13 +439,13 @@ class ApplicationFormController extends Controller
                 'special_skills'
             ])
         );
-    
+
         // Collect current subject IDs from the form submission
         $currentSubjectIds = [];
         foreach ($request->utm_course_id as $index => $courseId) {
             $utmCourse = Course::findOrFail($courseId);
             $subject = $applicationForm->subjects->where('utm_course_id', $utmCourse->id)->first() ?? new ApplicationFormSubject();
-    
+
             $subject->application_form_id = $applicationForm->id;
             $subject->utm_course_id = $utmCourse->id;
             $subject->utm_course_code = $utmCourse->course_code;
@@ -431,22 +455,22 @@ class ApplicationFormController extends Controller
             $subject->target_course_credit = $request->target_course_credit[$index] ?? null;
             $subject->target_course_description = $request->target_course_description[$index];
             $subject->notes = $request->target_course_notes[$index] ?? $subject->notes;  // Maintain existing notes if not provided
-    
+
             $subject->save();
-    
+
             // Add to current subject IDs
             $currentSubjectIds[] = $subject->id;
         }
-    
+
         // Delete subjects that are no longer present in the form submission
         $applicationForm->subjects()->whereNotIn('id', $currentSubjectIds)->delete();
-    
+
         // Save or update details for Tab D (Financial)
         $applicationForm->financialDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
             $request->only(['finance_method', 'sponsorship_details'])
         );
-    
+
         if ($request->item && $request->expenditure && $request->total) {
             $financialDetails = [];
             foreach ($request->item as $index => $item) {
@@ -458,17 +482,17 @@ class ApplicationFormController extends Controller
             }
             $applicationForm->financialDetails()->update(['details' => json_encode($financialDetails)]);
         }
-    
+
         // Save or update details for Tab E (Advisor and Approval)
         $applicationForm->advisorFacultyApprovalDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
             $request->only(['advisor_name', 'advisor_email', 'advisor_phone', 'advisor_remarks', 'approval', 'faculty_remarks'])
         );
-    
+
         return redirect()->route('dashboard')->with('success', 'Application updated successfully!');
     }
-    
-    
+
+
 
 
 

@@ -106,6 +106,9 @@
                     <td class="border px-4 py-2">
                         <textarea name="target_course[]" rows="2" class="w-full rounded-md border-gray-300 shadow-sm"></textarea>
                     </td>
+                    <td class="px-4 py-4 whitespace-nowrap">
+                        <textarea name="target_course_credit[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter target university course credit"></textarea>
+                    </td>
                     <td class="border px-4 py-2">
                         <textarea name="target_course_description[]" rows="4" class="w-full rounded-md border-gray-300 shadow-sm"></textarea>
                     </td>

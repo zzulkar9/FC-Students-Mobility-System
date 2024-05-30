@@ -43,6 +43,11 @@
                                     data-tabs-target="#report" type="button" role="tab" aria-controls="report"
                                     aria-selected="false">Report</button>
                             </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 rounded-t-lg border-b-2" id="calculated-credits-tab"
+                                    data-tabs-target="#calculated-credits" type="button" role="tab" aria-controls="calculated-credits"
+                                    aria-selected="false">Calculated Credits</button>
+                            </li>
                         </ul>
                     </nav>
 
@@ -93,6 +98,14 @@
                             aria-labelledby="report-tab">
                             @include('application-form.show-partials.show_report', [
                                 'approvalDetails' => $applicationForm->supportApprovalDetails,
+                            ])
+                        </div>
+
+                        <!-- Calculated Credits Tab Content -->
+                        <div class="hidden p-4 rounded-lg" id="calculated-credits" role="tabpanel"
+                            aria-labelledby="calculated-credits-tab">
+                            @include('application-form.show-partials.calculated_credits', [
+                                'subjects' => $applicationForm->subjects,
                             ])
                         </div>
                     </div>

@@ -34,7 +34,7 @@
                                         $hoursTarget = $targetCredits / $coefficient * 40;
                                     @endphp
                                     <tr class="hover:bg-gray-100">
-                                        <td class="px-4 py-2">{{ $subject->utm_course_code }} - {{ $subject->utm_course_name }}</td>
+                                        <td class="px-4 py-2">{{ $subject->utm_course_code }} - {{ $subject->utm_course_name }} ({{ $utmCredits }} UTM Credits)</td>
                                         <td class="px-4 py-2">{{ $subject->target_course }}</td>
                                         <td class="px-4 py-2">{{ $targetCredits }}</td>
                                         <td class="px-4 py-2">{{ $equivalentCredits }}</td>
