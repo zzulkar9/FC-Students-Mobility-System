@@ -10,7 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <!-- Form Start -->
-                    <form method="POST" action="{{ route('application-form.update', ['applicationForm' => $applicationForm->id]) }}">
+                    <form method="POST"
+                        action="{{ route('application-form.update', ['applicationForm' => $applicationForm->id]) }}">
                         @csrf
                         @method('PUT')
 
@@ -37,7 +38,7 @@
                                     id="tab{{ $key }}" role="tabpanel">
                                     @include('application-form.edit-partials.edit-tab' . $key, [
                                         'applicationForm' => $applicationForm,
-                                        'courses' => $courses
+                                        'courses' => $courses,
                                     ])
                                 </div>
                             @endforeach
@@ -81,7 +82,10 @@
             });
 
             // Set initial active tab
-            document.querySelector('.tab-button.active-tab').click();
+            const initialTab = document.querySelector('[data-tabs-target="#tabA"]');
+            if (initialTab) {
+                initialTab.click();
+            }
         });
 
         $(document).ready(function() {
@@ -92,7 +96,8 @@
             }); // Initialize Select2 on existing selects
 
             window.addSubject = function() {
-                const tableBody = document.querySelector('.min-w-full tbody'); // Ensure this selector correctly points to your table body
+                const tableBody = document.querySelector(
+                '.min-w-full tbody'); // Ensure this selector correctly points to your table body
                 const row = document.createElement('tr');
                 row.className = 'course-field';
                 row.innerHTML = `

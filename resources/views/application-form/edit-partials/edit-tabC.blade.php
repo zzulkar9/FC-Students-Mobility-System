@@ -75,7 +75,7 @@
 </div>
 
 <!-- Scripts for adding/removing subjects -->
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         $('.utm-course-select').select2({
             width: '100%',
@@ -125,4 +125,4 @@
             row.remove();
         };
     });
-</script>
+</script> --}}

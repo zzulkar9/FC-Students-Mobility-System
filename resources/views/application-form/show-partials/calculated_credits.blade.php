@@ -1,5 +1,4 @@
-<!-- resources/views/application-form/show-partials/calculated_credits.blade.php -->
-
+<!-- Calculated Credits Tab Content -->
 <div class="overflow-x-auto">
     <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead class="bg-gray-200">
@@ -12,7 +11,7 @@
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-            @foreach ($subjects as $subject)
+            @foreach ($applicationForm->subjects as $subject)
                 @php
                     $targetCredits = $subject->target_course_credit;
                     $creditCalculation = $subject->creditCalculations;

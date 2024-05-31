@@ -8,15 +8,38 @@ use Illuminate\Http\Request;
 
 class CreditCalculationController extends Controller
 {
+
+    public function index()
+    {
+        $user = auth()->user();
+        $applicationForm = ApplicationForm::where('user_id', $user->id)->with('subjects.creditCalculations')->firstOrFail();
+        
+        return view('credits.index', compact('applicationForm'));
+    }
+    
     public function calculateAndShowCredits()
     {
         $user = auth()->user();
         $applicationForm = ApplicationForm::where('user_id', $user->id)->with('subjects')->firstOrFail();
 
+        // Recalculate credits
+        $this->recalculateCredits($applicationForm->id);
+
+        // Redirect to the calculated credits view
+        return redirect()->route('credits.index');
+    }
+
+
+    public function recalculateCredits($applicationFormId)
+    {
+        $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
+
         foreach ($applicationForm->subjects as $subject) {
+            // Ensure that UTM course credit is fetched correctly
+            $utmCourseCredit = $subject->utm_course_credit;
+
             // Calculate equivalent UTM credits (using the provided conversion coefficient)
-            $coefficient = 60 / 32.75; // 60 credits per year in Europe / 32.75 credits per year in Malaysia
-            $equivalentUtmCredits = $subject->target_course_credit / $coefficient;
+            $equivalentUtmCredits = $subject->target_course_credit / 1.832;
 
             // Store the calculated equivalent UTM credits in the new table
             CreditCalculation::updateOrCreate(
@@ -29,12 +52,5 @@ class CreditCalculationController extends Controller
                 ]
             );
         }
-
-        // Reload the application form with the calculated credits
-        $applicationForm = ApplicationForm::where('user_id', $user->id)->with('subjects.creditCalculations')->firstOrFail();
-
-        return view('credits.index', compact('applicationForm'));
     }
-
-
 }

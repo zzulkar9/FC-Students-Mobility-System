@@ -37,5 +37,10 @@ class ApplicationFormSubject extends Model
         return $this->hasOne(CreditCalculation::class, 'application_form_subject_id');
     }
 
+    public function utmCourse()
+    {
+        return $this->belongsTo(Course::class, 'utm_course_id');
+    }
+
 
 }
