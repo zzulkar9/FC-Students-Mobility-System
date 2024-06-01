@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\ApplicationForm;
@@ -8,7 +7,6 @@ use Illuminate\Http\Request;
 
 class CreditCalculationController extends Controller
 {
-
     public function index()
     {
         $user = auth()->user();
@@ -16,7 +14,7 @@ class CreditCalculationController extends Controller
         
         return view('credits.index', compact('applicationForm'));
     }
-    
+
     public function calculateAndShowCredits()
     {
         $user = auth()->user();
@@ -29,15 +27,11 @@ class CreditCalculationController extends Controller
         return redirect()->route('credits.index');
     }
 
-
     public function recalculateCredits($applicationFormId)
     {
         $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
 
         foreach ($applicationForm->subjects as $subject) {
-            // Ensure that UTM course credit is fetched correctly
-            $utmCourseCredit = $subject->utm_course_credit;
-
             // Calculate equivalent UTM credits (using the provided conversion coefficient)
             $equivalentUtmCredits = $subject->target_course_credit / 1.832;
 
@@ -53,4 +47,25 @@ class CreditCalculationController extends Controller
             );
         }
     }
+
+    public function updateCredits(Request $request, $id)
+    {
+        $applicationForm = ApplicationForm::findOrFail($id);
+    
+        foreach ($request->credit_calculations as $calculationId => $data) {
+            $calculation = CreditCalculation::findOrFail($calculationId);
+            $calculation->remarks = $data['remarks'] ?? $calculation->remarks;
+            $calculation->save();
+        }
+    
+        // Save overall approval status
+        $applicationForm->approval_status = $request->input('approval_status') == 'approved';
+        $applicationForm->save();
+    
+        return redirect()->route('dashboard')->with('success', 'Credit calculations updated successfully!');
+    }
+    
+
+    
+
 }

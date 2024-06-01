@@ -13,6 +13,8 @@ class CreditCalculation extends Model
         'application_form_id',
         'application_form_subject_id',
         'equivalent_utm_credits',
+        'remarks',
+        'approved',
     ];
 
     public function applicationForm()

@@ -116,9 +116,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/study-plans/review/{userId}/save-remarks', [StudyPlanController::class, 'saveRemarks'])->name('study-plans.save-remarks');
 
     // REAL CALCULATE CREDIT
-    // Route::get('/calculate-credits', [CreditCalculationController::class, 'calculateAndShowCredits'])->name('credits.calculateAndShow');
     Route::get('/calculate-credits', [CreditCalculationController::class, 'calculateAndShowCredits'])->name('credits.calculate');
     Route::get('/credits', [CreditCalculationController::class, 'index'])->name('credits.index');
+    Route::patch('/credits/{applicationForm}', [CreditCalculationController::class, 'updateCredits'])->name('credits.update');
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');

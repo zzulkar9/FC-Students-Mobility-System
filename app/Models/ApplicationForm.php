@@ -9,7 +9,15 @@ class ApplicationForm extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'is_draft', 'intake_period', 'submitted_at', 'link'];
+    protected $fillable = [
+        'user_id',
+        'is_draft',
+        'intake_period',
+        'submitted_at',
+        'link',
+        'remarks', // Add this field
+        'approval_status' // Add this field
+    ];
 
 
     public function subjects()

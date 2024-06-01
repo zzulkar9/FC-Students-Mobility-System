@@ -52,7 +52,7 @@ class ApplicationFormController extends Controller
 
         return min($semesterCount, 8); // Ensure it does not exceed 8 semesters
     }
-    
+
     public function index()
     {
         $user = auth()->user();
@@ -220,22 +220,20 @@ class ApplicationFormController extends Controller
     // }
 
 
+    public function coordinatorIndex(Request $request)
+    {
+        $searchTerm = $request->input('search', '');
+        $applications = ApplicationForm::with('user')
+            ->where('is_draft', true)  // Ensure drafts are not shown to coordinators
+            ->whereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+            })
+            ->latest()
+            ->paginate(10);
 
-
-    // public function coordinatorIndex(Request $request)
-    // {
-    //     $searchTerm = $request->input('search', '');
-    //     $applications = ApplicationForm::with('user')
-    //         ->where('is_draft', true)  // Ensure drafts are not shown to coordinators
-    //         ->whereHas('user', function ($query) use ($searchTerm) {
-    //             $query->where('name', 'like', '%' . $searchTerm . '%')
-    //                 ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
-    //         })
-    //         ->latest()
-    //         ->paginate(10);
-
-    //     return view('application-form.pc-index', compact('applications'));
-    // }
+        return view('application-form.pc-index', compact('applications'));
+    }
 
     public function submit(Request $request)
     {
