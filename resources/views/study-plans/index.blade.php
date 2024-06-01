@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     @if (session('success'))
@@ -23,55 +23,113 @@
 
                     <form method="POST" action="{{ route('study-plans.update') }}" id="studyPlanForm">
                         @csrf
-                        <div id="study-plan-container">
-                            @foreach ($studyPlans as $yearSemester => $plans)
-                                <div class="semester-block" data-semester="{{ $yearSemester }}">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">{{ $yearSemester }}</h3>
-                                    <button type="button"
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2"
-                                        onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button>
-                                    <table class="min-w-full mt-2 text-sm">
-                                        <thead class="bg-cyan-100">
-                                            <tr>
-                                                <th class="border px-4 py-2">Course Code</th>
-                                                <th class="border px-4 py-2">Course Name</th>
-                                                <th class="border px-4 py-2">Credits</th>
-                                                <th class="border px-4 py-2">Prerequisites</th>
-                                                <th class="border px-4 py-2">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="sortable">
-                                            @foreach ($plans as $plan)
-                                                <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}" onclick="location.href='{{ route('courses.show', $plan->course_id) }}'" style="cursor:pointer;">
-                                                    <td class="border px-4 py-2">{{ $plan->course->course_code }}</td>
-                                                    <td class="border px-4 py-2">{{ $plan->course->course_name }}</td>
-                                                    <td class="border px-4 py-2">{{ $plan->course->course_credit }}</td>
-                                                    <td class="border px-4 py-2">{{ $plan->course->prerequisites ?? 'None' }}</td>
-                                                    <td class="border px-4 py-2">
-                                                        <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="event.stopPropagation(); removeSubject(this)">Remove</button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                        <tfoot>
-                                            <tr class="bg-gray-100">
-                                                <td colspan="2" class="text-right px-4 py-2 font-medium">Total Credits:</td>
-                                                <td class="px-4 py-2 font-medium">{{ $plans->sum('course.course_credit') }}</td>
-                                                <td colspan="2"></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    <div class="mt-4">
-                                        <label for="remark_{{ $yearSemester }}" class="block text-sm font-medium text-gray-700">Remark</label>
-                                        <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="3" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
-                                    </div>
-                                </div>
-                            @endforeach
+                        <div id="study-plan-container" class="flex space-x-8">
+                            <div class="w-1/2">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Past Semesters</h3>
+                                @foreach ($studyPlans as $yearSemester => $plans)
+                                    @if ($isPastSemester($yearSemester))
+                                        <details class="semester-block mb-4" data-semester="{{ $yearSemester }}">
+                                            <summary class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
+                                                {{ $yearSemester }}
+                                            </summary>
+                                            <table class="min-w-full mt-2 text-xs">
+                                                <thead class="bg-cyan-100">
+                                                    <tr>
+                                                        <th class="border px-2 py-1">Course Code</th>
+                                                        <th class="border px-2 py-1">Course Name</th>
+                                                        <th class="border px-2 py-1">Credits</th>
+                                                        <th class="border px-2 py-1">Pre-Requisites</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="sortable">
+                                                    @foreach ($plans as $plan)
+                                                        <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_name }}
+                                                                <div class="text-xs mt-1 space-x-1">
+                                                                    <a href="{{ route('courses.show', $plan->course_id) }}"
+                                                                        class="text-blue-500 hover:text-blue-700">View</a>
+                                                                    <a> | </a>
+                                                                    <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                                                                </div>
+                                                            </td>
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="bg-gray-100">
+                                                        <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
+                                                        <td class="px-2 py-1 font-medium text-sm">{{ $plans->sum('course.course_credit') }}</td>
+                                                        <td colspan="1"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </details>
+                                    @endif
+                                @endforeach
+                            </div>
+                            <div class="w-1/2">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Upcoming Semesters</h3>
+                                @foreach ($studyPlans as $yearSemester => $plans)
+                                    @if (!$isPastSemester($yearSemester))
+                                        <details class="semester-block mb-4" data-semester="{{ $yearSemester }}">
+                                            <summary class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
+                                                {{ $yearSemester }}
+                                            </summary>
+                                            <button type="button"
+                                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2 text-xs"
+                                                onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button>
+                                            <table class="min-w-full mt-2 text-xs">
+                                                <thead class="bg-cyan-100">
+                                                    <tr>
+                                                        <th class="border px-2 py-1">Course Code</th>
+                                                        <th class="border px-2 py-1">Course Name</th>
+                                                        <th class="border px-2 py-1">Credits</th>
+                                                        <th class="border px-2 py-1">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="sortable">
+                                                    @foreach ($plans as $plan)
+                                                        <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_name }}
+                                                                <div class="text-xs mt-1 space-x-1">
+                                                                    <a href="{{ route('courses.show', $plan->course_id) }}"
+                                                                        class="text-blue-500 hover:text-blue-700">View</a>
+                                                                    <a> | </a>
+                                                                    <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                                                                </div>
+                                                            </td>
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
+                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="bg-gray-100">
+                                                        <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
+                                                        <td class="px-2 py-1 font-medium text-sm">{{ $plans->sum('course.course_credit') }}</td>
+                                                        <td colspan="1"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                            <div class="mt-4">
+                                                <label for="remark_{{ $yearSemester }}" class="block text-xs font-medium text-gray-700">Remark</label>
+                                                <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="2" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
+                                            </div>
+                                        </details>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                         <input type="hidden" name="study_plan_data" id="studyPlanData">
-                        <div class="flex items-center justify-end mt-4">
+                        <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Update Study Plan
+                                Save Study Plan
                             </button>
                         </div>
                     </form>
@@ -201,13 +259,18 @@
             newRow.setAttribute('data-course-id', courseId);
             newRow.classList.add('hover:bg-gray-50');
             newRow.innerHTML = `
-                <td class="border px-4 py-2">${selectedCourse.course_code}</td>
-                <td class="border px-4 py-2">${selectedCourse.course_name}</td>
-                <td class="border px-4 py-2">${selectedCourse.course_credit}</td>
-                <td class="border px-4 py-2">${selectedCourse.prerequisites ?? 'None'}</td>
-                <td class="border px-4 py-2">
-                    <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" onclick="removeSubject(this)">Remove</button>
+                <td class="border px-2 py-1 text-sm">${selectedCourse.course_code}</td>
+                <td class="border px-2 py-1 text-sm">
+                    ${selectedCourse.course_name}
+                    <div class="text-xs mt-1 space-x-1">
+                        <a href="{{ route('courses.show', $plan->course_id) }}"
+                            class="text-blue-500 hover:text-blue-700">View</a>
+                        <a> | </a>
+                        <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                    </div>
                 </td>
+                <td class="border px-2 py-1 text-sm">${selectedCourse.course_credit}</td>
+                <td class="border px-2 py-1 text-sm">${selectedCourse.prerequisites ?? 'None'}</td>
             `;
 
             // Append the new row to the corresponding semester block
