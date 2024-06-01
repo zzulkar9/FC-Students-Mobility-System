@@ -29,7 +29,8 @@
                                 @foreach ($studyPlans as $yearSemester => $plans)
                                     @if ($isPastSemester($yearSemester))
                                         <details class="semester-block mb-4" data-semester="{{ $yearSemester }}">
-                                            <summary class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
+                                            <summary
+                                                class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
                                                 {{ $yearSemester }}
                                             </summary>
                                             <table class="min-w-full mt-2 text-xs">
@@ -43,26 +44,35 @@
                                                 </thead>
                                                 <tbody class="sortable">
                                                     @foreach ($plans as $plan)
-                                                        <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                        <tr class="hover:bg-gray-50"
+                                                            data-course-id="{{ $plan->course_id }}">
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_code }}</td>
                                                             <td class="border px-2 py-1 text-sm">
                                                                 {{ $plan->course->course_name }}
                                                                 <div class="text-xs mt-1 space-x-1">
                                                                     <a href="{{ route('courses.show', $plan->course_id) }}"
                                                                         class="text-blue-500 hover:text-blue-700">View</a>
                                                                     <a> | </a>
-                                                                    <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                                                                    <a href="#"
+                                                                        class="text-red-500 hover:text-red-700"
+                                                                        onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
                                                                 </div>
                                                             </td>
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_credit }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->prerequisites ?? 'None' }}</td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
                                                 <tfoot>
                                                     <tr class="bg-gray-100">
-                                                        <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
-                                                        <td class="px-2 py-1 font-medium text-sm">{{ $plans->sum('course.course_credit') }}</td>
+                                                        <td colspan="2"
+                                                            class="text-right px-2 py-1 font-medium text-sm">Total
+                                                            Credits:</td>
+                                                        <td class="px-2 py-1 font-medium text-sm">
+                                                            {{ $plans->sum('course.course_credit') }}</td>
                                                         <td colspan="1"></td>
                                                     </tr>
                                                 </tfoot>
@@ -76,12 +86,14 @@
                                 @foreach ($studyPlans as $yearSemester => $plans)
                                     @if (!$isPastSemester($yearSemester))
                                         <details class="semester-block mb-4" data-semester="{{ $yearSemester }}">
-                                            <summary class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
+                                            <summary
+                                                class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
                                                 {{ $yearSemester }}
                                             </summary>
                                             <button type="button"
                                                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2 text-xs"
-                                                onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button>
+                                                onclick="openAddSubjectModal('{{ $yearSemester }}')">Add
+                                                Subject</button>
                                             <table class="min-w-full mt-2 text-xs">
                                                 <thead class="bg-cyan-100">
                                                     <tr>
@@ -93,42 +105,91 @@
                                                 </thead>
                                                 <tbody class="sortable">
                                                     @foreach ($plans as $plan)
-                                                        <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                        <tr class="hover:bg-gray-50"
+                                                            data-course-id="{{ $plan->course_id }}">
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_code }}</td>
                                                             <td class="border px-2 py-1 text-sm">
                                                                 {{ $plan->course->course_name }}
                                                                 <div class="text-xs mt-1 space-x-1">
                                                                     <a href="{{ route('courses.show', $plan->course_id) }}"
                                                                         class="text-blue-500 hover:text-blue-700">View</a>
                                                                     <a> | </a>
-                                                                    <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                                                                    <a href="#"
+                                                                        class="text-red-500 hover:text-red-700"
+                                                                        onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
                                                                 </div>
                                                             </td>
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
-                                                            <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->course_credit }}</td>
+                                                            <td class="border px-2 py-1 text-sm">
+                                                                {{ $plan->course->prerequisites ?? 'None' }}</td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
                                                 <tfoot>
                                                     <tr class="bg-gray-100">
-                                                        <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
-                                                        <td class="px-2 py-1 font-medium text-sm">{{ $plans->sum('course.course_credit') }}</td>
+                                                        <td colspan="2"
+                                                            class="text-right px-2 py-1 font-medium text-sm">Total
+                                                            Credits:</td>
+                                                        <td class="px-2 py-1 font-medium text-sm">
+                                                            {{ $plans->sum('course.course_credit') }}</td>
                                                         <td colspan="1"></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
                                             <div class="mt-4">
-                                                <label for="remark_{{ $yearSemester }}" class="block text-xs font-medium text-gray-700">Remark</label>
-                                                <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="2" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
+                                                <label for="remark_{{ $yearSemester }}"
+                                                    class="block text-xs font-medium text-gray-700">Remark</label>
+                                                <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="2"
+                                                    class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
                                             </div>
                                         </details>
                                     @endif
                                 @endforeach
+                                <!-- Orphan Subjects Section -->
+                                <div class="mt-8">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Subjects Not in Any
+                                        Semester</h3>
+                                    <table class="min-w-full mt-2 text-xs">
+                                        <thead class="bg-cyan-100">
+                                            <tr>
+                                                <th class="border px-2 py-1">Course Code</th>
+                                                <th class="border px-2 py-1">Course Name</th>
+                                                <th class="border px-2 py-1">Credits</th>
+                                                <th class="border px-2 py-1">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="sortable" data-semester="None">
+                                            @foreach ($orphanSubjects as $orphan)
+                                                <tr class="hover:bg-gray-50" data-course-id="{{ $orphan->course_id }}">
+                                                    <td class="border px-2 py-1 text-sm">
+                                                        {{ $orphan->course->course_code }}</td>
+                                                    <td class="border px-2 py-1 text-sm">
+                                                        {{ $orphan->course->course_name }}
+                                                        <div class="text-xs mt-1 space-x-1">
+                                                            <a href="{{ route('courses.show', $orphan->course_id) }}"
+                                                                class="text-blue-500 hover:text-blue-700">View</a>
+                                                            <a> | </a>
+                                                            <a href="#" class="text-red-500 hover:text-red-700"
+                                                                onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
+                                                        </div>
+                                                    </td>
+                                                    <td class="border px-2 py-1 text-sm">
+                                                        {{ $orphan->course->course_credit }}</td>
+                                                    <td class="border px-2 py-1 text-sm">
+                                                        {{ $orphan->course->prerequisites ?? 'None' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <input type="hidden" name="study_plan_data" id="studyPlanData">
                         <div class="flex items-center justify-center mt-4">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Save Study Plan
                             </button>
                         </div>
@@ -147,13 +208,17 @@
                 <option value="">Select a Course</option>
                 @foreach ($allCourses as $courses)
                     @foreach ($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}</option>
+                        <option value="{{ $course->id }}">{{ $course->course_code }} - {{ $course->course_name }}
+                        </option>
                     @endforeach
                 @endforeach
             </select>
             <div class="flex justify-end mt-4">
-                <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2" onclick="closeAddSubjectModal()">Cancel</button>
-                <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="addSubject()">Add</button>
+                <button type="button"
+                    class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2"
+                    onclick="closeAddSubjectModal()">Cancel</button>
+                <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onclick="addSubject()">Add</button>
             </div>
         </div>
     </div>
@@ -198,11 +263,16 @@
                         });
                     });
                 });
-                studyPlanDataInput.value = JSON.stringify(studyPlanData);
-            }
 
-            // Update study plan data on form submission
-            studyPlanForm.addEventListener('submit', updateStudyPlanData);
+                document.querySelectorAll('tbody[data-semester="None"] tr[data-course-id]').forEach(row => {
+                    studyPlanData.push({
+                        course_id: row.getAttribute('data-course-id'),
+                        year_semester: 'None'
+                    });
+                });
+
+                document.getElementById('studyPlanData').value = JSON.stringify(studyPlanData);
+            }
         });
 
         function openAddSubjectModal(semester) {

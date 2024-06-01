@@ -9,7 +9,7 @@ class StudyPlan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'course_id', 'year_semester', 'remark'];
+    protected $fillable = ['user_id', 'course_id', 'year_semester', 'remark', 'status'];
 
     public function user()
     {
