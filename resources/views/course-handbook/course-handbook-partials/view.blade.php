@@ -100,7 +100,33 @@
 </div> --}}
 
 
-<div x-data="{ activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', activeIntake: 'March/April', search: '' }">
+<div x-data="{ 
+    activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', 
+    activeIntake: 'March/April', 
+    search: '',
+    filteredCourses() {
+        const searchTerm = this.search.toLowerCase();
+        let filtered = {};
+        @foreach ($coursesByYearAndIntake as $year => $intakes)
+            filtered['{{ $year }}'] = {};
+            @foreach ($intakes as $intake => $semesters)
+                filtered['{{ $year }}']['{{ $intake }}'] = {};
+                @foreach ($semesters as $semester => $courses)
+                    filtered['{{ $year }}']['{{ $intake }}']['{{ $semester }}'] = {{ json_encode($courses) }}.filter(course => 
+                        course.course_code.toLowerCase().includes(searchTerm) ||
+                        course.course_name.toLowerCase().includes(searchTerm) ||
+                        course.course_credit.toString().includes(searchTerm) ||
+                        (course.prerequisites && course.prerequisites.toLowerCase().includes(searchTerm))
+                    );
+                @endforeach
+            @endforeach
+        @endforeach
+        return filtered;
+    },
+    getTotalCredits(year, intake, semester) {
+        return this.filteredCourses()[year][intake][semester].reduce((total, course) => total + parseInt(course.course_credit), 0);
+    }
+}">
     <div class="flex flex-col mb-4">
         <div class="flex space-x-1 mb-2">
             @foreach ($years as $year)
@@ -151,38 +177,27 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($courses as $course)
+                                        <template x-for="course in filteredCourses()['{{ $year }}']['{{ $intake }}']['{{ $semester }}']" :key="course.course_code">
                                             <tr class="hover:bg-gray-50">
-                                                <td class="border px-4 py-2">{{ $course->course_code }}</td>
+                                                <td class="border px-4 py-2" x-text="course.course_code"></td>
                                                 <td class="border px-4 py-2">
-                                                    {{ $course->course_name }}
-                                                    <div><a href="{{ route('courses.show', $course->id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
+                                                    <span x-text="course.course_name"></span>
+                                                    <div><a :href="`{{ route('courses.show', '') }}/${course.id}`" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div>
                                                 </td>
                                                 <td class="border px-4 py-2">
                                                     <span class="relative" x-data="{ showTooltip: false }" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
-                                                        {{ $course->course_credit }}
-                                                        @if ($totalCreditsBySemester[$year][$intake][$semester] < $targetCreditsBySemester[$year][$intake][$semester])
-                                                            <div x-show="showTooltip" class="absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2">
-                                                                Below target credit
-                                                            </div>
-                                                        @endif
-                                                    </span>
-                                                </td>
-                                                <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tr class="bg-gray-100">
-                                            <td colspan="2" class="text-right px-6 py-4 font-medium">Total Credits:</td>
-                                            <td class="px-6 py-4 font-medium {{ $totalCreditsBySemester[$year][$intake][$semester] < $targetCreditsBySemester[$year][$intake][$semester] ? 'text-red-500' : '' }}">
-                                                <span class="relative" x-data="{ showTooltip: false }" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
-                                                    {{ $totalCreditsBySemester[$year][$intake][$semester] }}
-                                                    @if ($totalCreditsBySemester[$year][$intake][$semester] < $targetCreditsBySemester[$year][$intake][$semester])
-                                                        <div x-show="showTooltip" class="absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2">
+                                                        <span x-text="course.course_credit"></span>
+                                                        <div x-show="showTooltip" class="absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2" x-show="course.course_credit < targetCreditsBySemester[year][intake][semester]">
                                                             Below target credit
                                                         </div>
-                                                    @endif
-                                                </span>
-                                            </td>
+                                                    </span>
+                                                </td>
+                                                <td class="border px-4 py-2" x-text="course.prerequisites ?? 'None'"></td>
+                                            </tr>
+                                        </template>
+                                        <tr class="bg-gray-100">
+                                            <td colspan="2" class="text-right px-6 py-4 font-medium">Total Credits:</td>
+                                            <td class="px-6 py-4 font-medium" :class="getTotalCredits('{{ $year }}', '{{ $intake }}', '{{ $semester }}') < targetCreditsBySemester['{{ $year }}']['{{ $intake }}']['{{ $semester }}'] ? 'text-red-500' : ''" x-text="getTotalCredits('{{ $year }}', '{{ $intake }}', '{{ $semester }}')"></td>
                                             <td></td>
                                         </tr>
                                         <tr class="bg-gray-100">
@@ -203,5 +218,7 @@
         @endforeach
     </div>
 </div>
+
+
 
 

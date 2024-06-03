@@ -82,49 +82,29 @@ class StudyPlanController extends Controller
         ]);
     }
 
-    public function update(Request $request)
-{
-    $user = Auth::user();
-    $data = $request->validate([
-        'study_plan_data' => 'required|string',
-    ]);
-
-    $studyPlanData = json_decode($data['study_plan_data'], true);
-
-    // Get existing remarks
-    $existingRemarks = StudyPlan::where('user_id', $user->id)->pluck('remark', 'course_id')->toArray();
-
-    // Remove existing study plan
-    StudyPlan::where('user_id', $user->id)->delete();
-
-    // Add new study plan and preserve remarks
-    foreach ($studyPlanData as $courseData) {
-        $remark = isset($existingRemarks[$courseData['course_id']]) ? $existingRemarks[$courseData['course_id']] : null;
-        $yearSemester = $courseData['year_semester'] ?? 'None';
-
-        // Ensure the status is set correctly
-        $status = $courseData['status'] ?? 'custom';
-
-        StudyPlan::create([
-            'user_id' => $user->id,
-            'course_id' => $courseData['course_id'],
-            'year_semester' => $yearSemester,
-            'remark' => $remark,
-            'status' => $status,
-        ]);
-    }
-
-    return redirect()->back()->with('success', 'Study plan updated successfully.');
-}
-
-
-
     public function review($userId)
     {
         $student = User::findOrFail($userId);
-        $studyPlans = StudyPlan::where('user_id', $student->id)->get()->groupBy('year_semester');
+        $studyPlans = StudyPlan::where('user_id', $student->id)
+            ->where('year_semester', '!=', 'None')
+            ->get()
+            ->groupBy('year_semester');
 
-        return view('study-plans.review-detail', compact('student', 'studyPlans'));
+        // Fetch orphan subjects (those not in any semester)
+        $orphanSubjects = StudyPlan::where('user_id', $student->id)
+            ->where('year_semester', 'None')
+            ->get()
+            ->map(function ($plan) {
+                $plan->course = Course::find($plan->course_id);
+                return $plan;
+            });
+
+        // Define isPastSemester closure
+        $isPastSemester = function ($yearSemester) use ($student) {
+            return $this->isPastSemester($yearSemester, $student);
+        };
+
+        return view('study-plans.review-detail', compact('student', 'studyPlans', 'orphanSubjects', 'isPastSemester'));
     }
 
     public function saveRemarks(Request $request, $userId)
@@ -143,13 +123,16 @@ class StudyPlanController extends Controller
         return redirect()->back()->with('success', 'Remarks updated successfully.');
     }
 
-    private function isPastSemester($yearSemester)
+    private function isPastSemester($yearSemester, $user = null)
     {
         if ($yearSemester === 'None') {
             return false;
         }
 
-        $user = Auth::user();
+        if (!$user) {
+            $user = Auth::user();
+        }
+
         $currentSemester = $this->getCurrentSemester($user);
 
         // Split the year and semester
@@ -185,4 +168,40 @@ class StudyPlanController extends Controller
 
         return min($semesterCount, 8); // Ensure it does not exceed 8 semesters
     }
+
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        $data = $request->validate([
+            'study_plan_data' => 'required|string',
+        ]);
+
+        $studyPlanData = json_decode($data['study_plan_data'], true);
+
+        // Get existing remarks
+        $existingRemarks = StudyPlan::where('user_id', $user->id)->pluck('remark', 'course_id')->toArray();
+
+        // Remove existing study plan
+        StudyPlan::where('user_id', $user->id)->delete();
+
+        // Add new study plan and preserve remarks
+        foreach ($studyPlanData as $courseData) {
+            $remark = isset($existingRemarks[$courseData['course_id']]) ? $existingRemarks[$courseData['course_id']] : null;
+            $yearSemester = $courseData['year_semester'] ?? 'None';
+
+            // Ensure the status is set correctly
+            $status = $courseData['status'] ?? 'custom';
+
+            StudyPlan::create([
+                'user_id' => $user->id,
+                'course_id' => $courseData['course_id'],
+                'year_semester' => $yearSemester,
+                'remark' => $remark,
+                'status' => $status,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Study plan updated successfully.');
+    }
+
 }

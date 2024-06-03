@@ -1,4 +1,27 @@
-<div x-data="{ activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', activeIntake: 'March/April', search: '' }">
+<div x-data="{ 
+    activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', 
+    activeIntake: 'March/April', 
+    search: '',
+    get filteredCourses() {
+        const searchTerm = this.search.toLowerCase();
+        let filtered = {};
+        @foreach ($coursesByYearAndIntake as $year => $intakes)
+            filtered['{{ $year }}'] = {};
+            @foreach ($intakes as $intake => $semesters)
+                filtered['{{ $year }}']['{{ $intake }}'] = {};
+                @foreach ($semesters as $semester => $courses)
+                    filtered['{{ $year }}']['{{ $intake }}']['{{ $semester }}'] = {{ json_encode($courses) }}.filter(course => 
+                        course.course_code.toLowerCase().includes(searchTerm) ||
+                        course.course_name.toLowerCase().includes(searchTerm) ||
+                        course.course_credit.toString().includes(searchTerm) ||
+                        (course.prerequisites && course.prerequisites.toLowerCase().includes(searchTerm))
+                    );
+                @endforeach
+            @endforeach
+        @endforeach
+        return filtered;
+    }
+}">
     <div class="flex flex-col mb-4">
         <div class="flex space-x-1 mb-2">
             @foreach ($years as $year)
@@ -37,17 +60,6 @@
                             </form>
                         </div>
                         @foreach ($semesters as $semester => $courses)
-                            {{-- <h3 class="px-6 py-3 border-b border-gray-200 bg-cyan-100 text-left text-xs leading-4 font-medium text-gray-900 uppercase tracking-wider mt-4">
-                                {{ $semester }}
-                                <a href="{{ route('courses.createForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}" class="mr-6 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
-                                    + Add
-                                </a>
-                                <a href="{{ route('courses.editForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}"
-                                    class="mr-6 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs">
-                                     Edit
-                                 </a>
-                            </h3> --}}
-                            
                             <details class="mt-4 group">
                                 <summary class="cursor-pointer text-gray-700 font-medium py-2 flex items-center justify-between hover:bg-gray-100">
                                     <div class="flex items-center space-x-2">
@@ -63,8 +75,6 @@
                                         </a>
                                     </span>
                                 </summary>
-                                
-                                
                                 <div class="px-6 py-4 border border-gray-300 bg-gray-100 text-gray-700">
                                     <form method="POST" action="{{ route('courses.setTargetCredits') }}">
                                         @csrf
@@ -86,35 +96,27 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($courses as $course)
+                                        <template x-for="course in filteredCourses['{{ $year }}']['{{ $intake }}']['{{ $semester }}']" :key="course.course_code">
                                             <tr class="hover:bg-gray-50">
-                                                <td class="border px-4 py-2">{{ $course->course_code }}</td>
+                                                <td class="border px-4 py-2" x-text="course.course_code"></td>
                                                 <td class="border px-4 py-2">
-                                                    {{ $course->course_name }}
-                                                    {{-- <div><a href="{{ route('courses.show', $course->id) }}" class="text-blue-500 hover:text-blue-700 text-xs">View</a></div> --}}
+                                                    <span x-text="course.course_name"></span>
                                                     <div class="text-xs mt-1 space-x-1">
-                                                        <a href="{{ route('courses.show', $course->id) }}"
-                                                            class="text-blue-500 hover:text-blue-700">View</a>
+                                                        <a :href="`{{ route('courses.show', '') }}/${course.id}`" class="text-blue-500 hover:text-blue-700">View</a>
                                                         <a> | </a>
-                                                        <a href="{{ route('courses.edit', $course->id) }}"
-                                                            class="text-green-500 hover:text-green-700">Update</a>
+                                                        <a :href="`{{ route('courses.edit', '') }}/${course.id}`" class="text-green-500 hover:text-green-700">Update</a>
                                                         <a> | </a>
-                                                        <form
-                                                            action="{{ route('courses.destroy', $course->id) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Are you sure?');"
-                                                            class="inline">
+                                                        <form :action="`{{ route('courses.destroy', '') }}/${course.id}`" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit"
-                                                                class="text-red-500 hover:text-red-700">Delete</button>
+                                                            <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
                                                         </form>
                                                     </div>
                                                 </td>
-                                                <td class="border px-4 py-2">{{ $course->course_credit }}</td>
-                                                <td class="border px-4 py-2">{{ $course->prerequisites ?? 'None' }}</td>
+                                                <td class="border px-4 py-2" x-text="course.course_credit"></td>
+                                                <td class="border px-4 py-2" x-text="course.prerequisites ?? 'None'"></td>
                                             </tr>
-                                        @endforeach
+                                        </template>
                                         <tr class="bg-gray-100">
                                             <td colspan="2" class="text-right px-6 py-4 font-medium">Total Credits:</td>
                                             <td class="px-6 py-4 font-medium {{ $totalCreditsBySemester[$year][$intake][$semester] < $targetCreditsBySemester[$year][$intake][$semester] ? 'text-red-500' : '' }}">
