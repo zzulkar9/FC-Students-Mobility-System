@@ -11,6 +11,7 @@ use App\Models\EducationDetail;
 use App\Models\FinancialDetail;
 use App\Models\AdvisorFacultyApprovalDetail;
 use App\Models\CreditCalculation;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -273,8 +274,11 @@ class ApplicationFormController extends Controller
         $financial = $applicationForm->financialDetails;
         $approval = $applicationForm->advisorFacultyApprovalDetails;
 
-        // Pass the necessary details along with the ApplicationForm to the view
-        return view('application-form.show', compact('applicationForm', 'details', 'educations', 'financial', 'approval'));
+        // Load comments
+        $comments = Comment::where('application_form_id', $id)->with('user')->get();
+
+        // Pass the necessary details along with the ApplicationForm and comments to the view
+        return view('application-form.show', compact('applicationForm', 'details', 'educations', 'financial', 'approval', 'comments'));
     }
 
     public function updateNotes(Request $request, $subjectId)
@@ -474,5 +478,20 @@ class ApplicationFormController extends Controller
         }
 
         return back()->with('success', 'All notes updated successfully!');
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+        $request->validate([
+            'comment' => 'required|string',
+        ]);
+
+        Comment::create([
+            'application_form_id' => $id,
+            'user_id' => Auth::id(),
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->route('application-form.show', $id)->with('success', 'Comment added successfully.');
     }
 }

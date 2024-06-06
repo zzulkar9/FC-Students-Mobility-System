@@ -130,6 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/application-form-subjects/{id}/update-notes', [ApplicationFormController::class, 'updateNotes'])->name('application-form.update-notes')->middleware('auth');
     Route::get('/application-form/{applicationForm}/edit', [ApplicationFormController::class, 'edit'])->name('application-form.edit')->middleware(['auth']);
     Route::put('/application-form/{applicationForm}', [ApplicationFormController::class, 'update'])->name('application-form.update')->middleware('auth');
+    Route::post('application-form/{id}/comment', [ApplicationFormController::class, 'storeComment'])->name('application-form.comment.store');
 });
 
 // Profile Routes
