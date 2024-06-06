@@ -5,14 +5,19 @@
 <div class="bg-gray-50 p-6 rounded-lg shadow-lg">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         @foreach ($programs as $program)
-            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200 transform hover:scale-105">
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200 transform hover:scale-105 cursor-pointer" onclick="openModal('{{ $program->id }}')">
                 <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}" class="w-full h-48 object-cover rounded-t-lg">
                 <div class="p-4">
                     <h3 class="text-lg font-semibold text-gray-800">{{ $program->title }}</h3>
                     <p class="text-gray-600">{{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
+                    <p class="text-gray-700 mt-2">{{ Str::limit($program->description, 100) }}</p>
                     <div class="mt-4 flex justify-between items-center">
-                        <a href="javascript:void(0);" onclick="openModal('{{ $program->id }}')" class="text-blue-500 hover:text-blue-700">Quick View</a>
-                        <a href="{{ route('mobility-programs.show', $program->id) }}" class="text-blue-500 hover:text-blue-700">Full Details &rarr;</a>
+                        <a href="{{ route('mobility-programs.show', $program->id) }}" class="text-blue-500 hover:text-blue-700" onclick="event.stopPropagation();">Full Details &rarr;</a>
+                        @if ($program->link)
+                            <a href="{{ $program->link }}" target="_blank" class="text-blue-500 hover:text-blue-700" onclick="event.stopPropagation();">
+                                Visit Website
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

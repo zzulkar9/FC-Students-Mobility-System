@@ -50,9 +50,6 @@
                                                         <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
                                                     </div>
                                                 </td>
-                                                {{-- <td class="border px-2 py-1 text-sm">
-                                                    {{ $orphan->target_university_course_id ? $orphan->targetCourse->course_credit : $orphan->course->course_credit }}
-                                                </td> --}}
                                                 <td class="border px-2 py-1 text-sm">
                                                     {{ $orphan->target_university_course_id ? $orphan->course->course_credit : $orphan->course->course_credit }}
                                                 </td>                                                
@@ -98,9 +95,6 @@
                                                                         <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
                                                                     </div>
                                                                 </td>
-                                                                {{-- <td class="border px-2 py-1 text-sm">
-                                                                    {{ $plan->target_university_course_id ? $plan->targetCourse->course_credit : $plan->course->course_credit }}
-                                                                </td> --}}
                                                                 <td class="border px-2 py-1 text-sm">
                                                                     {{ $plan->target_university_course_id ? $plan->course->course_credit : $plan->course->course_credit }}
                                                                 </td>                                                                
@@ -114,12 +108,20 @@
                                                     <tfoot>
                                                         <tr class="bg-gray-100">
                                                             <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
-                                                            <td class="px-2 py-1 font-medium text-sm">
+                                                            <td class="px-2 py-1 font-medium text-sm total-credits">
                                                                 {{ $plans->sum('course.course_credit') }}</td>
                                                             <td colspan="1"></td>
                                                         </tr>
                                                     </tfoot>
                                                 </table>
+                                                <div class="text-xs mt-1 space-x-1 total-credits-warning text-red-500 font-bold hidden">
+                                                    <span class="under-credits hidden">Warning: Not enough credits, should be 9 credits</span>
+                                                    <span class="over-credits hidden">Warning: Total credits should not exceed 18</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <label for="remark_{{ $yearSemester }}" class="block text-xs font-medium text-gray-700">Remark</label>
+                                                <textarea id="remark_{{ $yearSemester }}" name="remarks[{{ $yearSemester }}]" rows="2" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm" disabled>{{ $plans->first()->remark }}</textarea>
                                             </div>
                                         </details>
                                     @endif
@@ -158,9 +160,6 @@
                                                                         <a href="#" class="text-red-500 hover:text-red-700" onclick="event.stopPropagation(); removeSubject(this)">Remove</a>
                                                                     </div>
                                                                 </td>
-                                                                {{-- <td class="border px-2 py-1 text-sm">
-                                                                    {{ $plan->target_university_course_id ? $plan->targetCourse->course_credit : $plan->course->course_credit }}
-                                                                </td> --}}
                                                                 <td class="border px-2 py-1 text-sm">
                                                                     {{ $plan->target_university_course_id ? $plan->course->course_credit : $plan->course->course_credit }}
                                                                 </td>                                                                
@@ -173,12 +172,16 @@
                                                     <tfoot>
                                                         <tr class="bg-gray-100">
                                                             <td colspan="2" class="text-right px-2 py-1 font-medium text-sm">Total Credits:</td>
-                                                            <td class="px-2 py-1 font-medium text-sm">
+                                                            <td class="px-2 py-1 font-medium text-sm total-credits">
                                                                 {{ $plans->sum('course.course_credit') }}</td>
                                                             <td colspan="1"></td>
                                                         </tr>
                                                     </tfoot>
                                                 </table>
+                                                <div class="text-xs mt-1 space-x-1 total-credits-warning text-red-500 font-bold hidden">
+                                                    <span class="under-credits hidden">Warning: Not enough credits, should be 9 credits</span>
+                                                    <span class="over-credits hidden">Warning: Total credits should not exceed 18</span>
+                                                </div>
                                             </div>
                                             <div class="mt-4">
                                                 <label for="remark_{{ $yearSemester }}" class="block text-xs font-medium text-gray-700">Remark</label>
@@ -229,6 +232,12 @@
         .draggable:active {
             cursor: grabbing;
         }
+        .total-credits-warning {
+            display: none;
+        }
+        .total-credits-warning.active {
+            display: block;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -255,7 +264,10 @@
                 new Sortable(block, {
                     group: 'courses',
                     animation: 150,
-                    onEnd: updateStudyPlanData
+                    onEnd: () => {
+                        updateStudyPlanData();
+                        checkTotalCredits();
+                    }
                 });
             });
 
@@ -295,8 +307,36 @@
                 document.getElementById('studyPlanData').value = JSON.stringify(studyPlanData);
             }
 
+            // Function to check total credits and display warnings
+            function checkTotalCredits() {
+                document.querySelectorAll('.semester-block').forEach(block => {
+                    const totalCredits = Array.from(block.querySelectorAll('tbody tr')).reduce((total, row) => {
+                        return total + parseInt(row.querySelector('td:nth-child(3)').textContent) || 0;
+                    }, 0);
+                    
+                    const warningElement = block.querySelector('.total-credits-warning');
+                    const underCredits = warningElement.querySelector('.under-credits');
+                    const overCredits = warningElement.querySelector('.over-credits');
+
+                    if (totalCredits < 9) {
+                        warningElement.classList.add('active');
+                        underCredits.classList.remove('hidden');
+                        overCredits.classList.add('hidden');
+                    } else if (totalCredits > 18) {
+                        warningElement.classList.add('active');
+                        overCredits.classList.remove('hidden');
+                        underCredits.classList.add('hidden');
+                    } else {
+                        warningElement.classList.remove('active');
+                    }
+                });
+            }
+
             // Update study plan data on form submission
             studyPlanForm.addEventListener('submit', updateStudyPlanData);
+
+            // Call checkTotalCredits initially to ensure the UI is updated on load
+            checkTotalCredits();
         });
 
         function openAddSubjectModal(semester) {
@@ -375,6 +415,9 @@
 
             // Update the study plan data
             updateStudyPlanData();
+
+            // Check total credits and update warnings
+            checkTotalCredits();
         }
 
         function removeSubject(button) {
@@ -385,6 +428,7 @@
             orphanTable.appendChild(row);
 
             updateStudyPlanData();
+            checkTotalCredits();
         }
     </script>
 </x-app-layout>

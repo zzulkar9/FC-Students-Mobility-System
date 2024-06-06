@@ -52,30 +52,32 @@ class MobilityProgramController extends Controller
     // }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'due_date' => 'required|date',
-        'extra_info' => 'nullable|string',
-    ]);
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'due_date' => 'required|date',
+            'extra_info' => 'nullable|string',
+            'link' => 'nullable|url',
+        ]);
 
-    $imagePath = null;
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('mobility_program_images', 'public');
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('mobility_program_images', 'public');
+        }
+
+        MobilityProgram::create([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'image' => $imagePath,
+            'due_date' => $request->input('due_date'),
+            'extra_info' => $request->input('extra_info'),
+            'link' => $request->link,
+        ]);
+
+        return redirect()->route('mobility-programs.create')->with('success', 'Mobility program advertisement created successfully.');
     }
-
-    MobilityProgram::create([
-        'title' => $request->input('title'),
-        'description' => $request->input('description'),
-        'image' => $imagePath,
-        'due_date' => $request->input('due_date'),
-        'extra_info' => $request->input('extra_info'),
-    ]);
-
-    return redirect()->route('mobility-programs.create')->with('success', 'Mobility program advertisement created successfully.');
-}
 
 
     public function show($id)

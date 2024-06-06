@@ -12,7 +12,7 @@ class MobilityProgram extends Model
     protected $table = 'mobility_programs';
 
     protected $fillable = [
-        'title', 'description', 'image', 'due_date', 'extra_info'
+        'title', 'description', 'image', 'due_date', 'link', 'extra_info'
     ];
 
     protected $casts = [

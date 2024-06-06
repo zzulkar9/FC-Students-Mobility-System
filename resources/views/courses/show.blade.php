@@ -54,7 +54,9 @@
                     <!-- Buttons -->
                     <div class="flex justify-between mt-10">
                         <a href="javascript:history.back()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Go Back</a>
-                        <a href="{{ route('courses.edit', $course->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
+                        @if (!auth()->user()->isUtmStudent())
+                            <a href="{{ route('courses.edit', $course->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
+                        @endif
                     </div>
                 </div>
             </div>

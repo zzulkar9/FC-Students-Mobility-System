@@ -69,6 +69,13 @@
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="mb-4">
+                            <label for="link" class="block text-sm font-medium text-gray-700">Link</label>
+                            <input type="url" id="link" name="link" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" value="{{ old('link') }}">
+                            @error('link')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Create Advertisement

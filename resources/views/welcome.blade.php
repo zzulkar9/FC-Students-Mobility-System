@@ -1,3 +1,4 @@
+<!-- resources/views/welcome.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -19,6 +20,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .grid-item:hover {
@@ -53,10 +55,11 @@
 
         .grid-item .links {
             margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
         }
 
         .grid-item .links a {
-            margin-right: 0.5rem;
             transition: color 0.3s ease;
         }
 
@@ -217,16 +220,16 @@
             <div class="mt-8 bg-white bg-opacity-50 overflow-hidden shadow sm:rounded-lg shadow-md">
                 <div class="grid-container p-6 bg-white shadow-md">
                     @foreach ($programs as $program)
-                        <div class="grid-item shadow-lg">
+                        <div class="grid-item shadow-lg" onclick="openModal('{{ $program->id }}')">
                             <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}">
                             <div class="details p-4 text-center">
                                 <h3 class="title">{{ $program->title }}</h3>
                                 <p class="date">{{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
                                 <div class="links">
-                                    <a href="javascript:void(0);" onclick="openModal('{{ $program->id }}')"
-                                        class="text-blue-500 hover:text-blue-700">Quick View</a>
-                                    <a href="{{ route('mobility-programs.show', $program->id) }}"
-                                        class="text-blue-500 hover:text-blue-700">Full Details &rarr;</a>
+                                    <a href="{{ route('mobility-programs.show', $program->id) }}" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700">Full Details &rarr;</a>
+                                    @if ($program->link)
+                                        <a href="{{ $program->link }}" target="_blank" onclick="event.stopPropagation();" class="text-blue-500 hover:text-blue-700">Visit Website</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
