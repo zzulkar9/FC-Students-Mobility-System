@@ -99,38 +99,38 @@
                 allowClear: true
             }); // Initialize Select2 on existing selects
     
-            window.addCourseField = function() {
-                const tableBody = document.querySelector('.min-w-full tbody');
-                const row = document.createElement('tr');
-                row.className = 'course-field';
-                row.innerHTML = `
-                    <td class="px-4 py-4 whitespace-nowrap">
-                        <select name="utm_course_id[]" class="utm-course-select form-select w-full rounded-md border-gray-300 shadow-sm">
-                            @foreach ($allCourses as $dropdownCourse)
-                                <option value="{{ $dropdownCourse->id }}">{{ $dropdownCourse->course_code }} - {{ $dropdownCourse->course_name }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap">
-                        <textarea name="target_course[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter target university course"></textarea>
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap">
-                    <textarea name="target_course_credit[]" rows="1" class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter target university course credit"></textarea>
-                </td>
-                    <td class="px-4 py-4 whitespace-nowrap">
-                        <textarea name="target_course_description[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter course description at target university"></textarea>
-                    </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-center">
-                        <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-                $(row).find('.utm-course-select').select2({
-                    width: '100%',
-                    placeholder: "Select a course",
-                    allowClear: true
-                }); // Initialize Select2 on the new select
-            };
+            // window.addCourseField = function() {
+            //     const tableBody = document.querySelector('.min-w-full tbody');
+            //     const row = document.createElement('tr');
+            //     row.className = 'course-field';
+            //     row.innerHTML = `
+            //         <td class="px-4 py-4 whitespace-nowrap">
+            //             <select name="utm_course_id[]" class="utm-course-select form-select w-full rounded-md border-gray-300 shadow-sm">
+            //                 @foreach ($allCourses as $dropdownCourse)
+            //                     <option value="{{ $dropdownCourse->id }}">{{ $dropdownCourse->course_code }} - {{ $dropdownCourse->course_name }}</option>
+            //                 @endforeach
+            //             </select>
+            //         </td>
+            //         <td class="px-4 py-4 whitespace-nowrap">
+            //             <textarea name="target_course[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter target university course"></textarea>
+            //         </td>
+            //         <td class="px-4 py-4 whitespace-nowrap">
+            //         <textarea name="target_course_credit[]" rows="1" class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter target university course credit"></textarea>
+            //     </td>
+            //         <td class="px-4 py-4 whitespace-nowrap">
+            //             <textarea name="target_course_description[]" rows="4" class="form-textarea w-full rounded-md border-gray-300 shadow-sm" placeholder="Enter course description at target university"></textarea>
+            //         </td>
+            //         <td class="px-4 py-4 whitespace-nowrap text-center">
+            //             <button type="button" onclick="removeCourseField(this)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Remove</button>
+            //         </td>
+            //     `;
+            //     tableBody.appendChild(row);
+            //     $(row).find('.utm-course-select').select2({
+            //         width: '100%',
+            //         placeholder: "Select a course",
+            //         allowClear: true
+            //     }); // Initialize Select2 on the new select
+            // };
     
             window.removeCourseField = function(button) {
                 const row = button.closest('tr');

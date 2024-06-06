@@ -5,7 +5,8 @@
                 <tr class="hover:bg-gray-100">
                     <td class="px-4 py-2 font-medium bg-gray-200">Link:</td>
                     <td class="px-4 py-2">
-                        <a href="{{ $applicationForm->link }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
+                        <a href="{{ $applicationForm->link }}" target="_blank"
+                            class="text-blue-500 hover:text-blue-700">{{ $applicationForm->link }}</a>
                     </td>
                 </tr>
             </table>
@@ -16,6 +17,15 @@
         @csrf
         @method('PATCH')
         <div class="overflow-x-auto">
+            <!-- Additional Information Section -->
+            <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 flex flex-col">
+                <p><strong>Useful website to convert into ECTS credits if necessary:</strong></p>
+                <a href="https://www.germangradecalculator.com/ects-calculator/" class="text-blue-500 underline"
+                    target="_blank">ECTS Calculator</a>
+                <a href="https://www.uts.edu.au/study/international/study-abroad-and-exchange-uts/subjects-and-academic-information"
+                    class="text-blue-500 underline" target="_blank">UTS International Subjects and Academic
+                    Information</a>
+            </div>
             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead class="bg-gray-200 font-medium text-gray-700">
                     <tr>
@@ -29,7 +39,8 @@
                 <tbody>
                     @foreach ($applicationForm->subjects as $subject)
                         <tr class="hover:bg-gray-100">
-                            <td class="border px-4 py-2">{{ $subject->utm_course_code }} - {{ $subject->utm_course_name }}</td>
+                            <td class="border px-4 py-2">{{ $subject->utm_course_code }} -
+                                {{ $subject->utm_course_name }}</td>
                             <td class="border px-4 py-2">{!! nl2br(e($subject->utm_course_description)) !!}</td>
                             <td class="border px-4 py-2">
                                 <div>{{ $subject->target_course }}</div>

@@ -21,11 +21,16 @@
                             {{ __('Application Form') }}
                         </x-nav-link>
                     @endif
-                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+                    {{-- @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
                         <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.*')">
                             {{ __('Course Menu') }}
                         </x-nav-link>
-                    @endif
+                    @endif --}}
+                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+                    <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
+                        {{ __('Course Menu') }}
+                    </x-nav-link>
+                @endif
                     <x-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                         {{ __('Programs') }}
                     </x-nav-link>

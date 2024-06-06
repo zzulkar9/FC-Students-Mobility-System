@@ -176,7 +176,9 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs" defer></script>
 </x-app-layout> --}}
 
-<x-app-layout>
+{{-- NEW --}}
+
+{{-- <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Course Handbook') }}
@@ -262,14 +264,124 @@
             switchTab('view-tab-content');
         });
     </script>
+</x-app-layout> --}}
+
+
+{{-- NEWEST --}}
+
+
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Course Handbook') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Tabs Navigation -->
+            <div class="tabs mb-8 flex justify-center border-b-2 border-gray-200">
+                <button class="tab-button active" data-tab="view-tab-content">View</button>
+                <button class="tab-button" data-tab="edit-tab-content">Edit</button>
+                <button class="tab-button" onclick="location.href='{{ route('courses.create') }}'">Add</button>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-b border-gray-200">
+                <div id="view-tab-content" class="tab-content active">
+                    @include('course-handbook.course-handbook-partials.view', [
+                        'years' => $years,
+                        'coursesByYearAndIntake' => $coursesByYearAndIntake,
+                        'totalCreditsBySemester' => $totalCreditsBySemester,
+                        'notes' => $notes,
+                    ])
+                </div>
+                <div id="edit-tab-content" class="tab-content">
+                    @include('course-handbook.course-handbook-partials.edit', [
+                        'years' => $years,
+                        'coursesByYearAndIntake' => $coursesByYearAndIntake,
+                        'totalCreditsBySemester' => $totalCreditsBySemester,
+                        'notes' => $notes,
+                    ])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            /* Tailwind gray-200 */
+        }
+
+        .tab-button {
+            background-color: transparent;
+            color: #4b5563;
+            /* Tailwind gray-700 */
+            padding: 10px 20px;
+            margin: 0 10px;
+            /* Added margin to separate buttons */
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .tab-button:hover {
+            color: #2563eb;
+            /* Tailwind indigo-600 */
+            border-bottom: 2px solid #2563eb;
+            /* Tailwind indigo-600 */
+        }
+
+        .tab-button.active {
+            color: #2563eb;
+            /* Tailwind indigo-600 */
+            border-bottom: 2px solid #2563eb;
+            /* Tailwind indigo-600 */
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function switchTab(tabId) {
+                const tabs = document.querySelectorAll('.tab-content');
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            }
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    if (tabId) {
+                        switchTab(tabId);
+                    }
+                });
+            });
+
+            // Activate the default tab
+            switchTab('view-tab-content');
+        });
+    </script>
 </x-app-layout>
-
-
-
-
-
-
-
-
-
-

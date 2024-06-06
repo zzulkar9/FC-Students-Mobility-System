@@ -108,6 +108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/mobility-programs/{program}/edit', [MobilityProgramController::class, 'edit'])->name('mobility-programs.edit');
     Route::put('/mobility-programs/{program}', [MobilityProgramController::class, 'update'])->name('mobility-programs.update');
     Route::get('/mobility-programs/{program}', [MobilityProgramController::class, 'show'])->name('mobility-programs.show');
+    Route::delete('mobility-programs/{id}', [MobilityProgramController::class, 'destroy'])->name('mobility-programs.destroy');
 
     //STUDY PLANS
     Route::get('/study-plans', [StudyPlanController::class, 'index'])->name('study-plans.index');

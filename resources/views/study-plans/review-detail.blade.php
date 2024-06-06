@@ -1,4 +1,3 @@
-<!-- resources/views/study-plans/review-detail.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -28,15 +27,19 @@
                                     </thead>
                                     <tbody class="sortable" data-semester="None">
                                         @foreach ($orphanSubjects as $orphan)
-                                            <tr class="hover:bg-gray-50" data-course-id="{{ $orphan->course_id }}">
-                                                <td class="border px-2 py-1 text-sm">{{ $orphan->course->course_code }}</td>
+                                            <tr class="hover:bg-gray-50" data-course-id="{{ $orphan->course_id ?? $orphan->target_university_course_id }}" data-target-university-course-id="{{ $orphan->target_university_course_id ?? '' }}">
                                                 <td class="border px-2 py-1 text-sm">
-                                                    {{ $orphan->course->course_name }}
+                                                    {{ $orphan->target_university_course_id ? 'Mobility Course' : $orphan->course->course_code }}
+                                                </td>
+                                                <td class="border px-2 py-1 text-sm">
+                                                    {{ $orphan->target_university_course_id ? $orphan->targetCourse->course_name : $orphan->course->course_name }}
                                                     <div class="text-xs mt-1 space-x-1">
-                                                        <a href="{{ route('courses.show', $orphan->course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
+                                                        <a href="{{ route('courses.show', $orphan->course_id ?? $orphan->target_university_course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
                                                     </div>
                                                 </td>
-                                                <td class="border px-2 py-1 text-sm">{{ $orphan->course->course_credit }}</td>
+                                                <td class="border px-2 py-1 text-sm">
+                                                    {{ $orphan->target_university_course_id ? $orphan->course->course_credit : $orphan->course->course_credit }}
+                                                </td>
                                                 <td class="border px-2 py-1 text-sm">{{ $orphan->course->prerequisites ?? 'None' }}</td>
                                             </tr>
                                         @endforeach
@@ -67,15 +70,19 @@
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($plans as $plan)
-                                                            <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
-                                                                <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                            <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id ?? $plan->target_university_course_id }}" data-target-university-course-id="{{ $plan->target_university_course_id ?? '' }}">
                                                                 <td class="border px-2 py-1 text-sm">
-                                                                    {{ $plan->course->course_name }}
+                                                                    {{ $plan->target_university_course_id ? 'Mobility Course' : $plan->course->course_code }}
+                                                                </td>
+                                                                <td class="border px-2 py-1 text-sm">
+                                                                    {{ $plan->target_university_course_id ? $plan->targetCourse->course_name : $plan->course->course_name }}
                                                                     <div class="text-xs mt-1 space-x-1">
-                                                                        <a href="{{ route('courses.show', $plan->course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
+                                                                        <a href="{{ route('courses.show', $plan->course_id ?? $plan->target_university_course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
                                                                     </div>
                                                                 </td>
-                                                                <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
+                                                                <td class="border px-2 py-1 text-sm">
+                                                                    {{ $plan->target_university_course_id ? $plan->course->course_credit : $plan->course->course_credit }}
+                                                                </td>
                                                                 <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                                             </tr>
                                                         @endforeach
@@ -115,15 +122,19 @@
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($plans as $plan)
-                                                            <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id }}">
-                                                                <td class="border px-2 py-1 text-sm">{{ $plan->course->course_code }}</td>
+                                                            <tr class="hover:bg-gray-50" data-course-id="{{ $plan->course_id ?? $plan->target_university_course_id }}" data-target-university-course-id="{{ $plan->target_university_course_id ?? '' }}">
                                                                 <td class="border px-2 py-1 text-sm">
-                                                                    {{ $plan->course->course_name }}
+                                                                    {{ $plan->target_university_course_id ? 'Mobility Course' : $plan->course->course_code }}
+                                                                </td>
+                                                                <td class="border px-2 py-1 text-sm">
+                                                                    {{ $plan->target_university_course_id ? $plan->targetCourse->course_name : $plan->course->course_name }}
                                                                     <div class="text-xs mt-1 space-x-1">
-                                                                        <a href="{{ route('courses.show', $plan->course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
+                                                                        <a href="{{ route('courses.show', $plan->course_id ?? $plan->target_university_course_id) }}" class="text-blue-500 hover:text-blue-700">View</a>
                                                                     </div>
                                                                 </td>
-                                                                <td class="border px-2 py-1 text-sm">{{ $plan->course->course_credit }}</td>
+                                                                <td class="border px-2 py-1 text-sm">
+                                                                    {{ $plan->target_university_course_id ? $plan->course->course_credit : $plan->course->course_credit }}
+                                                                </td>
                                                                 <td class="border px-2 py-1 text-sm">{{ $plan->course->prerequisites ?? 'None' }}</td>
                                                             </tr>
                                                         @endforeach

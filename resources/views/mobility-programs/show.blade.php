@@ -30,7 +30,6 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center">
-                        {{-- <a href="{{ route('welcome') }}" class="text-blue-500 hover:text-blue-700">&larr; Go Back</a> --}}
                         <a href="javascript:history.back()" class="text-blue-500 hover:text-blue-700">&larr; Go Back</a>
                         @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
                             <a href="{{ route('mobility-programs.edit', $program->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</a>
@@ -38,10 +37,9 @@
                     </div>
                     <h2 class="text-3xl font-semibold mb-2">{{ $program->title }}</h2>
                     <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}" class="w-full rounded-md mb-4 mt-4">
-                    <h2 class="text-3xl font-semibold mb-2">{{ $program->title }}</h2>
-                    <p class="text-gray-700 dark:text-gray-300 mb-4">{{ $program->description }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">{!! nl2br(e($program->description)) !!}</p>
                     <p class="text-gray-700 dark:text-gray-300 mb-2"><strong>Due Date:</strong> {{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
-                    <p class="text-gray-700 dark:text-gray-300">{{ $program->extra_info }}</p>
+                    <p class="text-gray-700 dark:text-gray-300">{!! nl2br(e($program->extra_info)) !!}</p>
                 </div>
             </div>
         </div>

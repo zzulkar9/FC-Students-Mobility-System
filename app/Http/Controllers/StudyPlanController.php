@@ -5,11 +5,86 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\StudyPlan;
+use App\Models\TargetUniversityCourse; // Make sure to import this model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudyPlanController extends Controller
 {
+    // public function index()
+    // {
+    //     $user = Auth::user();
+
+    //     // Check if user is TDA or Program Coordinator
+    //     if ($user->isTDA() || $user->isProgramCoordinator()) {
+    //         // Fetch all users with study plans
+    //         $students = User::whereHas('studyPlans')->get();
+
+    //         return view('study-plans.review', compact('students'));
+    //     }
+
+    //     // Fetch the user's study plans
+    //     $studyPlans = StudyPlan::where('user_id', $user->id)
+    //         ->where('year_semester', '!=', 'None')
+    //         ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
+    //         ->get()
+    //         ->groupBy('year_semester');
+
+    //     // Fetch all guided courses
+    //     $allCourses = Course::where('intake_year', '20' . substr($user->matric_number, 1, 2))
+    //         ->where('intake_semester', $user->intake_period)
+    //         ->orderBy('year_semester', 'asc')
+    //         ->get()
+    //         ->groupBy('year_semester');
+
+    //     // Fetch orphan subjects (those not in any semester)
+    //     $orphanSubjects = StudyPlan::where('user_id', $user->id)
+    //         ->where('year_semester', 'None')
+    //         ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
+    //         ->get();
+
+    //     // Check if there are any study plans
+    //     if ($studyPlans->isEmpty()) {
+    //         // If no study plans, fall back to guided courses
+    //         $studyPlans = collect();
+
+    //         // Create a fallback study plan structure
+    //         foreach ($allCourses as $yearSemester => $courses) {
+    //             foreach ($courses as $course) {
+    //                 if (!isset($studyPlans[$yearSemester])) {
+    //                     $studyPlans[$yearSemester] = collect();
+    //                 }
+    //                 $studyPlans[$yearSemester][] = new StudyPlan([
+    //                     'course_id' => $course->id,
+    //                     'year_semester' => $yearSemester,
+    //                     'course' => $course,
+    //                     'status' => 'guided',
+    //                 ]);
+    //             }
+    //         }
+    //     } else {
+    //         // If study plans exist, we need to fetch courses for the study plans
+    //         foreach ($studyPlans as $yearSemester => $plans) {
+    //             foreach ($plans as $plan) {
+    //                 if ($plan->course_id) {
+    //                     $plan->course = Course::find($plan->course_id);
+    //                 } else {
+    //                     $plan->course = TargetUniversityCourse::find($plan->target_university_course_id);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return view('study-plans.index', [
+    //         'studyPlans' => $studyPlans,
+    //         'allCourses' => $allCourses,
+    //         'orphanSubjects' => $orphanSubjects,
+    //         'isPastSemester' => function ($yearSemester) use ($user) {
+    //             return $this->isPastSemester($yearSemester);
+    //         },
+    //     ]);
+    // }
+
     public function index()
     {
         $user = Auth::user();
@@ -25,6 +100,7 @@ class StudyPlanController extends Controller
         // Fetch the user's study plans
         $studyPlans = StudyPlan::where('user_id', $user->id)
             ->where('year_semester', '!=', 'None')
+            ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
             ->get()
             ->groupBy('year_semester');
 
@@ -38,11 +114,8 @@ class StudyPlanController extends Controller
         // Fetch orphan subjects (those not in any semester)
         $orphanSubjects = StudyPlan::where('user_id', $user->id)
             ->where('year_semester', 'None')
-            ->get()
-            ->map(function ($plan) {
-                $plan->course = Course::find($plan->course_id);
-                return $plan;
-            });
+            ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
+            ->get();
 
         // Check if there are any study plans
         if ($studyPlans->isEmpty()) {
@@ -64,10 +137,15 @@ class StudyPlanController extends Controller
                 }
             }
         } else {
-            // If study plans exist, we need to fetch courses for the study plans
+            // Ensure both course and targetCourse are loaded and set correctly
             foreach ($studyPlans as $yearSemester => $plans) {
                 foreach ($plans as $plan) {
-                    $plan->course = Course::find($plan->course_id);
+                    if ($plan->course_id) {
+                        $plan->course = Course::find($plan->course_id);
+                    }
+                    if ($plan->target_university_course_id) {
+                        $plan->targetCourse = TargetUniversityCourse::find($plan->target_university_course_id);
+                    }
                 }
             }
         }
@@ -82,30 +160,108 @@ class StudyPlanController extends Controller
         ]);
     }
 
+
+
+    // public function review($userId)
+    // {
+    //     $student = User::findOrFail($userId);
+    //     $studyPlans = StudyPlan::where('user_id', $student->id)
+    //         ->where('year_semester', '!=', 'None')
+    //         ->get()
+    //         ->groupBy('year_semester');
+
+    //     // Fetch orphan subjects (those not in any semester)
+    //     $orphanSubjects = StudyPlan::where('user_id', $student->id)
+    //         ->where('year_semester', 'None')
+    //         ->get()
+    //         ->map(function ($plan) {
+    //             if ($plan->course_id) {
+    //                 $plan->course = Course::find($plan->course_id);
+    //             } elseif ($plan->target_university_course_id) {
+    //                 $plan->course = TargetUniversityCourse::find($plan->target_university_course_id);
+    //             }
+    //             return $plan;
+    //         });
+
+    //     // Define isPastSemester closure
+    //     $isPastSemester = function ($yearSemester) use ($student) {
+    //         return $this->isPastSemester($yearSemester, $student);
+    //     };
+
+    //     return view('study-plans.review-detail', compact('student', 'studyPlans', 'orphanSubjects', 'isPastSemester'));
+    // }
+
     public function review($userId)
     {
         $student = User::findOrFail($userId);
+
+        // Fetch the user's study plans
         $studyPlans = StudyPlan::where('user_id', $student->id)
             ->where('year_semester', '!=', 'None')
+            ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
+            ->get()
+            ->groupBy('year_semester');
+
+        // Fetch all guided courses
+        $allCourses = Course::where('intake_year', '20' . substr($student->matric_number, 1, 2))
+            ->where('intake_semester', $student->intake_period)
+            ->orderBy('year_semester', 'asc')
             ->get()
             ->groupBy('year_semester');
 
         // Fetch orphan subjects (those not in any semester)
         $orphanSubjects = StudyPlan::where('user_id', $student->id)
             ->where('year_semester', 'None')
-            ->get()
-            ->map(function ($plan) {
-                $plan->course = Course::find($plan->course_id);
-                return $plan;
-            });
+            ->with(['course', 'targetCourse']) // Ensure both relationships are loaded
+            ->get();
+
+        // Check if there are any study plans
+        if ($studyPlans->isEmpty()) {
+            // If no study plans, fall back to guided courses
+            $studyPlans = collect();
+
+            // Create a fallback study plan structure
+            foreach ($allCourses as $yearSemester => $courses) {
+                foreach ($courses as $course) {
+                    if (!isset($studyPlans[$yearSemester])) {
+                        $studyPlans[$yearSemester] = collect();
+                    }
+                    $studyPlans[$yearSemester][] = new StudyPlan([
+                        'course_id' => $course->id,
+                        'year_semester' => $yearSemester,
+                        'course' => $course,
+                        'status' => 'guided',
+                    ]);
+                }
+            }
+        } else {
+            // Ensure both course and targetCourse are loaded and set correctly
+            foreach ($studyPlans as $yearSemester => $plans) {
+                foreach ($plans as $plan) {
+                    if ($plan->course_id) {
+                        $plan->course = Course::find($plan->course_id);
+                    }
+                    if ($plan->target_university_course_id) {
+                        $plan->targetCourse = TargetUniversityCourse::find($plan->target_university_course_id);
+                    }
+                }
+            }
+        }
 
         // Define isPastSemester closure
         $isPastSemester = function ($yearSemester) use ($student) {
             return $this->isPastSemester($yearSemester, $student);
         };
 
-        return view('study-plans.review-detail', compact('student', 'studyPlans', 'orphanSubjects', 'isPastSemester'));
+        return view('study-plans.review-detail', [
+            'student' => $student,
+            'studyPlans' => $studyPlans,
+            'allCourses' => $allCourses,
+            'orphanSubjects' => $orphanSubjects,
+            'isPastSemester' => $isPastSemester,
+        ]);
     }
+
 
     public function saveRemarks(Request $request, $userId)
     {
@@ -178,6 +334,8 @@ class StudyPlanController extends Controller
 
         $studyPlanData = json_decode($data['study_plan_data'], true);
 
+        // dd($studyPlanData);
+
         // Get existing remarks
         $existingRemarks = StudyPlan::where('user_id', $user->id)->pluck('remark', 'course_id')->toArray();
 
@@ -192,9 +350,11 @@ class StudyPlanController extends Controller
             // Ensure the status is set correctly
             $status = $courseData['status'] ?? 'custom';
 
+            // Ensure the correct course_id and target_university_course_id are set
             StudyPlan::create([
                 'user_id' => $user->id,
-                'course_id' => $courseData['course_id'],
+                'course_id' => $courseData['course_id'] ?? null,
+                'target_university_course_id' => $courseData['target_university_course_id'] ?? null,
                 'year_semester' => $yearSemester,
                 'remark' => $remark,
                 'status' => $status,
@@ -203,5 +363,7 @@ class StudyPlanController extends Controller
 
         return redirect()->back()->with('success', 'Study plan updated successfully.');
     }
+
+
 
 }

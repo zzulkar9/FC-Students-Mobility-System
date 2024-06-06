@@ -64,7 +64,7 @@
                     <div class="flex justify-between items-center">
                         <h4 class="text-lg leading-6 font-medium text-gray-900">Application Form:</h4>
                     </div>
-                    <table class="min-w-full w-full mt-2 text-sm">
+                    <table class="min-w-full w-full mt-2 text-sm mb-4">
                         <thead class="bg-cyan-100">
                             <tr>
                                 <th class="px-4 py-2">Form ID</th>
@@ -88,6 +88,63 @@
                             @endif
                         </tbody>
                     </table>
+                    @if (isset($incompleteTabs))
+                        @if (in_array('A', $incompleteTabs))
+                            <div class="rounded-md bg-yellow-50 p-4 mb-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            Tab A is not fully filled yet. Please complete it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if (in_array('B', $incompleteTabs))
+                            <div class="rounded-md bg-yellow-50 p-4 mb-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            Tab B is not fully filled yet. Please complete it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if (in_array('C', $incompleteTabs))
+                            <div class="rounded-md bg-yellow-50 p-4 mb-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            Tab C is not fully filled yet. Please complete it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if (in_array('D', $incompleteTabs))
+                            <div class="rounded-md bg-yellow-50 p-4 mb-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            Tab D is not fully filled yet. Please complete it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if (in_array('E', $incompleteTabs))
+                            <div class="rounded-md bg-yellow-50 p-4 mb-4">
+                                <div class="flex">
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-800">
+                                            Tab E is not fully filled yet. Please complete it.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
                 </div>
 
                 <div id="coursesBySemester" class="tab-content hidden">

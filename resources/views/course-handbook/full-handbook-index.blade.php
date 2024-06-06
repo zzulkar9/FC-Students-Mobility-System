@@ -147,8 +147,6 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs" defer></script>
 </x-app-layout> --}}
 
-
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
@@ -160,8 +158,9 @@
         activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}',
         activeIntake: 'March/April',
         search: '',
+        notes: {{ json_encode($notes) }},
         get filteredCourses() {
-            return this.search === '' ? {{ json_encode($coursesByYearAndIntake) }} : this.filterCourses()
+            return this.search === '' ? {{ json_encode($coursesByYearAndIntake) }} : this.filterCourses();
         },
         filterCourses() {
             const searchTerm = this.search.toLowerCase();
@@ -171,7 +170,7 @@
                 @foreach ($intakes as $intake => $semesters)
                     filtered['{{ $year }}']['{{ $intake }}'] = {};
                     @foreach ($semesters as $semester => $courses)
-                        filtered['{{ $year }}']['{{ $intake }}']['{{ $semester }}'] = {{ json_encode($courses) }}.filter(course => 
+                        filtered['{{ $year }}']['{{ $intake }}']['{{ $semester }}'] = {{ json_encode($courses) }}.filter(course =>
                             course.course_code.toLowerCase().includes(searchTerm) ||
                             course.course_name.toLowerCase().includes(searchTerm) ||
                             course.course_credit.toString().includes(searchTerm) ||
@@ -216,7 +215,6 @@
                 </div>
             </div>
 
-
             <!-- Search Input -->
             <div class="bg-white shadow-sm sm:rounded-lg mb-6 p-4">
                 <input x-model="search" type="text" placeholder="Search courses..."
@@ -232,7 +230,7 @@
                                 <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-2" x-text="intake"></h3>
                                 <div class="bg-gray-100 p-4 rounded-lg mb-6">
                                     <strong x-text="'Note for ' + intake + ':'"></strong>
-                                    <p x-text="notes[year + '-' + intake] && notes[year + '-' + intake].find(note => !note.year_semester) ? notes[year + '-' + intake].find(note => !note.year_semester).note : 'No notes available.'"></p>
+                                    <p x-text="notes[year + '-' + intake]?.find(note => !note.year_semester)?.note ?? 'No notes available.'"></p>
                                 </div>
                                 <template x-for="(courses, semester) in semesters" :key="semester">
                                     <div>
@@ -271,7 +269,7 @@
                                                     <td colspan="4" class="px-6 py-4 border border-gray-300">
                                                         <div class="p-4 bg-gray-100 rounded-lg">
                                                             <strong x-text="'Note for ' + semester + ':'"></strong>
-                                                            <p x-text="notes[year + '-' + intake + '-' + semester] ? notes[year + '-' + intake + '-' + semester][0].note : 'No notes available.'"></p>
+                                                            <p x-text="notes[year + '-' + intake + '-' + semester]?.[0]?.note ?? 'No notes available.'"></p>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -289,5 +287,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/alpinejs" defer></script>
 </x-app-layout>
+
 
 

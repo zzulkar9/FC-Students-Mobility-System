@@ -243,10 +243,10 @@
                 <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}"
                     class="w-full rounded-md mb-4">
                 <h2 class="text-2xl font-semibold mb-2">{{ $program->title }}</h2>
-                <p class="text-gray-700 mb-2">{{ $program->description }}</p>
+                <p class="text-gray-700 mb-2">{!! nl2br(e($program->description)) !!}</p>
                 <p class="text-gray-700 mb-2"><strong>Due Date:</strong>
                     {{ \Carbon\Carbon::parse($program->due_date)->format('F j, Y') }}</p>
-                <p class="text-gray-700">{{ $program->extra_info }}</p>
+                <p class="text-gray-700">{!! nl2br(e($program->extra_info)) !!}</p>
             </div>
         </div>
     @endforeach
