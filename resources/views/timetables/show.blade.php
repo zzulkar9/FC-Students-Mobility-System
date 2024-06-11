@@ -1,12 +1,5 @@
 <!-- resources/views/timetables/show.blade.php -->
 
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Timetable Data') }}
-        </h2>
-    </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -28,7 +21,7 @@
                         <input type="text" id="search" name="search" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search by course code or name">
                     </div>
 
-                    <form method="POST" action="{{ route('timetables.saveTimetable') }}">
+                    {{-- <form method="POST" action="{{ route('timetables.saveTimetable') }}"> --}}
                         @csrf
                         <div class="overflow-auto h-64">
                             <table class="min-w-full bg-white">
@@ -61,12 +54,12 @@
                                 {{ $timetables->links() }}
                             </div>
                         </div>
-                        <div class="flex items-center justify-center mt-4">
+                        {{-- <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Save Timetable
                             </button>
-                        </div>
-                    </form>
+                        </div> --}}
+                    {{-- </form> --}}
                 </div>
             </div>
         </div>
@@ -129,7 +122,7 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

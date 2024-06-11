@@ -123,11 +123,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/credits', [CreditCalculationController::class, 'index'])->name('credits.index');
     Route::patch('/credits/{applicationForm}', [CreditCalculationController::class, 'updateCredits'])->name('credits.update');
 
-    // INBOUND TIMETBALE
+
+    // INBOUND TIMETABLE
     Route::get('/timetables/upload', [TimetableController::class, 'create'])->name('timetables.create');
     Route::post('/timetables', [TimetableController::class, 'store'])->name('timetables.store');
+    Route::get('/timetables', [TimetableController::class, 'index'])->name('timetables.index');
     Route::get('/timetables/show', [TimetableController::class, 'show'])->name('timetables.show');
-    Route::post('/timetables/save', [TimetableController::class, 'saveTimetable'])->name('timetables.saveTimetable');
+    Route::post('/timetables/save', [TimetableController::class, 'saveAll'])->name('timetables.saveAll');
+
+    // INBOUND STUDENT LIST
+    Route::get('/inbound-students', [TimetableController::class, 'listInboundStudents'])->name('inbound-students.list');
+    Route::get('/inbound-students/{id}', [TimetableController::class, 'reviewInboundStudent'])->name('inbound-students.review');
+    Route::delete('/inbound-students/{id}', [TimetableController::class, 'deleteInboundStudent'])->name('inbound-students.delete');
+
+
+
+
+  
+
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');

@@ -1,20 +1,24 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InboundStudentTimetable extends Model
+class InboundStudent extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'inbound_student_id',
-        'course_code',
-        'course_name',
-        'section',
-        'time_slot',
-        'year',
+        'name',
+        'country',
         'semester',
     ];
+
+    public function timetables()
+    {
+        return $this->hasMany(InboundStudentTimetable::class, 'inbound_student_id');
+    }
+
 }
+

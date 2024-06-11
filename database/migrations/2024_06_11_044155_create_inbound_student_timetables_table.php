@@ -6,16 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateInboundStudentTimetablesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('inbound_student_timetables', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
+            $table->foreignId('inbound_student_id')->constrained()->onDelete('cascade');
             $table->string('course_code');
             $table->string('course_name');
             $table->string('section');
@@ -23,19 +18,12 @@ class CreateInboundStudentTimetablesTable extends Migration
             $table->year('year');
             $table->enum('semester', ['March/April', 'September']);
             $table->timestamps();
-
-            // Remove the foreign key constraint for simplicity
-            // $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('inbound_student_timetables');
     }
 }
+

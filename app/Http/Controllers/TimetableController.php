@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Timetable;
+use App\Models\InboundStudent;
 use App\Models\InboundStudentTimetable;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TimetablesImport;
@@ -48,29 +49,81 @@ class TimetableController extends Controller
         return view('timetables.show', compact('timetables', 'allTimetables'));
     }
 
-
-    public function saveTimetable(Request $request)
+    public function index()
     {
-        $data = $request->validate([
-            'student_id' => 'required|integer',
-            'course_code' => 'required|string',
-            'course_name' => 'required|string',
-            'section' => 'required|string',
-            'time_slot' => 'required|string',
-            'year' => 'required|integer',
+        $timetables = Timetable::paginate(3); // Adjust the number per page as needed
+        $allTimetables = Timetable::all(); // For the manual add form
+        return view('timetables.index', compact('timetables', 'allTimetables'));
+    }
+
+
+    public function saveAll(Request $request)
+    {
+        // Log request data
+        \Log::info('Request Data:', $request->all());
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'semester' => 'required|string|in:March/April,September',
+            'selected_timetables' => 'required|array',
         ]);
 
-        $existing = InboundStudentTimetable::where('student_id', $data['student_id'])
-            ->where('time_slot', $data['time_slot'])
-            ->first();
+        // Decode selected_timetables JSON strings
+        $timetables = array_map(function ($timetable) {
+            return json_decode($timetable, true);
+        }, $validatedData['selected_timetables']);
 
-        if ($existing) {
-            return redirect()->back()->with('error', 'Timeslot clash detected.');
+        // Log decoded timetables
+        \Log::info('Decoded Timetables:', $timetables);
+
+        $student = InboundStudent::create([
+            'name' => $validatedData['name'],
+            'country' => $validatedData['country'],
+            'semester' => $validatedData['semester'],
+        ]);
+
+        \Log::info('Inbound Student Created:', $student->toArray());
+
+        foreach ($timetables as $timetable) {
+            InboundStudentTimetable::create([
+                'inbound_student_id' => $student->id,
+                'course_code' => $timetable['course_code'],
+                'course_name' => $timetable['course_name'],
+                'section' => $timetable['section'],
+                'time_slot' => $timetable['time_slot'],
+                'year' => $timetable['year'],
+                'semester' => $timetable['semester'],
+            ]);
         }
 
-        InboundStudentTimetable::create($data);
+        \Log::info('Inbound Student Timetables Created');
 
-        return redirect()->back()->with('success', 'Timetable saved successfully.');
+        return redirect()->back()->with('success', 'Inbound student info and timetable saved successfully.');
     }
+
+    public function listInboundStudents()
+    {
+        $students = InboundStudent::paginate(10); // Adjust the pagination as needed
+        return view('timetables.student-list', compact('students'));
+    }
+
+    public function reviewInboundStudent($id)
+    {
+        $student = InboundStudent::findOrFail($id);
+        $timetables = InboundStudentTimetable::where('inbound_student_id', $id)->get();
+        return view('timetables.review', compact('student', 'timetables'));
+    }
+
+    public function deleteInboundStudent($id)
+    {
+        $student = InboundStudent::findOrFail($id);
+        $student->timetables()->delete(); // Assuming you have a relationship method named timetables in InboundStudent model
+        $student->delete();
+
+        return redirect()->back()->with('success', 'Inbound student deleted successfully.');
+    }
+
+
+
 }
