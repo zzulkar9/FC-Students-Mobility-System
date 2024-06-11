@@ -10,7 +10,6 @@
 namespace PHPUnit\Metadata\Api;
 
 use function array_key_exists;
-use function array_merge;
 use function assert;
 use function explode;
 use function is_array;
@@ -35,7 +34,6 @@ use PHPUnit\Metadata\TestWith;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
-use Traversable;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -110,7 +108,6 @@ final readonly class DataProvider
             try {
                 $class  = new ReflectionClass($_dataProvider->className());
                 $method = $class->getMethod($_dataProvider->methodName());
-                $object = null;
 
                 if (!$method->isPublic()) {
                     throw new InvalidDataProviderException(
@@ -142,7 +139,9 @@ final readonly class DataProvider
                     );
                 }
 
-                $data = $method->invoke($object);
+                $className  = $_dataProvider->className();
+                $methodName = $_dataProvider->methodName();
+                $data       = $className::$methodName();
             } catch (Throwable $e) {
                 Event\Facade::emitter()->dataProviderMethodFinished(
                     $testMethod,
@@ -156,33 +155,24 @@ final readonly class DataProvider
                 );
             }
 
-            if ($data instanceof Traversable) {
-                $origData = $data;
-                $data     = [];
+            foreach ($data as $key => $value) {
+                if (is_int($key)) {
+                    $result[] = $value;
+                } elseif (array_key_exists($key, $result)) {
+                    Event\Facade::emitter()->dataProviderMethodFinished(
+                        $testMethod,
+                        ...$methodsCalled,
+                    );
 
-                foreach ($origData as $key => $value) {
-                    if (is_int($key)) {
-                        $data[] = $value;
-                    } elseif (array_key_exists($key, $data)) {
-                        Event\Facade::emitter()->dataProviderMethodFinished(
-                            $testMethod,
-                            ...$methodsCalled,
-                        );
-
-                        throw new InvalidDataProviderException(
-                            sprintf(
-                                'The key "%s" has already been defined by a previous data provider',
-                                $key,
-                            ),
-                        );
-                    } else {
-                        $data[$key] = $value;
-                    }
+                    throw new InvalidDataProviderException(
+                        sprintf(
+                            'The key "%s" has already been defined by a previous data provider',
+                            $key,
+                        ),
+                    );
+                } else {
+                    $result[$key] = $value;
                 }
-            }
-
-            if (is_array($data)) {
-                $result = array_merge($result, $data);
             }
         }
 
@@ -251,7 +241,7 @@ final readonly class DataProvider
         foreach (explode("\n", $annotationContent) as $candidateRow) {
             $candidateRow = trim($candidateRow);
 
-            if ($candidateRow[0] !== '[') {
+            if ($candidateRow === '' || $candidateRow[0] !== '[') {
                 break;
             }
 

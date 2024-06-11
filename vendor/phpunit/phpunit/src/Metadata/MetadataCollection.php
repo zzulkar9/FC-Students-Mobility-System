@@ -190,12 +190,32 @@ final readonly class MetadataCollection implements Countable, IteratorAggregate
         );
     }
 
+    public function isCoversTrait(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isCoversTrait(),
+            ),
+        );
+    }
+
     public function isCoversFunction(): self
     {
         return new self(
             ...array_filter(
                 $this->metadata,
                 static fn (Metadata $metadata): bool => $metadata->isCoversFunction(),
+            ),
+        );
+    }
+
+    public function isCoversMethod(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isCoversMethod(),
             ),
         );
     }
@@ -266,6 +286,16 @@ final readonly class MetadataCollection implements Countable, IteratorAggregate
             ...array_filter(
                 $this->metadata,
                 static fn (Metadata $metadata): bool => $metadata->isDependsOnMethod(),
+            ),
+        );
+    }
+
+    public function isDisableReturnValueGenerationForTestDoubles(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isDisableReturnValueGenerationForTestDoubles(),
             ),
         );
     }
@@ -513,12 +543,32 @@ final readonly class MetadataCollection implements Countable, IteratorAggregate
         );
     }
 
+    public function isUsesTrait(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isUsesTrait(),
+            ),
+        );
+    }
+
     public function isUsesFunction(): self
     {
         return new self(
             ...array_filter(
                 $this->metadata,
                 static fn (Metadata $metadata): bool => $metadata->isUsesFunction(),
+            ),
+        );
+    }
+
+    public function isUsesMethod(): self
+    {
+        return new self(
+            ...array_filter(
+                $this->metadata,
+                static fn (Metadata $metadata): bool => $metadata->isUsesMethod(),
             ),
         );
     }

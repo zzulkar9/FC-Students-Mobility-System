@@ -73,7 +73,7 @@ if (!function_exists('PHPUnit\Framework\assertArrayIsEqualToArrayOnlyConsidering
     /**
      * Asserts that two arrays are equal while only considering a list of keys.
      *
-     * @psalm-param list<array-key> $keysToBeConsidered
+     * @psalm-param non-empty-list<array-key> $keysToBeConsidered
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -92,7 +92,7 @@ if (!function_exists('PHPUnit\Framework\assertArrayIsEqualToArrayIgnoringListOfK
     /**
      * Asserts that two arrays are equal while ignoring a list of keys.
      *
-     * @psalm-param list<array-key> $keysToBeIgnored
+     * @psalm-param non-empty-list<array-key> $keysToBeIgnored
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -111,7 +111,7 @@ if (!function_exists('PHPUnit\Framework\assertArrayIsIdenticalToArrayOnlyConside
     /**
      * Asserts that two arrays are identical while only considering a list of keys.
      *
-     * @psalm-param list<array-key> $keysToBeConsidered
+     * @psalm-param non-empty-list<array-key> $keysToBeConsidered
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -130,7 +130,7 @@ if (!function_exists('PHPUnit\Framework\assertArrayIsIdenticalToArrayIgnoringLis
     /**
      * Asserts that two arrays are equal while ignoring a list of keys.
      *
-     * @psalm-param list<array-key> $keysToBeIgnored
+     * @psalm-param non-empty-list<array-key> $keysToBeIgnored
      *
      * @throws Exception
      * @throws ExpectationFailedException
@@ -481,6 +481,20 @@ if (!function_exists('PHPUnit\Framework\assertObjectEquals')) {
     function assertObjectEquals(object $expected, object $actual, string $method = 'equals', string $message = ''): void
     {
         Assert::assertObjectEquals(...func_get_args());
+    }
+}
+
+if (!function_exists('PHPUnit\Framework\assertObjectNotEquals')) {
+    /**
+     * @throws ExpectationFailedException
+     *
+     * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+     *
+     * @see Assert::assertObjectNotEquals
+     */
+    function assertObjectNotEquals(object $expected, object $actual, string $method = 'equals', string $message = ''): void
+    {
+        Assert::assertObjectNotEquals(...func_get_args());
     }
 }
 
@@ -2384,13 +2398,6 @@ if (!function_exists('PHPUnit\Framework\isTrue')) {
     }
 }
 
-if (!function_exists('PHPUnit\Framework\callback')) {
-    function callback(callable $callback): Callback
-    {
-        return Assert::callback(...func_get_args());
-    }
-}
-
 if (!function_exists('PHPUnit\Framework\isFalse')) {
     function isFalse(): IsFalse
     {
@@ -2640,6 +2647,20 @@ if (!function_exists('PHPUnit\Framework\objectEquals')) {
     function objectEquals(object $object, string $method = 'equals'): ObjectEquals
     {
         return Assert::objectEquals(...func_get_args());
+    }
+}
+
+if (!function_exists('PHPUnit\Framework\callback')) {
+    /**
+     * @psalm-template CallbackInput of mixed
+     *
+     * @psalm-param callable(CallbackInput $callback): bool $callback
+     *
+     * @psalm-return Callback<CallbackInput>
+     */
+    function callback(callable $callback): Callback
+    {
+        return Assert::callback($callback);
     }
 }
 

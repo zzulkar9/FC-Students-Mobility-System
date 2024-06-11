@@ -209,6 +209,13 @@ class Builder implements BuilderContract
     public $beforeQueryCallbacks = [];
 
     /**
+     * The callbacks that should be invoked after retrieving data from the database.
+     *
+     * @var array
+     */
+    protected $afterQueryCallbacks = [];
+
+    /**
      * All of the available clause operators.
      *
      * @var string[]
@@ -247,8 +254,8 @@ class Builder implements BuilderContract
      * @return void
      */
     public function __construct(ConnectionInterface $connection,
-                                Grammar $grammar = null,
-                                Processor $processor = null)
+                                ?Grammar $grammar = null,
+                                ?Processor $processor = null)
     {
         $this->connection = $connection;
         $this->grammar = $grammar ?: $connection->getQueryGrammar();
@@ -1215,7 +1222,7 @@ class Builder implements BuilderContract
         $values = Arr::flatten($values);
 
         foreach ($values as &$value) {
-            $value = (int) $value;
+            $value = (int) ($value instanceof BackedEnum ? $value->value : $value);
         }
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean');
@@ -1712,7 +1719,7 @@ class Builder implements BuilderContract
      *
      * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
      * @param  string  $operator
-     * @param  \Closure||\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $callback
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder  $callback
      * @param  string  $boolean
      * @return $this
      */
@@ -1912,6 +1919,65 @@ class Builder implements BuilderContract
     public function orWhereJsonDoesntContain($column, $value)
     {
         return $this->whereJsonDoesntContain($column, $value, 'or');
+    }
+
+    /**
+     * Add a "where JSON overlaps" clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function whereJsonOverlaps($column, $value, $boolean = 'and', $not = false)
+    {
+        $type = 'JsonOverlaps';
+
+        $this->wheres[] = compact('type', 'column', 'value', 'boolean', 'not');
+
+        if (! $value instanceof ExpressionContract) {
+            $this->addBinding($this->grammar->prepareBindingForJsonContains($value));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add an "or where JSON overlaps" clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhereJsonOverlaps($column, $value)
+    {
+        return $this->whereJsonOverlaps($column, $value, 'or');
+    }
+
+    /**
+     * Add a "where JSON not overlap" clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereJsonDoesntOverlap($column, $value, $boolean = 'and')
+    {
+        return $this->whereJsonOverlaps($column, $value, $boolean, true);
+    }
+
+    /**
+     * Add an "or where JSON not overlap" clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhereJsonDoesntOverlap($column, $value)
+    {
+        return $this->whereJsonDoesntOverlap($column, $value, 'or');
     }
 
     /**
@@ -2771,6 +2837,34 @@ class Builder implements BuilderContract
     }
 
     /**
+     * Register a closure to be invoked after the query is executed.
+     *
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function afterQuery(Closure $callback)
+    {
+        $this->afterQueryCallbacks[] = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Invoke the "after query" modification callbacks.
+     *
+     * @param  mixed  $result
+     * @return mixed
+     */
+    public function applyAfterQueryCallbacks($result)
+    {
+        foreach ($this->afterQueryCallbacks as $afterQueryCallback) {
+            $result = $afterQueryCallback($result) ?: $result;
+        }
+
+        return $result;
+    }
+
+    /**
      * Get the SQL representation of the query.
      *
      * @return string
@@ -2814,7 +2908,7 @@ class Builder implements BuilderContract
      * @param  \Closure|null  $callback
      * @return mixed|static
      */
-    public function findOr($id, $columns = ['*'], Closure $callback = null)
+    public function findOr($id, $columns = ['*'], ?Closure $callback = null)
     {
         if ($columns instanceof Closure) {
             $callback = $columns;
@@ -2884,9 +2978,9 @@ class Builder implements BuilderContract
             return $this->processor->processSelect($this, $this->runSelect());
         }));
 
-        return isset($this->groupLimit)
-            ? $this->withoutGroupLimitKeys($items)
-            : $items;
+        return $this->applyAfterQueryCallbacks(
+            isset($this->groupLimit) ? $this->withoutGroupLimitKeys($items) : $items
+        );
     }
 
     /**
@@ -3114,11 +3208,13 @@ class Builder implements BuilderContract
             $this->columns = ['*'];
         }
 
-        return new LazyCollection(function () {
+        return (new LazyCollection(function () {
             yield from $this->connection->cursor(
                 $this->toSql(), $this->getBindings(), ! $this->useWritePdo
             );
-        });
+        }))->map(function ($item) {
+            return $this->applyAfterQueryCallbacks(collect([$item]))->first();
+        })->reject(fn ($item) => is_null($item));
     }
 
     /**
@@ -3167,9 +3263,11 @@ class Builder implements BuilderContract
 
         $key = $this->stripTableForPluck($key);
 
-        return is_array($queryResult[0])
+        return $this->applyAfterQueryCallbacks(
+            is_array($queryResult[0])
                     ? $this->pluckFromArrayColumn($queryResult, $column, $key)
-                    : $this->pluckFromObjectColumn($queryResult, $column, $key);
+                    : $this->pluckFromObjectColumn($queryResult, $column, $key)
+        );
     }
 
     /**
@@ -3651,12 +3749,18 @@ class Builder implements BuilderContract
      * Insert or update a record matching the attributes, and fill it with values.
      *
      * @param  array  $attributes
-     * @param  array  $values
+     * @param  array|callable  $values
      * @return bool
      */
-    public function updateOrInsert(array $attributes, array $values = [])
+    public function updateOrInsert(array $attributes, array|callable $values = [])
     {
-        if (! $this->where($attributes)->exists()) {
+        $exists = $this->where($attributes)->exists();
+
+        if ($values instanceof Closure) {
+            $values = $values($exists);
+        }
+
+        if (! $exists) {
             return $this->insert(array_merge($attributes, $values));
         }
 
@@ -3877,6 +3981,18 @@ class Builder implements BuilderContract
     public function raw($value)
     {
         return $this->connection->raw($value);
+    }
+
+    /**
+     * Get the query builder instances that are used in the union of the query.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getUnionBuilders()
+    {
+        return isset($this->unions)
+            ? collect($this->unions)->pluck('query')
+            : collect();
     }
 
     /**

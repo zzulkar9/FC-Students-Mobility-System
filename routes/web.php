@@ -12,6 +12,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\CreditTransferController;
 use App\Http\Controllers\CreditCalculationController;
+use App\Http\Controllers\TimetableController;
+use App\Http\Controllers\InboundStudentController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -120,6 +122,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/calculate-credits', [CreditCalculationController::class, 'calculateAndShowCredits'])->name('credits.calculate');
     Route::get('/credits', [CreditCalculationController::class, 'index'])->name('credits.index');
     Route::patch('/credits/{applicationForm}', [CreditCalculationController::class, 'updateCredits'])->name('credits.update');
+
+    // INBOUND TIMETBALE
+    Route::get('/timetables/upload', [TimetableController::class, 'create'])->name('timetables.create');
+    Route::post('/timetables', [TimetableController::class, 'store'])->name('timetables.store');
+    Route::get('/timetables/show', [TimetableController::class, 'show'])->name('timetables.show');
+    Route::post('/timetables/save', [TimetableController::class, 'saveTimetable'])->name('timetables.saveTimetable');
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');

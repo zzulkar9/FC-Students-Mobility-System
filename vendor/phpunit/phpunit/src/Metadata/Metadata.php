@@ -75,6 +75,23 @@ abstract readonly class Metadata
     }
 
     /**
+     * @psalm-param trait-string $traitName
+     */
+    public static function coversTrait(string $traitName): CoversTrait
+    {
+        return new CoversTrait(self::CLASS_LEVEL, $traitName);
+    }
+
+    /**
+     * @psalm-param class-string $className
+     * @psalm-param non-empty-string $methodName
+     */
+    public static function coversMethod(string $className, string $methodName): CoversMethod
+    {
+        return new CoversMethod(self::CLASS_LEVEL, $className, $methodName);
+    }
+
+    /**
      * @psalm-param non-empty-string $functionName
      */
     public static function coversFunction(string $functionName): CoversFunction
@@ -140,6 +157,11 @@ abstract readonly class Metadata
     public static function dependsOnMethod(string $className, string $methodName, bool $deepClone, bool $shallowClone): DependsOnMethod
     {
         return new DependsOnMethod(self::METHOD_LEVEL, $className, $methodName, $deepClone, $shallowClone);
+    }
+
+    public static function disableReturnValueGenerationForTestDoubles(): DisableReturnValueGenerationForTestDoubles
+    {
+        return new DisableReturnValueGenerationForTestDoubles(self::CLASS_LEVEL);
     }
 
     public static function doesNotPerformAssertionsOnClass(): DoesNotPerformAssertions
@@ -421,11 +443,28 @@ abstract readonly class Metadata
     }
 
     /**
+     * @psalm-param trait-string $traitName
+     */
+    public static function UsesTrait(string $traitName): UsesTrait
+    {
+        return new UsesTrait(self::CLASS_LEVEL, $traitName);
+    }
+
+    /**
      * @psalm-param non-empty-string $functionName
      */
     public static function usesFunction(string $functionName): UsesFunction
     {
         return new UsesFunction(self::CLASS_LEVEL, $functionName);
+    }
+
+    /**
+     * @psalm-param class-string $className
+     * @psalm-param non-empty-string $methodName
+     */
+    public static function usesMethod(string $className, string $methodName): UsesMethod
+    {
+        return new UsesMethod(self::CLASS_LEVEL, $className, $methodName);
     }
 
     /**
@@ -548,9 +587,25 @@ abstract readonly class Metadata
     }
 
     /**
+     * @psalm-assert-if-true CoversTrait $this
+     */
+    public function isCoversTrait(): bool
+    {
+        return false;
+    }
+
+    /**
      * @psalm-assert-if-true CoversFunction $this
      */
     public function isCoversFunction(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @psalm-assert-if-true CoversMethod $this
+     */
+    public function isCoversMethod(): bool
     {
         return false;
     }
@@ -583,6 +638,14 @@ abstract readonly class Metadata
      * @psalm-assert-if-true DependsOnMethod $this
      */
     public function isDependsOnMethod(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @psalm-assert-if-true DisableReturnValueGenerationForTestDoubles $this
+     */
+    public function isDisableReturnValueGenerationForTestDoubles(): bool
     {
         return false;
     }
@@ -798,9 +861,25 @@ abstract readonly class Metadata
     }
 
     /**
+     * @psalm-assert-if-true UsesTrait $this
+     */
+    public function isUsesTrait(): bool
+    {
+        return false;
+    }
+
+    /**
      * @psalm-assert-if-true UsesFunction $this
      */
     public function isUsesFunction(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @psalm-assert-if-true UsesMethod $this
+     */
+    public function isUsesMethod(): bool
     {
         return false;
     }
