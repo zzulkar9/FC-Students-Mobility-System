@@ -23,7 +23,7 @@
 
                     <div class="mb-4">
                         <a href="{{ route('timetables.index') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Add New
+                            Add New Student
                         </a>
                     </div>
 
@@ -43,13 +43,16 @@
                                     <td class="border px-4 py-2">{{ $student->country }}</td>
                                     <td class="border px-4 py-2">{{ $student->semester }}</td>
                                     <td class="border px-4 py-2">
-                                        <a href="{{ route('inbound-students.review', $student->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        <a href="{{ route('inbound-students.edit', $student->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                             Review
                                         </a>
-                                        <form action="{{ route('inbound-students.delete', $student->id) }}" method="POST" style="display:inline;">
+                                        <a href="{{ route('inbound-students.export', $student->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            Download
+                                        </a>
+                                        <form action="{{ route('inbound-students.delete', $student->id) }}" method="POST" class="inline-block">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Are you sure?')">
+                                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="return confirm('Are you sure you want to delete this student?');">
                                                 Delete
                                             </button>
                                         </form>

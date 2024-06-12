@@ -8,6 +8,7 @@ use App\Models\InboundStudent;
 use App\Models\InboundStudentTimetable;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\TimetablesImport;
+use App\Exports\InboundStudentExport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,49 +59,60 @@ class TimetableController extends Controller
 
 
     public function saveAll(Request $request)
-    {
-        // Log request data
-        \Log::info('Request Data:', $request->all());
+{
+    // Log request data
+    \Log::info('Request Data:', $request->all());
 
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'semester' => 'required|string|in:March/April,September',
-            'selected_timetables' => 'required|array',
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'country' => 'required|string|max:255',
+        'semester' => 'required|string|in:March/April,September',
+        'selected_timetables' => 'required|array',
+    ]);
+
+    // Decode selected_timetables JSON strings
+    $timetables = array_map(function ($timetable) {
+        return json_decode($timetable, true);
+    }, $validatedData['selected_timetables']);
+
+    // Log decoded timetables
+    \Log::info('Decoded Timetables:', $timetables);
+
+    if ($request->student_id) {
+        $student = InboundStudent::find($request->student_id);
+        $student->update([
+            'name' => $validatedData['name'],
+            'country' => $validatedData['country'],
+            'semester' => $validatedData['semester'],
         ]);
-
-        // Decode selected_timetables JSON strings
-        $timetables = array_map(function ($timetable) {
-            return json_decode($timetable, true);
-        }, $validatedData['selected_timetables']);
-
-        // Log decoded timetables
-        \Log::info('Decoded Timetables:', $timetables);
-
+        InboundStudentTimetable::where('inbound_student_id', $student->id)->delete();
+    } else {
         $student = InboundStudent::create([
             'name' => $validatedData['name'],
             'country' => $validatedData['country'],
             'semester' => $validatedData['semester'],
         ]);
-
-        \Log::info('Inbound Student Created:', $student->toArray());
-
-        foreach ($timetables as $timetable) {
-            InboundStudentTimetable::create([
-                'inbound_student_id' => $student->id,
-                'course_code' => $timetable['course_code'],
-                'course_name' => $timetable['course_name'],
-                'section' => $timetable['section'],
-                'time_slot' => $timetable['time_slot'],
-                'year' => $timetable['year'],
-                'semester' => $timetable['semester'],
-            ]);
-        }
-
-        \Log::info('Inbound Student Timetables Created');
-
-        return redirect()->back()->with('success', 'Inbound student info and timetable saved successfully.');
     }
+
+    \Log::info('Inbound Student Created:', $student->toArray());
+
+    foreach ($timetables as $timetable) {
+        InboundStudentTimetable::create([
+            'inbound_student_id' => $student->id,
+            'course_code' => $timetable['course_code'],
+            'course_name' => $timetable['course_name'],
+            'section' => $timetable['section'],
+            'time_slot' => $timetable['time_slot'],
+            'year' => $timetable['year'],
+            'semester' => $timetable['semester'],
+        ]);
+    }
+
+    \Log::info('Inbound Student Timetables Created');
+
+    return redirect()->back()->with('success', 'Inbound student info and timetable saved successfully.');
+}
+
 
     public function listInboundStudents()
     {
@@ -115,6 +127,52 @@ class TimetableController extends Controller
         return view('timetables.review', compact('student', 'timetables'));
     }
 
+    public function edit($id)
+    {
+        $student = InboundStudent::with('timetables')->findOrFail($id);
+        $timetables = Timetable::paginate(3); // Adjust the number per page as needed
+        $allTimetables = Timetable::all(); // For the manual add form
+        return view('timetables.index', compact('student', 'timetables', 'allTimetables'));
+    }
+
+    public function update(Request $request, InboundStudent $student)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'semester' => 'required|string|in:March/April,September',
+            'selected_timetables' => 'required|array',
+        ]);
+    
+        $student->update([
+            'name' => $validatedData['name'],
+            'country' => $validatedData['country'],
+            'semester' => $validatedData['semester'],
+        ]);
+    
+        // Remove existing timetables for the student
+        InboundStudentTimetable::where('inbound_student_id', $student->id)->delete();
+    
+        // Decode selected_timetables JSON strings
+        $timetables = array_map(function ($timetable) {
+            return json_decode($timetable, true);
+        }, $validatedData['selected_timetables']);
+    
+        foreach ($timetables as $timetable) {
+            InboundStudentTimetable::create([
+                'inbound_student_id' => $student->id,
+                'course_code' => $timetable['course_code'],
+                'course_name' => $timetable['course_name'],
+                'section' => $timetable['section'],
+                'time_slot' => $timetable['time_slot'],
+                'year' => $timetable['year'],
+                'semester' => $timetable['semester'],
+            ]);
+        }
+    
+        return redirect()->route('inbound-students.list')->with('success', 'Inbound student info and timetable updated successfully.');
+    }
+    
     public function deleteInboundStudent($id)
     {
         $student = InboundStudent::findOrFail($id);
@@ -122,6 +180,11 @@ class TimetableController extends Controller
         $student->delete();
 
         return redirect()->back()->with('success', 'Inbound student deleted successfully.');
+    }
+
+    public function exportStudent(InboundStudent $student)
+    {
+        return Excel::download(new InboundStudentExport($student), $student->name . '_timetable.xlsx');
     }
 
 

@@ -21,16 +21,11 @@
                             {{ __('Application Form') }}
                         </x-nav-link>
                     @endif
-                    {{-- @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
-                        <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.*')">
-                            {{ __('Course Menu') }}
-                        </x-nav-link>
-                    @endif --}}
                     @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
                     <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
                         {{ __('Course Menu') }}
                     </x-nav-link>
-                @endif
+                    @endif
                     <x-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                         {{ __('Programs') }}
                     </x-nav-link>
@@ -46,6 +41,11 @@
                     <x-nav-link :href="route('credits.calculate')" :active="request()->routeIs('credits.calculate')">
                         {{ __('Calculate Credits') }}
                     </x-nav-link>
+                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+                    <x-nav-link :href="route('inbound-students.list')" :active="request()->routeIs('inbound-students.list')">
+                        {{ __('Inbound') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 

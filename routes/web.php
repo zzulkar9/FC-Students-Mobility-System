@@ -133,13 +133,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // INBOUND STUDENT LIST
     Route::get('/inbound-students', [TimetableController::class, 'listInboundStudents'])->name('inbound-students.list');
-    Route::get('/inbound-students/{id}', [TimetableController::class, 'reviewInboundStudent'])->name('inbound-students.review');
+    Route::get('/timetables/{student}/edit', [TimetableController::class, 'edit'])->name('inbound-students.edit');
+    Route::put('/timetables/{student}', [TimetableController::class, 'update'])->name('inbound-students.update');
     Route::delete('/inbound-students/{id}', [TimetableController::class, 'deleteInboundStudent'])->name('inbound-students.delete');
-
-
-
-
-  
+    Route::get('/inbound-students/{student}/export', [TimetableController::class, 'exportStudent'])->name('inbound-students.export');
 
 
     // Application Form Routes

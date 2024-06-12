@@ -21,24 +21,27 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('timetables.saveAll') }}">
+                    <form method="POST" action="{{ isset($student) ? route('inbound-students.update', $student->id) : route('timetables.saveAll') }}">
                         @csrf
+                        @if(isset($student))
+                            @method('PUT')
+                        @endif
                         <div class="tabs">
                             <button type="button" onclick="showTab('inbound-info')">Inbound Student Info</button>
                             <button type="button" onclick="showTab('timetable')">Timetable</button>
                         </div>
                         
                         <div id="inbound-info" class="tab-content">
-                            @include('timetables.inbound-info')
+                            @include('timetables.inbound-info', ['student' => $student ?? null])
                         </div>
                         
                         <div id="timetable" class="tab-content" style="display: none;">
-                            @include('timetables.show')
+                            @include('timetables.show', ['student' => $student ?? null, 'selectedTimetables' => $student->timetables ?? collect()])
                         </div>
 
                         <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Save All
+                                {{ isset($student) ? 'Update' : 'Save All' }}
                             </button>
                         </div>
                     </form>
