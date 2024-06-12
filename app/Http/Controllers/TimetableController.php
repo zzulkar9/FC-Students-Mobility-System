@@ -52,7 +52,7 @@ class TimetableController extends Controller
 
     public function index()
     {
-        $timetables = Timetable::paginate(3); // Adjust the number per page as needed
+        $timetables = Timetable::paginate(); // Adjust the number per page as needed
         $allTimetables = Timetable::all(); // For the manual add form
         return view('timetables.index', compact('timetables', 'allTimetables'));
     }
@@ -116,8 +116,10 @@ class TimetableController extends Controller
 
     public function listInboundStudents()
     {
-        $students = InboundStudent::paginate(10); // Adjust the pagination as needed
-        return view('timetables.student-list', compact('students'));
+        $timetables = Timetable::paginate(); // Adjust the number per page as needed
+        $allTimetables = Timetable::all(); // For the manual add form
+        $students = InboundStudent::paginate(); // Adjust the pagination as needed
+        return view('timetables.list-index', compact('students', 'timetables', 'allTimetables'));
     }
 
     public function reviewInboundStudent($id)
@@ -134,6 +136,8 @@ class TimetableController extends Controller
         $allTimetables = Timetable::all(); // For the manual add form
         return view('timetables.index', compact('student', 'timetables', 'allTimetables'));
     }
+    
+    
 
     public function update(Request $request, InboundStudent $student)
     {
@@ -185,6 +189,38 @@ class TimetableController extends Controller
     public function exportStudent(InboundStudent $student)
     {
         return Excel::download(new InboundStudentExport($student), $student->name . '_timetable.xlsx');
+    }
+
+    public function editCourse($id)
+    {
+        $timetable = Timetable::findOrFail($id);
+        return view('timetables.edit', compact('timetable'));
+    }
+
+    public function updateCourse(Request $request, $id)
+    {
+        $request->validate([
+            'course_code' => 'required|string|max:255',
+            'course_name' => 'required|string|max:255',
+            'program_type' => 'required|string|max:255',
+            'year' => 'required|integer',
+            'semester' => 'required|string|max:255',
+            'section' => 'required|string|max:255',
+            'time_slot' => 'required|string|max:255',
+        ]);
+
+        $timetable = Timetable::findOrFail($id);
+        $timetable->update($request->all());
+
+        return redirect()->route('inbound-students.list')->with('success', 'Timetable updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $timetable = Timetable::findOrFail($id);
+        $timetable->delete();
+
+        return redirect()->route('inbound-students.list')->with('success', 'Timetable deleted successfully.');
     }
 
 

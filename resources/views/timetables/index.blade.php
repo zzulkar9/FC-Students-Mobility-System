@@ -26,19 +26,38 @@
                         @if(isset($student))
                             @method('PUT')
                         @endif
-                        <div class="tabs">
-                            <button type="button" onclick="showTab('inbound-info')">Inbound Student Info</button>
-                            <button type="button" onclick="showTab('timetable')">Timetable</button>
-                        </div>
-                        
-                        <div id="inbound-info" class="tab-content">
-                            @include('timetables.inbound-info', ['student' => $student ?? null])
-                        </div>
-                        
-                        <div id="timetable" class="tab-content" style="display: none;">
-                            @include('timetables.show', ['student' => $student ?? null, 'selectedTimetables' => $student->timetables ?? collect()])
+
+                        <!-- Tab Navigation -->
+                        <nav class="border-b border-gray-200 mb-6">
+                            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                                <li class="mr-2" role="presentation">
+                                    <button
+                                        class="inline-block p-4 rounded-t-lg border-b-2 transition duration-300 ease-in-out active-tab bg-blue-500 text-white"
+                                        data-tabs-target="#inbound-info" type="button" role="tab">
+                                        Inbound Student Info
+                                    </button>
+                                </li>
+                                <li class="mr-2" role="presentation">
+                                    <button
+                                        class="inline-block p-4 rounded-t-lg border-b-2 transition duration-300 ease-in-out hover:bg-blue-100"
+                                        data-tabs-target="#timetable" type="button" role="tab">
+                                        Timetable
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <!-- Tab Content -->
+                        <div id="myTabContent">
+                            <div class="block rounded-lg" id="inbound-info" role="tabpanel">
+                                @include('timetables.inbound-info', ['student' => $student ?? null])
+                            </div>
+                            <div class="hidden rounded-lg" id="timetable" role="tabpanel">
+                                @include('timetables.show', ['student' => $student ?? null, 'selectedTimetables' => $student->timetables ?? collect()])
+                            </div>
                         </div>
 
+                        <!-- Submit Button -->
                         <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 {{ isset($student) ? 'Update' : 'Save All' }}
@@ -51,11 +70,29 @@
     </div>
 
     <script>
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('[data-tabs-target]');
+            const tabContents = document.querySelectorAll('[role="tabpanel"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('active-tab', 'bg-blue-500', 'text-white');
+                        t.classList.add('hover:bg-blue-100');
+                    });
+                    tab.classList.add('active-tab', 'bg-blue-500', 'text-white');
+                    tab.classList.remove('hover:bg-blue-100');
+
+                    const target = document.querySelector(tab.dataset.tabsTarget);
+                    tabContents.forEach(tc => tc.classList.add('hidden'));
+                    target.classList.remove('hidden');
+                });
             });
-            document.getElementById(tabName).style.display = 'block';
-        }
+
+            // Set initial active tab
+            const initialTab = document.querySelector('[data-tabs-target="#inbound-info"]');
+            if (initialTab) {
+                initialTab.click();
+            }
+        });
     </script>
 </x-app-layout>

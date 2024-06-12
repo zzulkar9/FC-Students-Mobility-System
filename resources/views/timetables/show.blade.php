@@ -1,7 +1,7 @@
 <!-- resources/views/timetables/show.blade.php -->
 
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
                 @if (session('error'))
@@ -30,6 +30,7 @@
                                     <th class="py-2">Course Code</th>
                                     <th class="py-2">Course Name</th>
                                     <th class="py-2">Program Type</th>
+                                    <th class="py-2">Year/Semester</th>
                                     <th class="py-2">Section</th>
                                     <th class="py-2">Timeslot</th>
                                     <th class="py-2">Select</th>
@@ -41,6 +42,7 @@
                                         <td class="border px-4 py-2">{{ $timetable->course_code }}</td>
                                         <td class="border px-4 py-2">{{ $timetable->course_name }}</td>
                                         <td class="border px-4 py-2">{{ $timetable->program_type }}</td>
+                                        <td class="border px-4 py-2">{{ $timetable->year }} / {{ $timetable->semester }}</td>
                                         <td class="border px-4 py-2">{{ $timetable->section }}</td>
                                         <td class="border px-4 py-2">{{ $timetable->time_slot }}</td>
                                         <td class="border px-4 py-2">
@@ -54,16 +56,10 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="mt-4">
+                        {{-- <div class="mt-4">
                             {{ $timetables->links() }}
-                        </div>
+                        </div> --}}
                     </div>
-                                        {{-- <div class="flex items-center justify-center mt-4">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Save Timetable
-                        </button>
-                    </div> --}}
-                {{-- </form> --}}
             </div>
         </div>
     </div>

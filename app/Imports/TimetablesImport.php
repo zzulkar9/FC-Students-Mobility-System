@@ -10,11 +10,13 @@ class TimetablesImport implements ToCollection
 {
     private $year;
     private $semester;
+    private $studentId;
 
-    public function __construct($year, $semester)
+    public function __construct($year, $semester, $studentId = null)
     {
         $this->year = $year;
         $this->semester = $semester;
+        $this->studentId = $studentId;
     }
 
     public function collection(Collection $rows)
@@ -45,6 +47,7 @@ class TimetablesImport implements ToCollection
                     'time_slot' => implode(', ', $timeslots),
                     'year' => $this->year,
                     'semester' => $this->semester,
+                    'student_id' => $this->studentId, // Add student_id
                 ]);
             }
         }

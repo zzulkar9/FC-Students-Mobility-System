@@ -138,6 +138,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/inbound-students/{id}', [TimetableController::class, 'deleteInboundStudent'])->name('inbound-students.delete');
     Route::get('/inbound-students/{student}/export', [TimetableController::class, 'exportStudent'])->name('inbound-students.export');
 
+    // INBOUND COURSE
+    Route::resource('timetables', TimetableController::class);
+    Route::put('timetables/updateCourse/{id}', [TimetableController::class, 'updateCourse'])->name('timetables.updateCourse');
+    Route::get('timetables/{id}/editCourse', [TimetableController::class, 'editCourse'])->name('timetables.editCourse');
+
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');
