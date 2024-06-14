@@ -120,16 +120,17 @@ class ApplicationFormController extends Controller
     {
         $searchTerm = $request->input('search', '');
         $applications = ApplicationForm::with('user')
-            ->where('is_draft', true)  // Ensure drafts are not shown to coordinators
+            ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
             ->whereHas('user', function ($query) use ($searchTerm) {
                 $query->where('name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
             })
             ->latest()
             ->paginate(10);
-
+    
         return view('application-form.pc-index', compact('applications'));
     }
+    
 
     public function submit(Request $request)
     {

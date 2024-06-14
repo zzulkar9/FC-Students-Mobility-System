@@ -23,6 +23,21 @@ class AdminController extends Controller
         return view('dashboard.admin', compact('users'));
     }
 
+    public function userListIndex(Request $request)
+    {
+        $searchQuery = $request->input('search', '');
+    
+        $users = User::query()
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                return $query->where('name', 'like', "%{$searchQuery}%")
+                    ->orWhere('email', 'like', "%{$searchQuery}%");
+            })
+            ->paginate();
+    
+        return view('users.user-list', compact('users'));
+    }
+    
+
     // Show form for editing the specified user
     public function edit($id)
     {

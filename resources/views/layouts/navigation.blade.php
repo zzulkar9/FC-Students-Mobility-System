@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false, inboundDropdown: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -15,37 +15,72 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    @if (auth()->check() &&
-                            (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
+                    @if (auth()->check() && !auth()->user()->isStaff())
                         <x-nav-link :href="route('application-form.index')" :active="request()->routeIs('application-form.*')">
                             {{ __('Application Form') }}
                         </x-nav-link>
                     @endif
-                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
-                    <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
-                        {{ __('Course Menu') }}
-                    </x-nav-link>
+                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isTDA()))
+                        <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
+                            {{ __('Course Menu') }}
+                        </x-nav-link>
+                    @endif
+                    @if (auth()->check() && auth()->user()->isAdmin())
+                        <x-nav-link :href="route('users.users-list')" :active="request()->routeIs('users.users-list')">
+                            {{ __('User List') }}
+                        </x-nav-link>
                     @endif
                     <x-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                         {{ __('Programs') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
-                        {{ __('Full Course Handbook') }}
-                    </x-nav-link>
+                    @if (auth()->check() && !auth()->user()->isProgramCoordinator())
+                        <x-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
+                            {{ __('Full Course Handbook') }}
+                        </x-nav-link>
+                    @endif
                     @if (auth()->check() &&
-                            (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
+                            (auth()->user()->isUtmStudent() ||
+                                auth()->user()->isTDA() ||
+                                auth()->user()->isProgramCoordinator() ||
+                                auth()->user()->isAA()))
                         <x-nav-link :href="route('study-plans.index')" :active="request()->routeIs('study-plans.*')">
                             {{ __('Study Plans') }}
                         </x-nav-link>
                     @endif
-                    <x-nav-link :href="route('credits.calculate')" :active="request()->routeIs('credits.calculate')">
-                        {{ __('Calculate Credits') }}
-                    </x-nav-link>
-                    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
-                    <x-nav-link :href="route('inbound-students.list')" :active="request()->routeIs('inbound-students.list')">
-                        {{ __('Inbound') }}
-                    </x-nav-link>
+                    @if (auth()->check() && auth()->user()->isUtmStudent())
+                        <x-nav-link :href="route('credits.calculate')" :active="request()->routeIs('credits.calculate')">
+                            {{ __('Calculate Credits') }}
+                        </x-nav-link>
                     @endif
+                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                        @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+                            <div @click.away="inboundDropdown = false" class=>
+                                <x-nav-link @click="inboundDropdown = ! inboundDropdown" :active="request()->routeIs('inbound-students.list')"
+                                    class="cursor-pointer">
+                                    {{ __('Inbound') }}
+                                    <div class="ms-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </x-nav-link>
+
+                                <div x-show="inboundDropdown" x-transition
+                                    class="absolute z-10 w-48 py-2 mt-2 bg-white rounded-md shadow-xl">
+                                    <x-dropdown-link :href="route('inbound-students.students-list')">
+                                        {{ __('Students Timetable') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('inbound-students.course-list')">
+                                        {{ __('Course List/Section') }}
+                                    </x-dropdown-link>
+                                    <!-- Add more dropdown links as needed -->
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -109,25 +144,47 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            @if (auth()->check() &&
-                    (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
-                <x-nav-link :href="route('application-form.index')" :active="request()->routeIs('application-form.*')">
+            @if (auth()->check() && !auth()->user()->isStaff())
+                <x-responsive-nav-link :href="route('application-form.index')" :active="request()->routeIs('application-form.*')">
                     {{ __('Application Form') }}
-                </x-nav-link>
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isTDA()))
+                <x-responsive-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
+                    {{ __('Course Menu') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->check() && auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('users.users-list')" :active="request()->routeIs('users.users-list')">
+                    {{ __('User List') }}
+                </x-responsive-nav-link>
+            @endif
+            <x-responsive-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
+                {{ __('Programs') }}
+            </x-responsive-nav-link>
+            @if (auth()->check() && !auth()->user()->isProgramCoordinator())
+                <x-responsive-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
+                    {{ __('Full Course Handbook') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->check() &&
+                    (auth()->user()->isUtmStudent() ||
+                        auth()->user()->isTDA() ||
+                        auth()->user()->isProgramCoordinator() ||
+                        auth()->user()->isAA()))
+                <x-responsive-nav-link :href="route('study-plans.index')" :active="request()->routeIs('study-plans.*')">
+                    {{ __('Study Plans') }}
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->check() && auth()->user()->isUtmStudent())
+                <x-responsive-nav-link :href="route('credits.calculate')" :active="request()->routeIs('credits.calculate')">
+                    {{ __('Calculate Credits') }}
+                </x-responsive-nav-link>
             @endif
             @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
-                <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.*')">
-                    {{ __('Course Menu') }}
-                </x-nav-link>
-            @endif
-            <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
-                {{ __('Programs') }}
-            </x-nav-link>
-            @if (auth()->check() &&
-                    (auth()->user()->isUtmStudent() || auth()->user()->isTDA() || auth()->user()->isProgramCoordinator()))
-                <x-nav-link :href="route('study-plans.index')" :active="request()->routeIs('study-plans.*')">
-                    {{ __('Study Plans') }}
-                </x-nav-link>
+                <x-responsive-nav-link :href="route('inbound-students.list')" :active="request()->routeIs('inbound-students.list')">
+                    {{ __('Inbound') }}
+                </x-responsive-nav-link>
             @endif
 
         </div>

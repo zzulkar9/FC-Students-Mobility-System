@@ -27,7 +27,7 @@ class UserController extends Controller
                 'confirmed',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/'
             ],
-            'user_type' => 'required|string|in:utm_student,other_uni_student,Admin,TDA,program_coordinator,UTM Staff',
+            'user_type' => 'required|string|in:utm_student,other_uni_student,Admin,TDA,program_coordinator,UTM Staff,Academic Advisor',
             'matric_number' => 'nullable|string|required_if:user_type,utm_student|max:255',
             'intake_period' => 'nullable|string|required_if:user_type,utm_student',
         ]);

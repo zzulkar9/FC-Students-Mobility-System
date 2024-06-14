@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.body-bg-colour {
+    background-color: #f1f6fd;
+}

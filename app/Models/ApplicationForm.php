@@ -15,8 +15,8 @@ class ApplicationForm extends Model
         'intake_period',
         'submitted_at',
         'link',
-        'remarks', // Add this field
-        'approval_status' // Add this field
+        'remarks',
+        'approval_status'
     ];
 
 

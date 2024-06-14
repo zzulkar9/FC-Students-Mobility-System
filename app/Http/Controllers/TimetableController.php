@@ -59,68 +59,103 @@ class TimetableController extends Controller
 
 
     public function saveAll(Request $request)
-{
-    // Log request data
-    \Log::info('Request Data:', $request->all());
-
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'country' => 'required|string|max:255',
-        'semester' => 'required|string|in:March/April,September',
-        'selected_timetables' => 'required|array',
-    ]);
-
-    // Decode selected_timetables JSON strings
-    $timetables = array_map(function ($timetable) {
-        return json_decode($timetable, true);
-    }, $validatedData['selected_timetables']);
-
-    // Log decoded timetables
-    \Log::info('Decoded Timetables:', $timetables);
-
-    if ($request->student_id) {
-        $student = InboundStudent::find($request->student_id);
-        $student->update([
-            'name' => $validatedData['name'],
-            'country' => $validatedData['country'],
-            'semester' => $validatedData['semester'],
-        ]);
-        InboundStudentTimetable::where('inbound_student_id', $student->id)->delete();
-    } else {
-        $student = InboundStudent::create([
-            'name' => $validatedData['name'],
-            'country' => $validatedData['country'],
-            'semester' => $validatedData['semester'],
-        ]);
-    }
-
-    \Log::info('Inbound Student Created:', $student->toArray());
-
-    foreach ($timetables as $timetable) {
-        InboundStudentTimetable::create([
-            'inbound_student_id' => $student->id,
-            'course_code' => $timetable['course_code'],
-            'course_name' => $timetable['course_name'],
-            'section' => $timetable['section'],
-            'time_slot' => $timetable['time_slot'],
-            'year' => $timetable['year'],
-            'semester' => $timetable['semester'],
-        ]);
-    }
-
-    \Log::info('Inbound Student Timetables Created');
-
-    return redirect()->back()->with('success', 'Inbound student info and timetable saved successfully.');
-}
-
-
-    public function listInboundStudents()
     {
-        $timetables = Timetable::paginate(); // Adjust the number per page as needed
-        $allTimetables = Timetable::all(); // For the manual add form
-        $students = InboundStudent::paginate(); // Adjust the pagination as needed
-        return view('timetables.list-index', compact('students', 'timetables', 'allTimetables'));
+        // Log request data
+        \Log::info('Request Data:', $request->all());
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'semester' => 'required|string|in:March/April,September',
+            'selected_timetables' => 'required|array',
+        ]);
+
+        // Decode selected_timetables JSON strings
+        $timetables = array_map(function ($timetable) {
+            return json_decode($timetable, true);
+        }, $validatedData['selected_timetables']);
+
+        // Log decoded timetables
+        \Log::info('Decoded Timetables:', $timetables);
+
+        if ($request->student_id) {
+            $student = InboundStudent::find($request->student_id);
+            $student->update([
+                'name' => $validatedData['name'],
+                'country' => $validatedData['country'],
+                'semester' => $validatedData['semester'],
+            ]);
+            InboundStudentTimetable::where('inbound_student_id', $student->id)->delete();
+        } else {
+            $student = InboundStudent::create([
+                'name' => $validatedData['name'],
+                'country' => $validatedData['country'],
+                'semester' => $validatedData['semester'],
+            ]);
+        }
+
+        \Log::info('Inbound Student Created:', $student->toArray());
+
+        foreach ($timetables as $timetable) {
+            InboundStudentTimetable::create([
+                'inbound_student_id' => $student->id,
+                'course_code' => $timetable['course_code'],
+                'course_name' => $timetable['course_name'],
+                'section' => $timetable['section'],
+                'time_slot' => $timetable['time_slot'],
+                'year' => $timetable['year'],
+                'semester' => $timetable['semester'],
+            ]);
+        }
+
+        \Log::info('Inbound Student Timetables Created');
+
+        return redirect()->back()->with('success', 'Inbound student info and timetable saved successfully.');
     }
+
+
+    public function listInboundStudents(Request $request)
+    {
+        $search = $request->input('search');
+    
+        $timetablesQuery = Timetable::query();
+        if ($search) {
+            $timetablesQuery->where('course_code', 'like', "%$search%")
+                ->orWhere('course_name', 'like', "%$search%");
+        }
+    
+        $timetables = $timetablesQuery->paginate(7); // Adjust the number per page as needed
+        $allTimetables = Timetable::all(); // For the manual add form
+    
+        $studentsQuery = InboundStudent::query();
+        if ($search) {
+            $studentsQuery->where('name', 'like', "%$search%")
+                ->orWhere('country', 'like', "%$search%");
+        }
+    
+        $students = $studentsQuery->paginate(7); // Adjust the pagination as needed
+    
+        return view('timetables.list-partials.student-list', compact('students', 'timetables', 'allTimetables', 'search'));
+    }
+    
+
+    public function listInboundCourses(Request $request)
+    {
+        $search = $request->input('search');
+
+        $timetablesQuery = Timetable::query();
+        if ($search) {
+            $timetablesQuery->where('course_code', 'like', "%$search%")
+                ->orWhere('course_name', 'like', "%$search%");
+        }
+
+        $timetables = $timetablesQuery->paginate(7); // Adjust the number per page as needed
+        $allTimetables = Timetable::all(); // For the manual add form
+        $students = InboundStudent::paginate(7); // Adjust the pagination as needed
+
+        return view('timetables.list-partials.course-list', compact('students', 'timetables', 'allTimetables', 'search'));
+    }
+
 
     public function reviewInboundStudent($id)
     {
@@ -136,8 +171,8 @@ class TimetableController extends Controller
         $allTimetables = Timetable::all(); // For the manual add form
         return view('timetables.index', compact('student', 'timetables', 'allTimetables'));
     }
-    
-    
+
+
 
     public function update(Request $request, InboundStudent $student)
     {
@@ -147,21 +182,21 @@ class TimetableController extends Controller
             'semester' => 'required|string|in:March/April,September',
             'selected_timetables' => 'required|array',
         ]);
-    
+
         $student->update([
             'name' => $validatedData['name'],
             'country' => $validatedData['country'],
             'semester' => $validatedData['semester'],
         ]);
-    
+
         // Remove existing timetables for the student
         InboundStudentTimetable::where('inbound_student_id', $student->id)->delete();
-    
+
         // Decode selected_timetables JSON strings
         $timetables = array_map(function ($timetable) {
             return json_decode($timetable, true);
         }, $validatedData['selected_timetables']);
-    
+
         foreach ($timetables as $timetable) {
             InboundStudentTimetable::create([
                 'inbound_student_id' => $student->id,
@@ -173,10 +208,10 @@ class TimetableController extends Controller
                 'semester' => $timetable['semester'],
             ]);
         }
-    
+
         return redirect()->route('inbound-students.list')->with('success', 'Inbound student info and timetable updated successfully.');
     }
-    
+
     public function deleteInboundStudent($id)
     {
         $student = InboundStudent::findOrFail($id);

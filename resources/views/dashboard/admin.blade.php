@@ -2,62 +2,113 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Admin Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {{-- Search form --}}
-            <form method="GET" action="{{ route('dashboard-admin') }}">
-                <div class="flex space-x-4 items-center mb-4">
-                    <input type="text" name="search" class="rounded-md shadow-sm border-gray-300" placeholder="Search users..." value="{{ request('search') }}">
-                    <button type="submit" class="px-2 rounded-md">🔍</button>
+    <div class="py-12 bg-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <!-- Admin Info -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg p-6 border border-gray-300">
+                <div class="text-gray-900">
+                    <h3 class="text-xl font-semibold mb-4">Admin Information</h3>
+                    <p class="mt-1 text-sm"><span class="font-bold">Name:</span> {{ Auth::user()->name }}</p>
+                    <p class="mt-1 text-sm"><span class="font-bold">Email:</span> {{ Auth::user()->email }}</p>
                 </div>
-            </form>
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="mb-4">
-                        <a href="{{ route('users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            + Add User
-                        </a>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Total Users -->
+                <div class="bg-white overflow-hidden shadow-lg rounded-lg p-6 border border-gray-300">
+                    <div class="text-gray-900">
+                        <h3 class="text-xl font-semibold">Total Users</h3>
+                        <p class="text-4xl font-bold text-blue-600 mt-4">{{ $users->count() }}</p>
+                        <a href="{{ route('users.users-list') }}" class="text-blue-600 hover:text-blue-900 font-semibold mt-4 block">Manage Users</a>
                     </div>
-                    <table class="min-w-full w-full border-collapse border border-gray-300 break-words">
-                        <thead>
-                            <tr>
-                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Name</th>
-                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Email</th>
-                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">User Type</th>
-                                <th class="p-3 font-bold uppercase bg-cyan-100 font-medium bg-cyan-100 text-xs border border-gray-300 text-center">Matric Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($users as $user)
-                                <tr class="hover:bg-gray-100">
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">
-                                        {{ $user->name }}
-                                        <div class="text-xs mt-1 space-x-1">
-                                            <a href="{{ route('users.edit', $user->id) }}" class="text-green-500 hover:text-green-700">Edit</a>
-                                            <a> | </a>
-                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->email }}</td>
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->user_type }}</td>
-                                    <td class="p-2 border-b border-gray-300 text-sm text-center">{{ $user->matric_number }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                        <div class="mt-4 pb-3">
-                            {{ $users->appends(['search' => request('search')])->links() }}
-                        </div>
-                    </table>
                 </div>
+                <!-- Total Mobility Programs -->
+                <div class="bg-white overflow-hidden shadow-lg rounded-lg p-6 border border-gray-300">
+                    <div class="text-gray-900">
+                        <h3 class="text-xl font-semibold">Total Mobility Programs</h3>
+                        <p class="text-4xl font-bold text-blue-600 mt-4">{{ $programs->count() }}</p>
+                        <a href="{{ route('mobility-programs.Programindex') }}" class="text-blue-600 hover:text-blue-900 font-semibold mt-4 block">Manage Programs</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Mobility Programs -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg p-6 border border-gray-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">Manage Mobility Programs</h3>
+                    <a href="{{ route('mobility-programs.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        + Add New Program
+                    </a>
+                </div>
+                <p class="text-gray-700">View and manage all mobility programs currently available.</p>
+                <a href="{{ route('mobility-programs.Programindex') }}" class="text-blue-600 hover:text-blue-900 font-semibold mt-4 block">View Programs</a>
+            </div>
+
+            <!-- Users Overview Chart -->
+            <div class="bg-white overflow-hidden shadow-lg rounded-lg p-6 border border-gray-300">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Users Overview</h3>
+                <canvas id="usersChart"></canvas>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Users Overview Chart
+            const ctxUsers = document.getElementById('usersChart').getContext('2d');
+            const usersChart = new Chart(ctxUsers, {
+                type: 'bar',
+                data: {
+                    labels: ['Admin', 'Program Coordinator', 'UTM Student', 'TDA', 'UTM Staff', 'Academic Advisor'],
+                    datasets: [{
+                        label: 'User Types',
+                        data: [
+                            {{ $users->where('user_type', 'Admin')->count() }},
+                            {{ $users->where('user_type', 'program_coordinator')->count() }},
+                            {{ $users->where('user_type', 'utm_student')->count() }},
+                            {{ $users->where('user_type', 'TDA')->count() }},
+                            {{ $users->where('user_type', 'UTM Staff')->count() }},
+                            {{ $users->where('user_type', 'Academic Advisor')->count() }}
+                        ],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

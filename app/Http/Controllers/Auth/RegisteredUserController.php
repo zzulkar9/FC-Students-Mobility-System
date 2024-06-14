@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
                 'regex:/[0-9]/',       // must contain at least one digit
                 'regex:/[@$!%*#?&]/',  // must contain a special character
             ],
-            'user_type' => ['required', 'string', 'in:utm_student,other_uni_student'],
+            'user_type' => ['required', 'string', 'in:utm_student,other_uni_student,UTM Staff'],
             'matric_number' => ['nullable', 'string', 'required_if:user_type,utm_student', 'max:255'],
             'intake_period' => ['nullable', 'string', 'required_if:user_type,utm_student'],
         ]);

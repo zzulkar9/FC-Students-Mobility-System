@@ -17,6 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
     const TYPE_TDA = 'TDA';
     const TYPE_PROGRAM_COORDINATOR = 'program_coordinator';
     const TYPE_UTM_STAFF = 'UTM Staff';
+    const TYPE_AA = 'Academic Advisor';
 
     /**
      * The attributes that are mass assignable.
@@ -55,6 +56,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->user_type === self::TYPE_ADMIN;
     }
 
+    public function isStaff(): bool
+    {
+        return $this->user_type === self::TYPE_UTM_STAFF;
+    }
+
     public function isUtmStudent(): bool
     {
         return $this->user_type === self::TYPE_UTM_STUDENT;
@@ -63,6 +69,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isTDA(): bool
     {
         return $this->user_type === self::TYPE_TDA;
+    }
+
+    public function isAA(): bool
+    {
+        return $this->user_type === self::TYPE_AA;
     }
 
     /**

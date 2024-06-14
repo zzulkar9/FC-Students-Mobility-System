@@ -61,6 +61,7 @@
                                 <option value="TDA">TDA</option>
                                 <option value="program_coordinator">Program Coordinator</option>
                                 <option value="UTM Staff">UTM Staff</option>
+                                <option value="Academic Advisor">Academic Advisor</option>
                             </select>
                         </div>
 

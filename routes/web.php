@@ -46,6 +46,8 @@ Route::get('/dashboard', function () {
             return redirect()->route('dashboard-pc');
         case User::TYPE_UTM_STAFF:
             return redirect()->route('dashboard-staff');
+        case User::TYPE_AA:
+            return redirect()->route('dashboard-aa');
         default:
             return abort(403, 'Unauthorized');
     }
@@ -55,22 +57,16 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Routes
     // Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
+    // Route::get('/dashboard-other-student', function () {return view('dashboard.other-student');})->name('dashboard-other-student');
     Route::get('/dashboard-utm-student', [DashboardController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
-    Route::get('/dashboard-other-student', function () {
-        return view('dashboard.other-student');
-    })->name('dashboard-other-student');
-    Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('dashboard-admin');
-    Route::get('/dashboard-tda', function () {
-        return view('dashboard.tda');
-    })->name('dashboard-tda');
-    // Update this to the correct method if changed
-    Route::get('/dashboard-pc', [ApplicationFormController::class, 'coordinatorIndex'])->name('dashboard-pc')->middleware('auth');
-
-    Route::get('/dashboard-staff', function () {
-        return view('dashboard.staff');
-    })->name('dashboard-staff');
+    Route::get('/dashboard-admin', [DashboardController::class, 'indexForAdmin'])->name('dashboard-admin');
+    Route::get('/dashboard-tda', [DashboardController::class, 'indexForTDA'])->name('dashboard-tda')->middleware('auth');
+    Route::get('/dashboard-pc', [DashboardController::class, 'indexForPC'])->name('dashboard-pc')->middleware('auth');
+    Route::get('/dashboard-staff', [DashboardController::class, 'indexForStaff'])->name('dashboard-staff')->middleware('auth');
+    Route::get('/dashboard-aa', [DashboardController::class, 'indexForAA'])->name('dashboard-aa')->middleware('auth');
 
     // User Management Routes
+    Route::get('/users-list', [AdminController::class, 'userListIndex'])->name('users.users-list');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{id}/edit', [AdminController::class, 'edit'])->name('users.edit');
@@ -137,6 +133,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/timetables/{student}', [TimetableController::class, 'update'])->name('inbound-students.update');
     Route::delete('/inbound-students/{id}', [TimetableController::class, 'deleteInboundStudent'])->name('inbound-students.delete');
     Route::get('/inbound-students/{student}/export', [TimetableController::class, 'exportStudent'])->name('inbound-students.export');
+    Route::get('/inbound-students-list', [TimetableController::class, 'listInboundStudents'])->name('inbound-students.students-list');
+    Route::get('/inbound-course-list', [TimetableController::class, 'listInboundCourses'])->name('inbound-students.course-list');
 
     // INBOUND COURSE
     Route::resource('timetables', TimetableController::class);
