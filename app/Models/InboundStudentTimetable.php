@@ -16,5 +16,6 @@ class InboundStudentTimetable extends Model
         'time_slot',
         'year',
         'semester',
+        'timetables_course_id',
     ];
 }

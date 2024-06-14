@@ -21,41 +21,41 @@
                     <input type="text" id="search" name="search" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search by course code or name">
                 </div>
 
-                    @csrf
-                    <div class="overflow-auto h-64">
-                        <table class="min-w-full bg-white">
-                            <thead>
+                @csrf
+                <div class="overflow-auto h-64">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2">Course Code</th>
+                                <th class="py-2">Course Name</th>
+                                <th class="py-2">Program Type</th>
+                                <th class="py-2">Year/Semester</th>
+                                <th class="py-2">Section</th>
+                                <th class="py-2">Timeslot</th>
+                                <th class="py-2">Select</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subject-list">
+                            @foreach ($allTimetables as $timetable)
                                 <tr>
-                                    <th class="py-2">Course Code</th>
-                                    <th class="py-2">Course Name</th>
-                                    <th class="py-2">Program Type</th>
-                                    <th class="py-2">Year/Semester</th>
-                                    <th class="py-2">Section</th>
-                                    <th class="py-2">Timeslot</th>
-                                    <th class="py-2">Select</th>
+                                    <td class="border px-4 py-2">{{ $timetable->course_code }}</td>
+                                    <td class="border px-4 py-2">{{ $timetable->course_name }}</td>
+                                    <td class="border px-4 py-2">{{ $timetable->program_type }}</td>
+                                    <td class="border px-4 py-2">{{ $timetable->year }} - {{ $timetable->semester }}</td>
+                                    <td class="border px-4 py-2">{{ $timetable->section }}</td>
+                                    <td class="border px-4 py-2">{{ $timetable->time_slot }}</td>
+                                    <td class="border px-4 py-2">
+                                        <input type="checkbox" name="selected_timetables[]" value="{{ json_encode($timetable) }}" class="timeslot-checkbox"
+                                        @if($selectedTimetables->contains('timetables_course_id', $timetable->id))
+                                            checked
+                                        @endif
+                                        >
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody id="subject-list">
-                                @foreach ($timetables as $timetable)
-                                    <tr>
-                                        <td class="border px-4 py-2">{{ $timetable->course_code }}</td>
-                                        <td class="border px-4 py-2">{{ $timetable->course_name }}</td>
-                                        <td class="border px-4 py-2">{{ $timetable->program_type }}</td>
-                                        <td class="border px-4 py-2">{{ $timetable->year }} - {{ $timetable->semester }}</td>
-                                        <td class="border px-4 py-2">{{ $timetable->section }}</td>
-                                        <td class="border px-4 py-2">{{ $timetable->time_slot }}</td>
-                                        <td class="border px-4 py-2">
-                                            <input type="checkbox" name="selected_timetables[]" value="{{ json_encode($timetable) }}" class="timeslot-checkbox"
-                                            @if(isset($selectedTimetables) && $selectedTimetables->contains('course_code', $timetable->course_code))
-                                                checked
-                                            @endif
-                                            >
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -99,6 +99,7 @@ class TimetableController extends Controller
         foreach ($timetables as $timetable) {
             InboundStudentTimetable::create([
                 'inbound_student_id' => $student->id,
+                'timetables_course_id' =>$timetable['id'],
                 'course_code' => $timetable['course_code'],
                 'course_name' => $timetable['course_name'],
                 'section' => $timetable['section'],
@@ -157,23 +158,29 @@ class TimetableController extends Controller
     }
 
 
-    public function reviewInboundStudent($id)
-    {
-        $student = InboundStudent::findOrFail($id);
-        $timetables = InboundStudentTimetable::where('inbound_student_id', $id)->get();
-        return view('timetables.review', compact('student', 'timetables'));
-    }
+    // public function reviewInboundStudent($id)
+    // {
+    //     $student = InboundStudent::findOrFail($id);
+    //     $timetables = InboundStudentTimetable::where('inbound_student_id', $id)->get();
+    //     return view('timetables.review', compact('student', 'timetables'));
+    // }
+
+    // public function index()
+    // {
+    //     $timetables = Timetable::paginate();
+    //     $allTimetables = Timetable::all();
+    //     return view('timetables.index', compact('timetables', 'allTimetables'));
+    // }
 
     public function edit($id)
     {
         $student = InboundStudent::with('timetables')->findOrFail($id);
-        $timetables = Timetable::paginate(3); // Adjust the number per page as needed
-        $allTimetables = Timetable::all(); // For the manual add form
-        return view('timetables.index', compact('student', 'timetables', 'allTimetables'));
+        $selectedTimetables = InboundStudentTimetable::where('inbound_student_id', $id)->get();
+        $allTimetables = Timetable::all();
+    
+        return view('timetables.edit-timetables', compact('student', 'selectedTimetables', 'allTimetables'));
     }
-
-
-
+    
     public function update(Request $request, InboundStudent $student)
     {
         $validatedData = $request->validate([
@@ -200,6 +207,7 @@ class TimetableController extends Controller
         foreach ($timetables as $timetable) {
             InboundStudentTimetable::create([
                 'inbound_student_id' => $student->id,
+                'timetables_course_id' =>$timetable['id'],
                 'course_code' => $timetable['course_code'],
                 'course_name' => $timetable['course_name'],
                 'section' => $timetable['section'],
