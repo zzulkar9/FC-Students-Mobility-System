@@ -4,7 +4,7 @@
     <h1 class="text-4xl font-bold text-gray-900">Manage Mobility Programs</h1>
 </div>
 
-<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+<div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-300">
     <div class="p-6">
         <div class="mb-4">
             <a href="{{ route('mobility-programs.create') }}"

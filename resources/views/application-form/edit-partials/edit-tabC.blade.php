@@ -58,9 +58,12 @@
                                         placeholder="Enter target university course">{{ $subject->target_course }}</textarea>
                                 </td>
                                 <td class="px-4 py-4 whitespace-nowrap">
-                                    <input type="number" name="target_course_credit[]"
+                                    <textarea name="target_course_credit[]" rows="2"
+                                    class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
+                                    placeholder="Enter target university course">{{ $subject->target_course_credit }}</textarea>
+                                    {{-- <input type="number" name="target_course_credit[]"
                                         class="form-input w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                        placeholder="Credit" value="{{ $subject->target_course_credit }}">
+                                        placeholder="Credit" value="{{ $subject->target_course_credit }}"> --}}
                                 </td>
                                 <td class="px-4 py-4 whitespace-nowrap">
                                     <textarea name="target_course_description[]" rows="2"
@@ -111,7 +114,7 @@
                     <textarea name="target_course[]" rows="1" class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 resize-none text-sm" placeholder="Enter target university course"></textarea>
                 </td>
                 <td class="px-4 py-4 whitespace-nowrap">
-                    <input type="number" name="target_course_credit[]" class="form-input w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Credit">
+                    <textarea rows="2" name="target_course_credit[]" class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Credit"></textarea>
                 </td>
                 <td class="px-4 py-4 whitespace-nowrap">
                     <textarea name="target_course_description[]" rows="2" class="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Enter course description at target university"></textarea>

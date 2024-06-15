@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApplicantDetail extends Model
 {
     protected $fillable = [
-        'application_form_id', 'program_type', 'religion', 'citizenship', 'ic_passport_number',
+        'application_form_id', 'program_type', 'upcoming_semester', 'religion', 'citizenship', 'ic_passport_number',
         'contact_number', 'race', 'home_address', 'next_of_kin', 'emergency_contact',
         'parents_occupation', 'parents_monthly_income'
     ];

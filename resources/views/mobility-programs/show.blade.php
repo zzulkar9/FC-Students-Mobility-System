@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
         .background {
-            background: #f2f3f7;
+            background: #f1f6fd;
         }
     </style>
 </head>
@@ -27,7 +27,7 @@
         @endif
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-20">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg border border-gray-300">
                 <div class="p-6">
                     <div class="flex justify-between items-center">
                         <a href="javascript:history.back()" class="text-blue-500 hover:text-blue-700">&larr; Go Back</a>

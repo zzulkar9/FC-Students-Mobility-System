@@ -34,7 +34,8 @@
         <!-- Upcoming Semester -->
         <div>
             <label class="block text-sm font-medium text-gray-700">Upcoming Semester</label>
-            <div class="mt-2 p-2 border rounded-md bg-gray-100">{{ Auth::user()->getCurrentSemester() }}</div>
+            <input type="text" name="upcoming_semester" class="mt-2 form-input block w-full rounded-md shadow-sm border-gray-300" placeholder="Upcoming semester" value="{{ Auth::user()->getCurrentSemester() }}">
+            {{-- <div class="mt-2 p-2 border rounded-md bg-gray-100" value="{{ Auth::user()->getCurrentSemester() }}"> {{ Auth::user()->getCurrentSemester() }}</div> --}}
         </div>
         
         <!-- Religion -->

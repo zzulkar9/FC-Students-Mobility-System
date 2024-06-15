@@ -152,6 +152,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/application-form/{applicationForm}/edit', [ApplicationFormController::class, 'edit'])->name('application-form.edit')->middleware(['auth']);
     Route::put('/application-form/{applicationForm}', [ApplicationFormController::class, 'update'])->name('application-form.update')->middleware('auth');
     Route::post('application-form/{id}/comment', [ApplicationFormController::class, 'storeComment'])->name('application-form.comment.store');
+    Route::patch('/application-form/{id}/approval-update', [ApplicationFormController::class, 'ApprovalUpdate'])->name('application-form.ApprovalUpdate');
 });
 
 // Profile Routes

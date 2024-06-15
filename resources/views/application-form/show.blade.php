@@ -37,13 +37,13 @@
                                     role="tab" aria-controls="approval" aria-selected="false">Approval</button>
                             </li>
                             <li class="mr-2" role="presentation">
-                                <button class="tab-button" id="report-tab" data-tabs-target="#report" type="button"
-                                    role="tab" aria-controls="report" aria-selected="false">Report</button>
-                            </li>
-                            <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="calculated-credits-tab"
                                     data-tabs-target="#calculated-credits" type="button" role="tab"
                                     aria-controls="calculated-credits" aria-selected="false">Calculated Credits</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button" id="report-tab" data-tabs-target="#report" type="button"
+                                    role="tab" aria-controls="report" aria-selected="false">Report</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="comments-tab" data-tabs-target="#comments" type="button"
@@ -92,19 +92,19 @@
                             ])
                         </div>
 
-                        <!-- Report Tab Content -->
-                        <div class="hidden p-4 rounded-lg" id="report" role="tabpanel"
-                            aria-labelledby="report-tab">
-                            @include('application-form.show-partials.show_report', [
-                                'approvalDetails' => $applicationForm->supportApprovalDetails,
-                            ])
-                        </div>
-
                         <!-- Calculated Credits Tab Content -->
                         <div class="hidden p-4 rounded-lg" id="calculated-credits" role="tabpanel"
                             aria-labelledby="calculated-credits-tab">
                             @include('application-form.show-partials.calculated_credits', [
                                 'subjects' => $applicationForm->subjects,
+                            ])
+                        </div>
+
+                        <!-- Report Tab Content -->
+                        <div class="hidden p-4 rounded-lg" id="report" role="tabpanel"
+                            aria-labelledby="report-tab">
+                            @include('application-form.show-partials.show_report', [
+                                'approvalDetails' => $applicationForm->supportApprovalDetails,
                             ])
                         </div>
 
@@ -121,21 +121,21 @@
                                 </div>
                             @endforeach
 
-                            @if (auth()->user()->isProgramCoordinator() || auth()->user()->isTDA())
-                                <form method="POST"
-                                    action="{{ route('application-form.comment.store', $applicationForm->id) }}">
-                                    @csrf
-                                    <div class="mt-4">
-                                        <textarea name="comment" rows="4" class="form-textarea mt-1 block w-full" placeholder="Leave a comment..."></textarea>
-                                    </div>
-                                    <div class="mt-2 text-right">
-                                        <button type="submit"
-                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                            Add Comment
-                                        </button>
-                                    </div>
-                                </form>
-                            @endif
+
+                            <form method="POST"
+                                action="{{ route('application-form.comment.store', $applicationForm->id) }}">
+                                @csrf
+                                <div class="mt-4">
+                                    <textarea name="comment" rows="4" class="form-textarea mt-1 block w-full" placeholder="Leave a comment..."></textarea>
+                                </div>
+                                <div class="mt-2 text-right">
+                                    <button type="submit"
+                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Add Comment
+                                    </button>
+                                </div>
+                            </form>
+
 
                         </div>
                     </div>

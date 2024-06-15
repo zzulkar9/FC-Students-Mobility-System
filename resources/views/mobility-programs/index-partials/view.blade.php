@@ -2,10 +2,10 @@
 <div class="flex justify-between items-center pb-8">
     <h1 class="text-4xl font-bold text-gray-900">Mobility Programs</h1>
 </div>
-<div class="bg-gray-50 p-6 rounded-lg shadow-lg">
+<div class="bg-gray-50 p-6 rounded-lg shadow-lg border border-gray-300">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         @foreach ($programs as $program)
-            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200 transform hover:scale-105 cursor-pointer" onclick="openModal('{{ $program->id }}')">
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-200 transform hover:scale-105 cursor-pointer border border-gray-400" onclick="openModal('{{ $program->id }}')">
                 <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}" class="w-full h-48 object-cover rounded-t-lg">
                 <div class="p-4">
                     <h3 class="text-lg font-semibold text-gray-800">{{ $program->title }}</h3>

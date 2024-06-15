@@ -169,7 +169,7 @@
                 <!-- Right Boxes -->
                 <div class="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 four-box-section">
                     <!-- Box 1 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
                         <img src="{{ asset('images/box-1.jpg') }}" alt="Placeholder Image 1"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                     <!-- Box 2 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
                         <img src="{{ asset('images/box-2.png') }}" alt="Placeholder Image 2"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -187,7 +187,7 @@
                         </div>
                     </div>
                     <!-- Box 3 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
                         <img src="{{ asset('images/telegram.png') }}" alt="Placeholder Image 3"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -196,7 +196,7 @@
                         </div>
                     </div>
                     <!-- Box 4 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
                         <img src="{{ asset('images/box-4.png') }}" alt="Placeholder Image 4"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -217,10 +217,10 @@
                 @endif
             </div>
 
-            <div class="mt-8 bg-white bg-opacity-50 overflow-hidden shadow sm:rounded-lg shadow-md">
+            <div class="mt-8 bg-white bg-opacity-50 overflow-hidden shadow sm:rounded-lg shadow-md border border-gray-300">
                 <div class="grid-container p-6 bg-white shadow-md">
                     @foreach ($programs as $program)
-                        <div class="grid-item shadow-lg" onclick="openModal('{{ $program->id }}')">
+                        <div class="grid-item shadow-lg border border-gray-300" onclick="openModal('{{ $program->id }}')">
                             <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}">
                             <div class="details p-4 text-center">
                                 <h3 class="title">{{ $program->title }}</h3>

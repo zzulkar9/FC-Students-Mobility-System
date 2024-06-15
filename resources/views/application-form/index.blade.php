@@ -17,7 +17,7 @@
                         <nav class="border-b border-gray-200 mb-4">
                             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab"
                                 data-tabs-toggle="#myTabContent" role="tablist">
-                                @foreach (['A' => 'Applicant Details', 'B' => 'Education & Co-Curriculum', 'C' => 'Mobility Program Information', 'D' => 'Financial', 'E' => 'Support / Approval', 'H' => 'Full Report'] as $key => $title)
+                                @foreach (['A' => 'Applicant Details', 'B' => 'Education & Co-Curriculum', 'C' => 'Mobility Program Information', 'D' => 'Financial', 'E' => 'Support / Approval'] as $key => $title)
                                     <li class="mr-2" role="presentation">
                                         <button class="inline-block p-4 rounded-t-lg border-b-2 {{ $loop->first ? 'active-tab' : '' }} hover:bg-blue-100 hover:text-blue-700 transition-colors duration-300"
                                             data-tabs-target="#tab{{ $key }}" type="button" role="tab">

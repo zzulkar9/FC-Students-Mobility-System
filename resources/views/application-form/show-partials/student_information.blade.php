@@ -12,7 +12,7 @@
             </tr>
             <tr class="hover:bg-gray-100">
                 <td class="px-4 py-2 font-medium bg-gray-100 border-b">Upcoming Semester:</td>
-                <td class="px-4 py-2 bg-white border-b">{{ Auth::user()->getCurrentSemester() }}</td>
+                <td class="px-4 py-2 bg-white border-b">{{ $details->upcoming_semester ?? 'N/A' }}</td>
             </tr>
             <tr class="hover:bg-gray-100">
                 <td class="px-4 py-2 font-medium bg-gray-100 border-b">Program Type:</td>

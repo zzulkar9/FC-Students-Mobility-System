@@ -108,7 +108,16 @@ class ApplicationFormController extends Controller
                 ->paginate(10);
 
             return view('application-form.pc-index', compact('applications'));
-        } else {
+        }elseif ($user->isAA()) {
+            // For program coordinators, show the dashboard with all submitted applications, excluding drafts
+            $applications = ApplicationForm::with('user')
+                ->where('is_draft', false)  // Exclude draft applications
+                ->latest()
+                ->paginate(10);
+
+            return view('application-form.pc-index', compact('applications'));
+        }
+         else {
             // Optionally handle other roles or redirect with an error
             return abort(403, 'Unauthorized access.');
         }
@@ -137,6 +146,7 @@ class ApplicationFormController extends Controller
         $request->validate([
             // Validation rules for tabs A, B, C, D, and E
             'program_type' => 'nullable|string',
+            'upcoming_semester' => 'nullable|string',
             'religion' => 'nullable|string',
             'citizenship' => 'nullable|string',
             'ic_passport_number' => 'nullable|string',
@@ -194,7 +204,7 @@ class ApplicationFormController extends Controller
         // Save or update details for Tab A
         $applicationForm->applicantDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
-            $request->only(['program_type', 'religion', 'citizenship', 'ic_passport_number', 'contact_number', 'race', 'home_address', 'next_of_kin', 'emergency_contact', 'parents_occupation', 'parents_monthly_income'])
+            $request->only(['program_type', 'upcoming_semester', 'religion', 'citizenship', 'ic_passport_number', 'contact_number', 'race', 'home_address', 'next_of_kin', 'emergency_contact', 'parents_occupation', 'parents_monthly_income'])
         );
 
         // Save or update details for Tab B
@@ -336,6 +346,7 @@ class ApplicationFormController extends Controller
             'link' => 'nullable|url',
 
             'program_type' => 'nullable|string',
+            'upcoming_semester' => 'nullable|string',
             'religion' => 'nullable|string',
             'citizenship' => 'nullable|string',
             'ic_passport_number' => 'nullable|string',
@@ -359,9 +370,7 @@ class ApplicationFormController extends Controller
 
             'finance_method' => 'nullable|string',
             'sponsorship_details' => 'nullable|string',
-            'item' => 'nullable|array',
-            'expenditure' => 'nullable|array',
-            'total' => 'nullable|array',
+            'budget_details' => 'nullable|string',
 
             'advisor_name' => 'nullable|string',
             'advisor_email' => 'nullable|string|email',
@@ -380,6 +389,7 @@ class ApplicationFormController extends Controller
             ['application_form_id' => $applicationForm->id],
             $request->only([
                 'program_type',
+                'upcoming_semester',
                 'religion',
                 'citizenship',
                 'ic_passport_number',
@@ -438,20 +448,8 @@ class ApplicationFormController extends Controller
         // Save or update details for Tab D (Financial)
         $applicationForm->financialDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
-            $request->only(['finance_method', 'sponsorship_details'])
+            $request->only(['finance_method', 'sponsorship_details' , 'budget_details'])
         );
-
-        if ($request->item && $request->expenditure && $request->total) {
-            $financialDetails = [];
-            foreach ($request->item as $index => $item) {
-                $financialDetails[] = [
-                    'item' => $item,
-                    'expenditure' => $request->expenditure[$index],
-                    'total' => $request->total[$index],
-                ];
-            }
-            $applicationForm->financialDetails()->update(['details' => json_encode($financialDetails)]);
-        }
 
         // Save or update details for Tab E (Advisor and Approval)
         $applicationForm->advisorFacultyApprovalDetails()->updateOrCreate(
@@ -495,4 +493,33 @@ class ApplicationFormController extends Controller
 
         return redirect()->route('application-form.show', $id)->with('success', 'Comment added successfully.');
     }
+    public function ApprovalUpdate(Request $request, $id)
+    {
+        $applicationForm = ApplicationForm::with([
+            'subjects',
+            'applicantDetails',
+            'educationDetails',
+            'financialDetails',
+            'advisorFacultyApprovalDetails'
+        ])->findOrFail($id);
+
+        $request->validate([
+            'advisor_name' => 'nullable|string',
+            'advisor_email' => 'nullable|string|email',
+            'advisor_phone' => 'nullable|string',
+            'advisor_remarks' => 'nullable|string',
+            'approval' => 'nullable|string',
+            'faculty_remarks' => 'nullable|string',
+        ]);
+
+        $applicationForm->advisorFacultyApprovalDetails()->updateOrCreate(
+            ['application_form_id' => $applicationForm->id],
+            $request->only(['advisor_name', 'advisor_email', 'advisor_phone', 'advisor_remarks', 'approval', 'faculty_remarks'])
+        );
+    
+        return redirect()->route('application-form.show', $id)->with('success', 'Approval details updated successfully.');
+    }
+    
+    
+    
 }

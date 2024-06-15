@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 py-12">
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border border-gray-300">
             <div class="p-6 bg-white border-b border-gray-200">
                 <h1 class="text-2xl font-semibold text-center mb-6">Edit User Details</h1>
                 <form action="{{ route('users.update', $user->id) }}" method="POST">

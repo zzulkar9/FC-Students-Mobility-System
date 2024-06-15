@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-5">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-5 border border-gray-300">
                 <h1 class="text-2xl font-semibold mb-6 text-center">User Registration Form</h1>
                 <form method="POST" action="{{ route('users.store') }}">
                     @csrf

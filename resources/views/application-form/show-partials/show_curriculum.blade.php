@@ -30,15 +30,15 @@
     <div class="space-y-4 mt-6">
         <div class="space-y-2">
             <label class="block font-medium text-gray-700">Co-Curriculum:</label>
-            <div class="bg-gray-100 p-2 rounded-md">{{ $educations->co_curriculum ?? 'N/A' }}</div>
+            <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="3" readonly>{{ $educations->co_curriculum ?? 'N/A' }}</textarea>
         </div>
         <div class="space-y-2">
             <label class="block font-medium text-gray-700">Achievements (Academic & Co-curriculum):</label>
-            <div class="bg-gray-100 p-2 rounded-md">{{ $educations->achievements ?? 'N/A' }}</div>
+            <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="3" readonly>{{ $educations->achievements ?? 'N/A' }}</textarea>
         </div>
         <div class="space-y-2">
             <label class="block font-medium text-gray-700">Special Skills / Soft Skills:</label>
-            <div class="bg-gray-100 p-2 rounded-md">{{ $educations->special_skills ?? 'N/A' }}</div>
+            <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="3" readonly>{{ $educations->special_skills ?? 'N/A' }}</textarea>
         </div>
     </div>
 </div>

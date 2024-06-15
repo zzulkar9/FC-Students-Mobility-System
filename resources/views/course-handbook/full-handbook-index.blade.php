@@ -187,7 +187,7 @@
     }">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <!-- Year and Intake Tabs -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6 border border-gray-300">
                 <div class="flex flex-col gap-4">
                     <div class="flex items-center space-x-2">
                         <p class="text-lg font-semibold text-gray-700">Year:</p>
@@ -222,7 +222,7 @@
             </div>
 
             <!-- Courses Table -->
-            <div class="bg-white shadow-sm sm:rounded-lg p-4">
+            <div class="bg-white shadow-sm sm:rounded-lg p-4 border border-gray-300">
                 <template x-for="(intakes, year) in filteredCourses" :key="year">
                     <div x-show="activeYear === year" x-cloak>
                         <template x-for="(semesters, intake) in intakes" :key="intake">

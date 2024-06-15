@@ -16,8 +16,13 @@
         </div>
         <div class="mb-4">
             <label for="advisor_remarks" class="block text-sm font-medium text-gray-700">Recommendation/Notes/Remarks:</label>
-            <textarea id="advisor_remarks" name="advisor_remarks" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter details here"></textarea>
+            <textarea id="advisor_remarks" name="advisor_remarks" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter details here"
+            @if (!auth()->user()->isAA())
+                readonly
+            @endif
+            ></textarea>
         </div>
+        
     </div>
 
     <hr class="my-6 border-gray-300"> <!-- Visual separator for clarity -->
@@ -28,18 +33,30 @@
             <label class="block text-sm font-medium text-gray-700">Approval:</label>
             <div class="mt-2 flex items-center">
                 <label class="inline-flex items-center mr-6">
-                    <input type="radio" name="approval" value="approved" class="form-radio">
+                    <input type="radio" name="approval" value="approved" class="form-radio"
+                    @if (!auth()->user()->isTDA())
+                        disabled
+                    @endif
+                    >
                     <span class="ml-2">Approved</span>
                 </label>
                 <label class="inline-flex items-center">
-                    <input type="radio" name="approval" value="disapproved" class="form-radio">
+                    <input type="radio" name="approval" value="disapproved" class="form-radio"
+                    @if (!auth()->user()->isTDA())
+                        disabled
+                    @endif
+                    >
                     <span class="ml-2">Disapproved</span>
                 </label>
             </div>
         </div>
+        
         <div class="mb-4">
             <label for="faculty_remarks" class="block text-sm font-medium text-gray-700">Recommendation/Notes/Remarks:</label>
-            <textarea id="faculty_remarks" name="faculty_remarks" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter details here"></textarea>
+            <textarea id="faculty_remarks" name="faculty_remarks" rows="4" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter details here"
+            @if (!auth()->user()->isTDA())
+                readonly
+            @endif></textarea>
         </div>
     </div>
 </div>

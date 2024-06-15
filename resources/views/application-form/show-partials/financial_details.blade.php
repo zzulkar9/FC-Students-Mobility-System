@@ -14,7 +14,7 @@
     <div class="space-y-2">
         <label class="block text-sm font-medium text-gray-700">Cost Item Details:</label>
         {{-- <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="4" readonly>{{ $financial->budget_details ?? 'N/A' }}</textarea> --}}
-        <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="4" readonly>{!! nl2br(e($financial->budget_details ?? 'N/A'))!!}</textarea>
-        {!! nl2br(e($financial->budget_details ?? 'N/A'))!!}
+        <textarea class="bg-gray-100 p-2 rounded-md w-full" rows="4" readonly>{{ $financial->budget_details ?? 'N/A' }}</textarea>
+        {{-- {!! nl2br(e($financial->budget_details ?? 'N/A'))!!} --}}
     </div>
 </div>

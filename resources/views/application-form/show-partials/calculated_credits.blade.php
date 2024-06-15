@@ -59,7 +59,7 @@
                             </details>
                         </td>
                         <td class="px-4 py-2 text-sm">
-                            @if (auth()->user()->isProgramCoordinator())
+                            @if (auth()->user()->isProgramCoordinator() ||  auth()->user()->isTDA())
                                 <textarea name="credit_calculations[{{ $creditCalculation->id }}][remarks]"
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">{{ $creditCalculation->remarks ?? '' }}</textarea>
                             @else
@@ -72,7 +72,7 @@
         </table>
     {{-- </div> --}}
 
-    @if (auth()->user()->isProgramCoordinator())
+    @if (auth()->user()->isTDA())
         <div class="flex justify-center items-center mt-4">
             <label class="mr-4 text-sm font-medium">Approval Status:</label>
             <div class="mr-4 flex items-center">
@@ -83,7 +83,7 @@
             <div class="mr-4 flex items-center">
                 <input type="radio" id="disapproved" name="approval_status" value="disapproved"
                     {{ !$applicationForm->approval_status ? 'checked' : '' }} class="form-radio text-red-600">
-                <label for="disapproved" class="ml-2 text-sm font-medium text-gray-700">Disapproved</label>
+                <label for="disapproved" class="ml-2 text-sm font-medium text-gray-700">Pending</label>
             </div>
             <button type="submit"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">Save Remarks</button>
@@ -91,11 +91,11 @@
     @endif
 </form>
 
-@if (auth()->user()->isUtmStudent())
+@if (auth()->user()->isUtmStudent() || auth()->user()->isProgramCoordinator() || auth()->user()->isAA())
     <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded-lg">
         <h3 class="text-2xl font-semibold mb-4">Approval Status</h3>
-        <p class="text-lg font-semibold" style="color: {{ $applicationForm->approval_status ? 'green' : 'red' }}">
-            {{ $applicationForm->approval_status ? 'Approved' : 'Disapproved' }}
+        <p class="text-lg font-semibold" style="color: {{ $applicationForm->approval_status ? 'green' : 'orange' }}">
+            {{ $applicationForm->approval_status ? 'Approved by TDA' : 'Pending from TDA' }}
         </p>
     </div>
 @endif

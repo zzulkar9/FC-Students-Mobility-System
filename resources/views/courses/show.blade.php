@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg border border-gray-300">
                 <div class="p-6">
                     <h1 class="text-3xl font-bold text-center mb-10">Course Information</h1>
                     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
