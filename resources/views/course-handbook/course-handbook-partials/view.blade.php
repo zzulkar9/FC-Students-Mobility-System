@@ -104,6 +104,7 @@
     activeYear: '{{ $years->isNotEmpty() ? $years->first()->intake_year : '' }}', 
     activeIntake: 'March/April', 
     search: '',
+    targetCreditsBySemester: {{ json_encode($targetCreditsBySemester) }},
     filteredCourses() {
         const searchTerm = this.search.toLowerCase();
         let filtered = {};
@@ -187,7 +188,7 @@
                                                 <td class="border px-4 py-2">
                                                     <span class="relative" x-data="{ showTooltip: false }" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
                                                         <span x-text="course.course_credit"></span>
-                                                        <div x-show="showTooltip" class="absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2" x-show="course.course_credit < targetCreditsBySemester[year][intake][semester]">
+                                                        <div x-show="showTooltip" class="absolute bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2" x-show="course.course_credit < targetCreditsBySemester['{{ $year }}']['{{ $intake }}']['{{ $semester }}']">
                                                             Below target credit
                                                         </div>
                                                     </span>
@@ -218,6 +219,7 @@
         @endforeach
     </div>
 </div>
+
 
 
 

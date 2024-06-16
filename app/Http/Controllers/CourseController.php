@@ -288,4 +288,44 @@ class CourseController extends Controller
 
         return back()->with('success', 'Target credits set successfully.');
     }
+
+    public function duplicate(Request $request)
+    {
+        \Log::info('Request Data:', $request->all());
+
+        $validated = $request->validate([
+            'sourceYear' => 'required|string|max:255',
+            'sourceIntake' => 'required|string|max:255',
+            'targetYear' => 'required|string|max:255',
+            'targetIntake' => 'required|string|max:255',
+        ]);
+
+        \Log::info('Validated Data:', $validated);
+
+        $sourceYear = $validated['sourceYear'];
+        $sourceIntake = $validated['sourceIntake'];
+        $targetYear = $validated['targetYear'];
+        $targetIntake = $validated['targetIntake'];
+
+        $coursesToDuplicate = Course::where('intake_year', $sourceYear)
+            ->where('intake_semester', $sourceIntake)
+            ->get();
+
+        foreach ($coursesToDuplicate as $course) {
+            Course::create([
+                'course_code' => $course->course_code,
+                'course_name' => $course->course_name,
+                'year_semester' => $course->year_semester,
+                'course_credit' => $course->course_credit,
+                'prerequisites' => $course->prerequisites,
+                'intake_year' => $targetYear,
+                'intake_semester' => $targetIntake,
+                'description' => $course->description,
+            ]);
+        }
+
+        return response()->json(['message' => 'Courses duplicated successfully']);
+    }
+    
+
 }

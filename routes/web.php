@@ -93,6 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/editForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'editForSemester'])->name('courses.editForSemester')->middleware('auth');
     Route::post('/courses/updateForSemester', [CourseController::class, 'updateForSemester'])->name('courses.updateForSemester')->middleware('auth');
     Route::post('/set-target-credits', [CourseController::class, 'setTargetCredits'])->name('courses.setTargetCredits')->middleware('auth');
+    Route::post('/courses/duplicate', [CourseController::class, 'duplicate'])->name('courses.duplicate');
 
     // SEMESTER NOTE
     Route::post('/notes', [NoteController::class, 'store'])->name('notes.store')->middleware('auth');

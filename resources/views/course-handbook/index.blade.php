@@ -283,6 +283,7 @@
             <div class="tabs mb-8 flex justify-center border-b-2 border-gray-200">
                 <button class="tab-button active" data-tab="view-tab-content">View</button>
                 <button class="tab-button" data-tab="edit-tab-content">Edit</button>
+                <button class="tab-button" data-tab="year-tab-content">Year by Year</button>
                 <button class="tab-button" onclick="location.href='{{ route('courses.create') }}'">Add</button>
             </div>
 
@@ -298,6 +299,14 @@
                 </div>
                 <div id="edit-tab-content" class="tab-content">
                     @include('course-handbook.course-handbook-partials.edit', [
+                        'years' => $years,
+                        'coursesByYearAndIntake' => $coursesByYearAndIntake,
+                        'totalCreditsBySemester' => $totalCreditsBySemester,
+                        'notes' => $notes,
+                    ])
+                </div>
+                <div id="year-tab-content" class="tab-content">
+                    @include('course-handbook.course-handbook-partials.year-by-year', [
                         'years' => $years,
                         'coursesByYearAndIntake' => $coursesByYearAndIntake,
                         'totalCreditsBySemester' => $totalCreditsBySemester,
