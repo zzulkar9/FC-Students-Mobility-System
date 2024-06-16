@@ -30,14 +30,16 @@
                             {{ __('User List') }}
                         </x-nav-link>
                     @endif
+
+
+                    <x-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
+                        {{ __('Full Course Handbook') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                         {{ __('Programs') }}
                     </x-nav-link>
-                    @if (auth()->check() && !auth()->user()->isProgramCoordinator())
-                        <x-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
-                            {{ __('Full Course Handbook') }}
-                        </x-nav-link>
-                    @endif
+
                     @if (auth()->check() &&
                             (auth()->user()->isUtmStudent() ||
                                 auth()->user()->isTDA() ||
@@ -159,14 +161,16 @@
                     {{ __('User List') }}
                 </x-responsive-nav-link>
             @endif
+            
+
+            <x-responsive-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
+                {{ __('Full Course Handbook') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('mobility-programs.Programindex')" :active="request()->routeIs('mobility-programs.Programindex')">
                 {{ __('Programs') }}
             </x-responsive-nav-link>
-            @if (auth()->check() && !auth()->user()->isProgramCoordinator())
-                <x-responsive-nav-link :href="route('course-handbook.full-handbook-index')" :active="request()->routeIs('course-handbook.full-handbook-index')">
-                    {{ __('Full Course Handbook') }}
-                </x-responsive-nav-link>
-            @endif
+
             @if (auth()->check() &&
                     (auth()->user()->isUtmStudent() ||
                         auth()->user()->isTDA() ||

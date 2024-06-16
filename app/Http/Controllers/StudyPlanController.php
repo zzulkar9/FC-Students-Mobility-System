@@ -12,16 +12,24 @@ use Illuminate\Support\Facades\Auth;
 class StudyPlanController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Check if user is TDA or Program Coordinator
+        // Check if user is TDA, Program Coordinator, or AA
         if ($user->isTDA() || $user->isProgramCoordinator() || $user->isAA()) {
-            // Fetch all users with study plans
-            $students = User::whereHas('studyPlans')->get();
+            // Get search term
+            $searchTerm = $request->input('search', '');
 
-            return view('study-plans.review', compact('students'));
+            // Fetch users with study plans and apply search filter
+            $students = User::whereHas('studyPlans')
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+                })
+                ->paginate(10); // Add pagination
+
+            return view('study-plans.review', compact('students', 'searchTerm'));
         }
 
         // Fetch the user's study plans
@@ -86,6 +94,8 @@ class StudyPlanController extends Controller
             },
         ]);
     }
+
+
 
     public function review($userId)
     {
@@ -259,6 +269,17 @@ class StudyPlanController extends Controller
 
         return redirect()->back()->with('success', 'Study plan updated successfully.');
     }
+
+    public function destroy($userId)
+    {
+        $student = User::findOrFail($userId);
+
+        // Delete all study plans for the student
+        StudyPlan::where('user_id', $student->id)->delete();
+
+        return redirect()->route('study-plans.index')->with('success', 'Student study plans deleted successfully.');
+    }
+
 
 
 

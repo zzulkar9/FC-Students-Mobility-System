@@ -54,7 +54,7 @@ class ApplicationFormController extends Controller
         return min($semesterCount, 8); // Ensure it does not exceed 8 semesters
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -100,26 +100,22 @@ class ApplicationFormController extends Controller
                 'applicationForm' => $applicationForm,
                 'applicationFormId' => $applicationForm->id
             ]);
-        } elseif ($user->isProgramCoordinator()) {
-            // For program coordinators, show the dashboard with all submitted applications, excluding drafts
-            $applications = ApplicationForm::with('user')
-                ->where('is_draft', false)  // Exclude draft applications
-                ->latest()
-                ->paginate(10);
-
-            return view('application-form.pc-index', compact('applications'));
-        }elseif ($user->isAA()) {
-            // For program coordinators, show the dashboard with all submitted applications, excluding drafts
-            $applications = ApplicationForm::with('user')
-                ->where('is_draft', false)  // Exclude draft applications
-                ->latest()
-                ->paginate(10);
-
-            return view('application-form.pc-index', compact('applications'));
         }
-         else {
+         elseif ($user->isProgramCoordinator() || $user->isAA() || $user->isTDA() || $user->isAdmin()) {
+            $searchTerm = $request->input('search', '');
+            $applications = ApplicationForm::with('user')
+                ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
+                ->whereHas('user', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('matric_number', 'like', '%' . $searchTerm . '%');
+                })
+                ->latest()
+                ->paginate(10);
+
+            return view('application-form.pc-index', compact('applications'));
+        }else {
             // Optionally handle other roles or redirect with an error
-            return abort(403, 'Unauthorized access.');
+            return view('unauthorize-access.unauthorize-access');
         }
     }
 
@@ -136,10 +132,10 @@ class ApplicationFormController extends Controller
             })
             ->latest()
             ->paginate(10);
-    
+
         return view('application-form.pc-index', compact('applications'));
     }
-    
+
 
     public function submit(Request $request)
     {
@@ -321,7 +317,7 @@ class ApplicationFormController extends Controller
         return view('application-form.edit', compact('applicationForm', 'details', 'educations', 'financial', 'approval', 'courses'));
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $applicationForm = ApplicationForm::with([
@@ -448,7 +444,7 @@ class ApplicationFormController extends Controller
         // Save or update details for Tab D (Financial)
         $applicationForm->financialDetails()->updateOrCreate(
             ['application_form_id' => $applicationForm->id],
-            $request->only(['finance_method', 'sponsorship_details' , 'budget_details'])
+            $request->only(['finance_method', 'sponsorship_details', 'budget_details'])
         );
 
         // Save or update details for Tab E (Advisor and Approval)
@@ -463,7 +459,7 @@ class ApplicationFormController extends Controller
         return redirect()->route('application-form.show', $applicationForm->id)->with('success', 'Application updated successfully!');
     }
 
-    
+
     public function updateAllNotes(Request $request, $applicationFormId)
     {
         $applicationForm = ApplicationForm::with('subjects')->findOrFail($applicationFormId);
@@ -516,10 +512,10 @@ class ApplicationFormController extends Controller
             ['application_form_id' => $applicationForm->id],
             $request->only(['advisor_name', 'advisor_email', 'advisor_phone', 'advisor_remarks', 'approval', 'faculty_remarks'])
         );
-    
+
         return redirect()->route('application-form.show', $id)->with('success', 'Approval details updated successfully.');
     }
-    
-    
-    
+
+
+
 }

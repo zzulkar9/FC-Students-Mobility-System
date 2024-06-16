@@ -8,10 +8,12 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if (session('success'))
-                <div class="rounded-md bg-green-50 p-4">
+                <div class="rounded-md bg-green-50 p-4 mb-4">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <!-- Icon placeholder -->
+                            <svg class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-green-800">
@@ -56,16 +58,20 @@
 
                         <div>
                             <label for="course_data" class="block text-sm font-medium text-gray-700">Paste Course Data:</label>
-                            <textarea id="course_data" name="course_data" rows="10" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                                placeholder="Enter each course on a new line, e.g.,\nSECR2043 Operating Systems 3\nSECJ2154 Object Oriented Programming 4 SECJ1023"></textarea>
+                            <p class="text-xs text-gray-600 mb-2">Enter each course on a new line in the following format:</p>
+                            <pre class="bg-gray-50 p-2 rounded text-xs text-gray-700 mb-2">Course Code  Course Name  Credits  Prerequisites (if any)</pre>
+                            <pre class="bg-gray-50 p-2 rounded text-xs text-gray-700 mb-4">Example:
+SECR2043  Operating Systems  3
+SECJ2154  Object Oriented Programming  4  SECJ1023</pre>
+                            <textarea id="course_data" name="course_data" rows="10" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Paste your course data here"></textarea>
                         </div>
 
-                        <div>
+                        <div hidden>
                             <label for="description" class="block text-sm font-medium text-gray-700">Description (Optional):</label>
-                            <textarea id="description" name="description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                            <textarea id="description" name="description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Provide additional details or context for the courses, if needed"></textarea>
                         </div>
 
-                        <div>
+                        <div hidden>
                             <label for="day_and_timeslot" class="block text-sm font-medium text-gray-700">Day and Timeslot (Optional):</label>
                             <input type="text" id="day_and_timeslot" name="day_and_timeslot" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g., Monday 10AM-12PM">
                         </div>

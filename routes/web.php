@@ -56,8 +56,6 @@ Route::get('/dashboard', function () {
 // Authenticated User Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Routes
-    // Route::get('/dashboard-utm-student', [ApplicationFormController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
-    // Route::get('/dashboard-other-student', function () {return view('dashboard.other-student');})->name('dashboard-other-student');
     Route::get('/dashboard-utm-student', [DashboardController::class, 'indexForStudent'])->name('dashboard-utm-student')->middleware('auth');
     Route::get('/dashboard-admin', [DashboardController::class, 'indexForAdmin'])->name('dashboard-admin');
     Route::get('/dashboard-tda', [DashboardController::class, 'indexForTDA'])->name('dashboard-tda')->middleware('auth');
@@ -75,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Course Handbook Route
     Route::get('/course-handbook', function (CourseHandbookController $controller) {
-        if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator())) {
+        if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->isProgramCoordinator() || Auth::user()->isTDA() || Auth::user()->isAA())) {
             $searchQuery = request('search', '');
             return $controller->index($searchQuery);
         }
@@ -113,8 +111,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //STUDY PLANS
     Route::get('/study-plans', [StudyPlanController::class, 'index'])->name('study-plans.index');
     Route::post('/study-plans/update', [StudyPlanController::class, 'update'])->name('study-plans.update');
-    Route::get('/study-plans/review/{user}', [StudyPlanController::class, 'review'])->name('study-plans.review');
+    Route::get('/study-plans/review/{user}', [StudyPlanController::class, 'review'])->name('study-plans.review.detail');
     Route::post('/study-plans/review/{userId}/save-remarks', [StudyPlanController::class, 'saveRemarks'])->name('study-plans.save-remarks');
+    Route::delete('/study-plans/{user}', [StudyPlanController::class, 'destroy'])->name('study-plans.destroy');
 
     // REAL CALCULATE CREDIT
     Route::get('/calculate-credits', [CreditCalculationController::class, 'calculateAndShowCredits'])->name('credits.calculate');
@@ -143,6 +142,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('timetables/updateCourse/{id}', [TimetableController::class, 'updateCourse'])->name('timetables.updateCourse');
     Route::get('timetables/{id}/editCourse', [TimetableController::class, 'editCourse'])->name('timetables.editCourse');
 
+    // Unauthorize Acess
+    Route::get('/unauthorize-access', [DashboardController::class, 'unauthorize'])->name('unauthorize')->middleware('auth'); 
 
     // Application Form Routes
     Route::get('/application-form', [ApplicationFormController::class, 'index'])->name('application-form.index')->middleware('auth');

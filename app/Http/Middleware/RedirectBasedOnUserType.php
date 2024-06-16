@@ -18,12 +18,14 @@ class RedirectBasedOnUserType
                     return redirect('/dashboard-other-student');
                 case User::TYPE_ADMIN:
                     return redirect('/dashboard-admin');
-                case User::TYPE_ADMIN:
+                case User::TYPE_TDA:
                     return redirect('/dashboard-tda');
-                case User::TYPE_ADMIN:
+                case User::TYPE_PROGRAM_COORDINATOR:
                     return redirect('/dashboard-pc');
-                case User::TYPE_ADMIN:
+                case User::TYPE_UTM_STAFF:
                     return redirect('/dashboard-staff');
+                case User::TYPE_AA:
+                    return redirect('/dashboard-aa');
             }
         }
 

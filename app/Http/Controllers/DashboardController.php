@@ -256,6 +256,12 @@ class DashboardController extends Controller
     
         return view('dashboard.aa', compact('applications', 'studentsWithStudyPlans'));
     }
+
+    public function unauthorize()
+    {
+    
+        return view('unauthorize-access.unauthorize-access');
+    }
     
 }
 
