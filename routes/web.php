@@ -94,6 +94,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/courses/updateForSemester', [CourseController::class, 'updateForSemester'])->name('courses.updateForSemester')->middleware('auth');
     Route::post('/set-target-credits', [CourseController::class, 'setTargetCredits'])->name('courses.setTargetCredits')->middleware('auth');
     Route::post('/courses/duplicate', [CourseController::class, 'duplicate'])->name('courses.duplicate');
+    Route::post('/courses/deleteIntake', [CourseController::class, 'deleteIntake'])->name('courses.deleteIntake');
 
     // SEMESTER NOTE
     Route::post('/notes', [NoteController::class, 'store'])->name('notes.store')->middleware('auth');

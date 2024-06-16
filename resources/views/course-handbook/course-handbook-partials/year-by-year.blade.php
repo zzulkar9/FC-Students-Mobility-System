@@ -39,6 +39,19 @@
                 console.error('Error data:', error.response.data); // Log error response data
                 alert('An error occurred');
             });
+    },
+    deleteIntake(year, intake) {
+        if (confirm('Are you sure you want to delete all courses for this intake?')) {
+            axios.post('{{ route("courses.deleteIntake") }}', { year: year, intake: intake })
+                .then(response => {
+                    alert('Courses deleted successfully');
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error data:', error.response.data); // Log error response data
+                    alert('An error occurred');
+                });
+        }
     }
 }">
     <div class="flex flex-col mb-4">
@@ -79,6 +92,7 @@
                                 </td>
                                 <td class="border px-6 py-4">
                                     <button @click="sourceYear = '{{ $year->intake_year }}'; sourceIntake = '{{ $intake }}'; showDuplicateModal = true;" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded">Duplicate</button>
+                                    <button @click="deleteIntake('{{ $year->intake_year }}', '{{ $intake }}')" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -103,7 +117,6 @@
                                 <input type="text" id="duplicateYear" x-model="duplicateYear" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter year">
                                 <label for="duplicateIntake" class="block text-sm font-medium text-gray-700 mt-4">Intake</label>
                                 <select id="duplicateIntake" x-model="duplicateIntake" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option>Select Intake</option>
                                     <option value="March/April">March/April</option>
                                     <option value="September">September</option>
                                 </select>

@@ -326,6 +326,23 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Courses duplicated successfully']);
     }
+
+    public function deleteIntake(Request $request)
+    {
+        $validated = $request->validate([
+            'year' => 'required|string|max:255',
+            'intake' => 'required|string|max:255',
+        ]);
+
+        $year = $validated['year'];
+        $intake = $validated['intake'];
+
+        Course::where('intake_year', $year)
+            ->where('intake_semester', $intake)
+            ->delete();
+
+        return response()->json(['message' => 'Courses deleted successfully']);
+    }
     
 
 }
