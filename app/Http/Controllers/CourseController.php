@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\TargetCredit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -153,43 +154,59 @@ class CourseController extends Controller
 
     public function createForSemester($intakeYear, $intakeSemester, $yearSemester)
     {
+        $intakeSemester = str_replace('-', '/', urldecode($intakeSemester));
+        $yearSemester = urldecode($yearSemester);
+    
         return view('courses.add-course-for-semester', [
             'intakeYear' => $intakeYear,
             'intakeSemester' => $intakeSemester,
             'yearSemester' => $yearSemester
         ]);
     }
-
+    
     public function editForSemester($intakeYear, $intakeSemester, $yearSemester)
     {
+        $intakeSemester = str_replace('-', '/', urldecode($intakeSemester));
+        $yearSemester = urldecode($yearSemester);
+    
         $courses = Course::where('intake_year', $intakeYear)
             ->where('intake_semester', $intakeSemester)
             ->where('year_semester', $yearSemester)
             ->get();
-
+    
         $courseData = $courses->map(function ($course) {
             return "{$course->course_code} {$course->course_name} {$course->course_credit}";
         })->implode("\n");
-
+    
         return view('course-handbook.edit-for-semester', compact('intakeYear', 'intakeSemester', 'yearSemester', 'courseData'));
     }
+    
+    
+    
 
     public function updateForSemester(Request $request)
-    {
-        $request->validate([
-            'intake_year' => 'required|string',
-            'intake_semester' => 'required|string',
-            'year_semester' => 'required|string',
-            'course_data' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'intake_year' => 'required|string',
+        'intake_semester' => 'required|string',
+        'year_semester' => 'required|string',
+        'course_data' => 'required|string',
+    ]);
 
-        $courseData = explode("\n", $request->course_data);
+    $courseData = explode("\n", $request->course_data);
+
+    DB::transaction(function () use ($request, $courseData) {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         // Delete existing courses for this semester
         Course::where('intake_year', $request->intake_year)
             ->where('intake_semester', $request->intake_semester)
             ->where('year_semester', $request->year_semester)
             ->delete();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Add updated courses
         foreach ($courseData as $courseLine) {
@@ -218,9 +235,10 @@ class CourseController extends Controller
                 'course_credit' => intval($course_credit),
             ]);
         }
+    });
 
-        return redirect()->route('course-handbook.index')->with('success', 'Courses updated successfully.');
-    }
+    return redirect()->route('course-handbook.index')->with('success', 'Courses updated successfully.');
+}
 
     public function setTargetCredits(Request $request)
     {

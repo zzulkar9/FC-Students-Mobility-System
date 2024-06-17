@@ -516,6 +516,15 @@ class ApplicationFormController extends Controller
         return redirect()->route('application-form.show', $id)->with('success', 'Approval details updated successfully.');
     }
 
+    public function destroy($id)
+{
+    $application = ApplicationForm::findOrFail($id);
+    $application->delete();
+
+    return redirect()->route('application-form.index')->with('success', 'Application deleted successfully.');
+}
+
+
 
 
 }

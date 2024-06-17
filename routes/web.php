@@ -87,8 +87,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->middleware('auth');
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy')->middleware('auth');
     Route::post('/courses/storeForSemester', [CourseController::class, 'storeForSemester'])->name('courses.storeForSemester');
-    Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester');
-    Route::get('/courses/editForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'editForSemester'])->name('courses.editForSemester')->middleware('auth');
+    Route::get('/courses/createForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'createForSemester'])->name('courses.createForSemester')->middleware('auth');
+Route::get('/courses/editForSemester/{intakeYear}/{intakeSemester}/{yearSemester}', [CourseController::class, 'editForSemester'])->name('courses.editForSemester')->middleware('auth');
     Route::post('/courses/updateForSemester', [CourseController::class, 'updateForSemester'])->name('courses.updateForSemester')->middleware('auth');
     Route::post('/set-target-credits', [CourseController::class, 'setTargetCredits'])->name('courses.setTargetCredits')->middleware('auth');
     Route::post('/courses/duplicate', [CourseController::class, 'duplicate'])->name('courses.duplicate');
@@ -156,6 +156,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/application-form/{applicationForm}', [ApplicationFormController::class, 'update'])->name('application-form.update')->middleware('auth');
     Route::post('application-form/{id}/comment', [ApplicationFormController::class, 'storeComment'])->name('application-form.comment.store');
     Route::patch('/application-form/{id}/approval-update', [ApplicationFormController::class, 'ApprovalUpdate'])->name('application-form.ApprovalUpdate');
+    Route::delete('/application-form/{id}', [ApplicationFormController::class, 'destroy'])->name('application-form.destroy');
+
 });
 
 // Profile Routes

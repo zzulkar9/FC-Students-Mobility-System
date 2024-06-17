@@ -1,4 +1,7 @@
 <x-guest-layout>
+    <div class="flex justify-center mb-6">
+        <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+    </div>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -34,10 +37,17 @@
         <div class="mt-4">
             <x-input-label for="user_type" :value="__('User Type')" />
         
-            <select name="user_type" id="user_type" class="block mt-1 w-full" required>
+            {{-- <select name="user_type" id="user_type" class="block mt-1 w-full" required>
                 <option value="">Please select a user type</option>
                 <option value="utm_student">UTM Student</option>
                 <option value="other_uni_student">Other University Student</option>
+            </select> --}}
+
+            <select name="user_type" id="user_type" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm" required>
+                <option value="">{{ __('Please select a user type') }}</option>
+                <option value="utm_student">{{ __('UTM Student') }}</option>
+                <option value="UTM Staff">{{ __('UTM Staff') }}</option>
+                <option value="Academic Advisor">{{ __('Academic Advisor') }}</option>
             </select>
         </div>
 

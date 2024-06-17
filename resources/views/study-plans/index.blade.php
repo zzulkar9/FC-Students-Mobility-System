@@ -21,11 +21,17 @@
                         </div>
                     @endif
 
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700">Notes/Instruction</label>
+                        <pre class="bg-gray-50 p-2 rounded text-xs text-gray-700 mb-2">The target university will appeard on the <strong>"Subjects/Course to be swapped"</strong> table section after it has been <strong>approved by TDA</strong>. Drag it into the your choosen target semester.</pre>
+                        <pre class="bg-gray-50 p-2 rounded text-xs text-gray-700 mb-4"><strong>Drag the subject/course</strong> into the selected semester.</pre>
+                    </div>
+
                     <form method="POST" action="{{ route('study-plans.update') }}" id="studyPlanForm">
                         @csrf
                         <!-- Orphan Subjects Section -->
                         <div class="mt-8">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Subjects Not in Any Semester</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 py-2">Subjects/Course to be swapped</h3>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full mt-2 text-xs">
                                     <thead class="bg-cyan-100">
@@ -135,7 +141,7 @@
                                             <summary class="text-sm leading-5 font-medium text-gray-900 py-2 cursor-pointer">
                                                 {{ $yearSemester }}
                                             </summary>
-                                            <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2 text-xs" onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button>
+                                            {{-- <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mb-2 text-xs" onclick="openAddSubjectModal('{{ $yearSemester }}')">Add Subject</button> --}}
                                             <div class="overflow-x-auto">
                                                 <table class="min-w-full mt-2 text-xs">
                                                     <thead class="bg-cyan-100">

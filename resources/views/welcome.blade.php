@@ -1,4 +1,3 @@
-<!-- resources/views/welcome.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -7,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Laravel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     <style>
         .grid-container {
             display: grid;
@@ -128,7 +128,7 @@
 
 <body class="font-sans antialiased background">
     <div class="relative flex flex-col items-center min-h-screen sm:pt-0">
-        <div class="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50 border border-gray-300">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                 <div class="text-xl font-semibold text-gray-900">FC Mobility Student System</div>
                 @if (Route::has('login'))
@@ -147,7 +147,7 @@
             </div>
         </div>
 
-        <div class="w-full bg-white shadow-lg">
+        <div class="w-full bg-white shadow-lg border border-gray-300">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-24">
                 <!-- Full Width Banner -->
                 <div class="w-full mb-8">
@@ -157,9 +157,9 @@
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-20 flex-1">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-20 flex-1" data-aos="fade-up">
             <!-- Section under the banner -->
-            <div class="flex flex-wrap items-start">
+            <div class="flex flex-wrap items-start" data-aos="fade-up">
                 <!-- Left Text -->
                 <div class="w-full md:w-1/4 mb-6 md:mb-0">
                     <h2 class="text-4xl font-bold text-gray-900 mb-4">Mobility System</h2>
@@ -169,7 +169,7 @@
                 <!-- Right Boxes -->
                 <div class="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 four-box-section">
                     <!-- Box 1 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300" data-aos="fade-up">
                         <img src="{{ asset('images/box-1.jpg') }}" alt="Placeholder Image 1"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                     <!-- Box 2 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300" data-aos="fade-up" data-aos-delay="100">
                         <img src="{{ asset('images/box-2.png') }}" alt="Placeholder Image 2"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -187,7 +187,7 @@
                         </div>
                     </div>
                     <!-- Box 3 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300" data-aos="fade-up" data-aos-delay="200">
                         <img src="{{ asset('images/telegram.png') }}" alt="Placeholder Image 3"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -196,7 +196,7 @@
                         </div>
                     </div>
                     <!-- Box 4 -->
-                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300">
+                    <div class="flex items-center bg-white rounded-lg shadow-md p-6 border border-gray-300" data-aos="fade-up" data-aos-delay="300">
                         <img src="{{ asset('images/box-4.png') }}" alt="Placeholder Image 4"
                             class="w-16 h-16 object-cover rounded-full mr-6">
                         <div class="flex flex-col">
@@ -207,7 +207,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center pt-20">
+            <div class="flex justify-between items-center pt-20" data-aos="fade-up">
                 <h1 class="text-4xl font-bold text-gray-900 px-4 py-2 rounded">Mobility Programs</h1>
                 <!-- Add More Button -->
                 @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
@@ -218,7 +218,7 @@
             </div>
 
             <div class="mt-8 bg-white bg-opacity-50 overflow-hidden shadow sm:rounded-lg shadow-md border border-gray-300">
-                <div class="grid-container p-6 bg-white shadow-md">
+                <div class="grid-container p-6 bg-white shadow-md" data-aos="fade-up">
                     @foreach ($programs as $program)
                         <div class="grid-item shadow-lg border border-gray-300" onclick="openModal('{{ $program->id }}')">
                             <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->title }}">
@@ -254,7 +254,10 @@
         </div>
     @endforeach
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+        AOS.init();
+
         function openModal(id) {
             document.getElementById('modal-' + id).style.display = 'block';
         }

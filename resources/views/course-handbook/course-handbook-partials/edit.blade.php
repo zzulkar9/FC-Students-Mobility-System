@@ -67,12 +67,12 @@
                                         <span>{{ $semester }}</span>
                                     </div>
                                     <span class="flex space-x-2">
-                                        {{-- <a href="{{ route('courses.createForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                        <a :href="`/courses/createForSemester/${encodeURIComponent('{{ $year }}')}/${encodeURIComponent('{{ str_replace('/', '-', $intake) }}')}/${encodeURIComponent('{{ $semester }}')}`" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
                                             + Add
                                         </a>
-                                        <a href="{{ route('courses.editForSemester', ['intakeYear' => $year, 'intakeSemester' => $intake, 'yearSemester' => $semester]) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                        <a :href="`/courses/editForSemester/${encodeURIComponent('{{ $year }}')}/${encodeURIComponent('{{ str_replace('/', '-', $intake) }}')}/${encodeURIComponent('{{ $semester }}')}`" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs">
                                             Edit
-                                        </a> --}}
+                                        </a>                                        
                                     </span>
                                 </summary>
                                 <div class="px-6 py-4 border border-gray-300 bg-gray-100 text-gray-700">
