@@ -57,51 +57,46 @@ class ApplicationFormController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-
+    
         if ($user->isUtmStudent()) {
             // Check if the user has any existing applications
             $applicationForm = ApplicationForm::where('user_id', $user->id)
                 ->latest('updated_at') // Make sure to get the most recent application
                 ->first();
-
-            // If no application form exists, create a new one as a draft
-            if (!$applicationForm) {
-                $applicationForm = ApplicationForm::create([
-                    'user_id' => $user->id,
-                    'is_draft' => true, // Assume it's a draft initially
-                    'intake_period' => $user->intake_period // Assume some default or calculated intake period
-                ]);
+    
+            // If an application form exists, redirect to the show function
+            if ($applicationForm) {
+                return redirect()->route('application-form.show', ['applicationForm' => $applicationForm->id]);
             }
-
+    
             $currentSemester = $user->getCurrentSemester();
             if (!$currentSemester) {
                 return view('application-form.index', [
-                    'message' => 'Unable to determine your current semester.',
-                    'applicationFormId' => $applicationForm->id
+                    'message' => 'Unable to determine your current semester.'
                 ]);
             }
-
+    
             $intakeYear = 2000 + intval(substr($user->matric_number, 1, 2)); // Assuming the year is the second and third characters of the matric number
             $intakeSemester = $user->intake_period;
-
+    
             $courses = Course::where('year_semester', 'Year ' . ceil($currentSemester / 2) . ': Semester ' . (($currentSemester % 2) ? 1 : 2))
                 ->where('intake_year', (string) $intakeYear)
                 ->where('intake_semester', $intakeSemester)
                 ->get();
-
+    
             $allCourses = Course::where('intake_year', $intakeYear)
                 ->where('intake_semester', $intakeSemester)
                 ->get();
-
+    
             // Now pass the applicationFormId to the view correctly
             return view('application-form.index', [
                 'courses' => $courses,
                 'allCourses' => $allCourses,
-                'applicationForm' => $applicationForm,
-                'applicationFormId' => $applicationForm->id
+                'applicationForm' => null,
+                'message' => 'No existing application form found. Please create a new application if needed.'
             ]);
         }
-         elseif ($user->isProgramCoordinator() || $user->isAA() || $user->isTDA() || $user->isAdmin()) {
+        elseif ($user->isProgramCoordinator() || $user->isAA() || $user->isTDA() || $user->isAdmin()) {
             $searchTerm = $request->input('search', '');
             $applications = ApplicationForm::with('user')
                 ->where('is_draft', false)  // Ensure drafts are not shown to coordinators
@@ -111,13 +106,16 @@ class ApplicationFormController extends Controller
                 })
                 ->latest()
                 ->paginate(10);
-
+    
             return view('application-form.pc-index', compact('applications'));
-        }else {
+        } else {
             // Optionally handle other roles or redirect with an error
             return view('unauthorize-access.unauthorize-access');
         }
     }
+    
+    
+
 
 
 

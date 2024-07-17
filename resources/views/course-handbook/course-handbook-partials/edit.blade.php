@@ -66,14 +66,14 @@
                                         <span class="mr-2 transform transition-transform duration-200" :class="{'rotate-90': open}">&#9654;</span>
                                         <span>{{ $semester }}</span>
                                     </div>
-                                    <span class="flex space-x-2">
+                                    {{-- <span class="flex space-x-2">
                                         <a :href="`/courses/createForSemester/${encodeURIComponent('{{ $year }}')}/${encodeURIComponent('{{ str_replace('/', '-', $intake) }}')}/${encodeURIComponent('{{ $semester }}')}`" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs">
                                             + Add
                                         </a>
                                         <a :href="`/courses/editForSemester/${encodeURIComponent('{{ $year }}')}/${encodeURIComponent('{{ str_replace('/', '-', $intake) }}')}/${encodeURIComponent('{{ $semester }}')}`" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded text-xs">
                                             Edit
                                         </a>                                        
-                                    </span>
+                                    </span> --}}
                                 </summary>
                                 <div class="px-6 py-4 border border-gray-300 bg-gray-100 text-gray-700">
                                     <form method="POST" action="{{ route('courses.setTargetCredits') }}">
@@ -101,12 +101,12 @@
                                                 <td class="border px-4 py-2" x-text="course.course_code"></td>
                                                 <td class="border px-4 py-2">
                                                     <span x-text="course.course_name"></span>
-                                                    <div class="text-xs mt-1 space-x-1">
-                                                        <a :href="`/courses/${course.id}`" class="text-blue-500 hover:text-blue-700">View</a>
-                                                        <a> | </a>
-                                                        <a :href="`/courses/${course.id}/edit`" class="text-green-500 hover:text-green-700">Update</a>
-                                                        <a> | </a>
-                                                        <form :action="`/courses/${course.id}`" method="POST" @submit.prevent="if (confirm('Are you sure?')) $event.target.submit()">
+                                                    <div class="text-xs mt-1 space-x-1 flex items-center">
+                                                        <a :href="`{{ url('courses') }}/${course.id}`" class="text-blue-500 hover:text-blue-700">View</a>
+                                                        <span>|</span>
+                                                        <a :href="`{{ url('courses') }}/${course.id}/edit`" class="text-green-500 hover:text-green-700">Update</a>
+                                                        <span>|</span>
+                                                        <form :action="`{{ url('courses') }}/${course.id}`" method="POST" @submit.prevent="if (confirm('Are you sure?')) $event.target.submit()" class="inline">
                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                             <input type="hidden" name="_method" value="DELETE">
                                                             <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
@@ -116,6 +116,7 @@
                                                 <td class="border px-4 py-2" x-text="course.course_credit"></td>
                                                 <td class="border px-4 py-2" x-text="course.prerequisites ?? 'None'"></td>
                                             </tr>
+                                                                                                                           
                                         </template>
                                         <tr class="bg-gray-100">
                                             <td colspan="2" class="text-right px-6 py-4 font-medium">Total Credits:</td>

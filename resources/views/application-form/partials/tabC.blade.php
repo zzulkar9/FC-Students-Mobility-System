@@ -5,8 +5,9 @@
 <div class="mb-6">
     <label for="link" class="block text-sm font-medium text-gray-700 mb-2">Enter Link:</label>
     <input type="url" id="link" name="link"
-        class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        placeholder="Please enter the target university course website link" value="{{ $applicationForm->link }}">
+           class="form-input block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+           placeholder="Please enter the target university course website link"
+           value="{{ $applicationForm ? $applicationForm->link : '' }}">
 </div>
 
 <!-- Additional Information Section -->

@@ -1,6 +1,8 @@
 <!-- resources/views/timetables/upload.blade.php -->
 
 <x-app-layout>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Upload Timetable Data') }}
@@ -41,8 +43,16 @@
                             </select>
                         </div>
                         <div class="mb-4">
-                            <label for="file" class="block text-sm font-medium text-gray-700">Excel File</label>
-                            <input type="file" id="file" name="file" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <div class="bg-gray-50 p-4 rounded text-xs text-gray-700 mb-2 flex items-center">
+                                <b class="mr-2">View/Download Example File Format:</b>
+                                <a href="{{ asset('files/Example_Sections_List.xlsx') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center" download>
+                                    <i class="fas fa-file-download mr-2"></i> Download Example File
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="file" class="block text-sm font-medium text-gray-700">Upload Excel File</label>
+                            <input type="file" id="file" name="file" class="mt-1 block w-full border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
                         </div>
                         <div class="flex items-center justify-center mt-4">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

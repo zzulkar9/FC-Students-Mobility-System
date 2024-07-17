@@ -37,7 +37,7 @@
                     @endphp
                     <tr class="hover:bg-gray-100">
                         <td class="px-4 py-2 text-sm text-gray-600">{{ $subject->utm_course_code }} -
-                            {{ $subject->utm_course_name }}</td>
+                            {{ $subject->utm_course_name }} - <b>({{ $utmCredits }} UTM Credits)</b></td>
                         <td class="px-4 py-2 text-sm text-gray-600">{{ $subject->target_course }}</td>
                         <td class="px-4 py-2 text-sm text-gray-600">{{ $targetCredits }}</td>
                         <td class="px-4 py-2 text-sm text-gray-600">{{ $equivalentCredits }}</td>
@@ -91,11 +91,11 @@
     @endif
 </form>
 
-@if (auth()->user()->isUtmStudent() || auth()->user()->isProgramCoordinator() || auth()->user()->isAA())
+{{-- @if (auth()->user()->isUtmStudent() || auth()->user()->isProgramCoordinator() || auth()->user()->isAA())
     <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded-lg">
         <h3 class="text-2xl font-semibold mb-4">Approval Status</h3>
         <p class="text-lg font-semibold" style="color: {{ $applicationForm->approval_status ? 'green' : 'orange' }}">
             {{ $applicationForm->approval_status ? 'Approved by TDA' : 'Pending from TDA' }}
         </p>
     </div>
-@endif
+@endif --}}

@@ -22,7 +22,7 @@
                     @endif
                     @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isTDA()))
                         <x-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
-                            {{ __('Course Menu') }}
+                            {{ __('Manage Course Menu') }}
                         </x-nav-link>
                     @endif
                     @if (auth()->check() && auth()->user()->isAdmin())
@@ -153,7 +153,7 @@
             @endif
             @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isTDA()))
                 <x-responsive-nav-link :href="route('course-handbook.index')" :active="request()->routeIs('course-handbook.index')">
-                    {{ __('Course Menu') }}
+                    {{ __('Manage Course Menu') }}
                 </x-responsive-nav-link>
             @endif
             @if (auth()->check() && auth()->user()->isAdmin())

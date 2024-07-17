@@ -7,6 +7,19 @@
 
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8">
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+                    role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+            
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <!-- Tab Navigation -->
@@ -16,25 +29,25 @@
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button active" id="profile-tab" data-tabs-target="#profile"
                                     type="button" role="tab" aria-controls="profile"
-                                    aria-selected="true">Profile</button>
-                            </li>
-                            <li class="mr-2" role="presentation">
-                                <button class="tab-button" id="courses-tab" data-tabs-target="#courses" type="button"
-                                    role="tab" aria-controls="courses" aria-selected="false">Courses</button>
+                                    aria-selected="true">A. Profile</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="curriculum-tab" data-tabs-target="#curriculum"
                                     type="button" role="tab" aria-controls="curriculum"
-                                    aria-selected="false">Curriculum</button>
+                                    aria-selected="false">B. Curriculum</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button" id="courses-tab" data-tabs-target="#courses" type="button"
+                                    role="tab" aria-controls="courses" aria-selected="false">C. Courses</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="financial-tab" data-tabs-target="#financial"
                                     type="button" role="tab" aria-controls="financial"
-                                    aria-selected="false">Financial</button>
+                                    aria-selected="false">D. Financial</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="approval-tab" data-tabs-target="#approval" type="button"
-                                    role="tab" aria-controls="approval" aria-selected="false">Approval</button>
+                                    role="tab" aria-controls="approval" aria-selected="false">E. Approval</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="calculated-credits-tab"
@@ -43,7 +56,7 @@
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="report-tab" data-tabs-target="#report" type="button"
-                                    role="tab" aria-controls="report" aria-selected="false">Report</button>
+                                    role="tab" aria-controls="report" aria-selected="false">Full Report</button>
                             </li>
                             <li class="mr-2" role="presentation">
                                 <button class="tab-button" id="comments-tab" data-tabs-target="#comments" type="button"
@@ -51,6 +64,17 @@
                             </li>
                         </ul>
                     </nav>
+
+                    @if (auth()->user()->isUtmStudent() || auth()->user()->isProgramCoordinator() || auth()->user()->isAA())
+                        <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded-lg">
+                            <h3 class="text-2xl font-semibold mb-4">Form Approval Status</h3>
+                            <p class="text-lg font-semibold"
+                                style="color: {{ $applicationForm->approval_status ? 'green' : 'orange' }}">
+                                {{ $applicationForm->approval_status ? 'Approved by TDA' : 'Pending from TDA' }}
+                            </p>
+                        </div>
+                    @endif
+
 
                     <!-- Tab Content -->
                     <div id="myTabContent">
@@ -62,7 +86,8 @@
                         </div>
 
                         <!-- Courses Tab Content -->
-                        <div class="hidden p-4 rounded-lg" id="courses" role="tabpanel" aria-labelledby="courses-tab">
+                        <div class="hidden p-4 rounded-lg" id="courses" role="tabpanel"
+                            aria-labelledby="courses-tab">
                             @include('application-form.show-partials.courses_table', [
                                 'subjects' => $applicationForm->subjects,
                             ])

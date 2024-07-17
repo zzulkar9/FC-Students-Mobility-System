@@ -117,6 +117,7 @@
                                 <input type="text" id="duplicateYear" x-model="duplicateYear" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter year">
                                 <label for="duplicateIntake" class="block text-sm font-medium text-gray-700 mt-4">Intake</label>
                                 <select id="duplicateIntake" x-model="duplicateIntake" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">Select Intake</option>
                                     <option value="March/April">March/April</option>
                                     <option value="September">September</option>
                                 </select>

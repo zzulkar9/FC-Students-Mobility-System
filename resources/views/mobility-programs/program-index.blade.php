@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="container mx-auto py-12">
-        @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator()))
+        @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isProgramCoordinator() || auth()->user()->isStaff()))
             <!-- Tabs for Admin and Program Coordinator -->
             <div class="tabs mb-8 flex justify-center border-b-2 border-gray-200">
                 <button class="tab-button active" onclick="showTab('view', this)">View</button>

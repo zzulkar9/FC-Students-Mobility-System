@@ -1,4 +1,4 @@
-<div class="p-6 text-gray-900 space-y-8">
+<div class="text-gray-900 space-y-8">
 
     <!-- Student Information and Education & Co-Curriculum Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

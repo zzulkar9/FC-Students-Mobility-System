@@ -44,7 +44,7 @@
                             <td class="border px-4 py-2">{!! nl2br(e($subject->utm_course_description)) !!}</td>
                             <td class="border px-4 py-2">
                                 <div>{{ $subject->target_course }}</div>
-                                <div class="text-gray-500 text-sm">{{ $subject->target_course_credit }} credits</div>
+                                <div class="text-gray-500 text-sm">{{ $subject->target_course_credit }} ECTS credits</div>
                             </td>
                             <td class="border px-4 py-2">{!! nl2br(e($subject->target_course_description)) !!}</td>
                             <td class="border px-4 py-2">

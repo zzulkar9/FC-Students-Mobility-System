@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel</title>
+    <title>FC Students Mobility System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
     <style>
@@ -130,7 +130,7 @@
     <div class="relative flex flex-col items-center min-h-screen sm:pt-0">
         <div class="w-full bg-white shadow-md fixed top-0 left-0 right-0 z-50 border border-gray-300">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <div class="text-xl font-semibold text-gray-900">FC Mobility Student System</div>
+                <div class="text-xl font-semibold text-gray-900">FC Students Mobility System</div>
                 @if (Route::has('login'))
                     <div class="flex space-x-4">
                         @auth
